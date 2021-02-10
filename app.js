@@ -26,7 +26,7 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  if (cluster.worker.id == 2) { // Use the second worker only for CronJobs, to never block trafic on the site
+  if (cluster.worker.id == 2) { // Use the second worker only for CronJobs, to never block traffic on the site
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
     mongoose.connect(mongoUri, { useNewUrlParser: true, auto_reconnect: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
   
@@ -50,6 +50,7 @@ if (cluster.isMaster) {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
     
     const indexRouteController = require('./routes/indexRoute');
+    const rootAdminRouteController = require('./routes/rootAdminRoute');
     
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'pug');
@@ -84,6 +85,7 @@ if (cluster.isMaster) {
     });
   
     app.use('/', indexRouteController);
+    app.use('/root_admin', rootAdminRouteController);
     
     server.listen(PORT, () => {
       console.log(`Server is on port ${PORT} as Worker ${cluster.worker.id} running @ process ${cluster.worker.process.pid}`);
