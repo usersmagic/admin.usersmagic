@@ -1,16 +1,17 @@
-const express = require('express');
+const bodyParser = require('body-parser');
 const cluster = require('cluster');
-const http = require('http');
-const path = require('path');
-const session = require('express-session');
 const cookieParser = require('cookie-parser');  
 const dotenv = require('dotenv');
+const express = require('express');
 const favicon = require('serve-favicon');
+const http = require('http');
+const i18n = require('i18n');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const path = require('path');
+const session = require('express-session');
 
-const MongoStore = require('connect-mongo')(session);
 const CronJob = require('./cron/CronJob');
+const MongoStore = require('connect-mongo')(session);
 
 const numCPUs = process.env.WEB_CONCURRENCY || require('os').cpus().length;
 
@@ -37,6 +38,13 @@ if (cluster.isMaster) {
     const server = http.createServer(app);
     
     dotenv.config({ path: path.join(__dirname, '.env') });
+
+    i18n.configure({
+      locales:['tr', 'en'],
+      directory: __dirname + '/translations',
+      queryParameter: 'lang',
+      defaultLocale: 'en'
+    });
     
     const PORT = process.env.PORT || 3000;
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
@@ -69,6 +77,7 @@ if (cluster.isMaster) {
     
     app.use(sessionOptions);
     app.use(cookieParser());
+    app.use(i18n.init);
     app.use((req, res, next) => {
       req.query = (req.query && typeof req.query == 'object' ? req.query : {});
       next();
