@@ -1,0 +1,43 @@
+doctype html
+html(lang='tr')
+  head
+    meta(name='viewport', content='width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1.0, user-scalable=0')
+    title Usersmagic Admin | #{title}
+    link(href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' rel='stylesheet')
+    if includes && includes.external
+      if includes.external.css
+        if includes.external.css.includes('page')
+          link(rel='stylesheet' href=`/css/${page}.css`)
+        if includes.external.css.includes('general')
+          link(rel='stylesheet' href='/css/general/general.css')
+        if includes.external.css.includes('header')
+          link(rel='stylesheet' href='/css/general/header.css')
+        if includes.external.css.includes('contentHeader')
+          link(rel='stylesheet' href='/css/general/contentHeader.css')
+        if includes.external.css.includes('logo')
+          link(rel='stylesheet' href='/css/general/logo.css')
+        if includes.external.css.includes('inputs')
+          link(rel='stylesheet' href='/css/general/inputs.css')
+        if includes.external.css.includes('buttons')
+          link(rel='stylesheet' href='/css/general/buttons.css')
+        if includes.external.css.includes('confirm')
+          link(rel='stylesheet' href='/css/general/confirm.css')
+        if includes.external.css.includes('fontawesome')
+          link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css', integrity='sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ', crossorigin='anonymous')
+      if includes.external.js
+        if includes.external.js.includes('page')
+          script(src=`/js/${page}.js`)
+        if includes.external.js.includes('duplicateElement')
+          script(src='/js/functions/duplicateElement.js')
+        if includes.external.js.includes('dragAndDrop')
+          script(src='/js/functions/dragAndDrop.js')
+        if includes.external.js.includes('buttonListeners')
+          script(src='/js/functions/buttonListeners.js')
+        if includes.external.js.includes('confirm')
+          script(src='/js/functions/confirmFunction.js')
+        if includes.external.js.includes('inputListeners')
+          script(src='/js/functions/inputListeners.js')
+        if includes.external.js.includes('serverRequests')
+          script(src='/js/functions/serverRequests.js')
+  body
+    block content

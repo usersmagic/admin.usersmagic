@@ -1,0 +1,41 @@
+{
+  "name": "admin.usersmagic",
+  "version": "1.0.0",
+  "description": "Usersmagic web app admin page",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "10.7.0"
+  },
+  "author": "Yunus Gürlek",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^3.2.0",
+    "aws-sdk": "^2.709.0",
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.19.0",
+    "cluster": "^0.7.7",
+    "connect-mongo": "^3.2.0",
+    "cookie-parser": "^1.4.5",
+    "cookie-session": "^1.4.0",
+    "cron": "^1.8.2",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "express-session": "^1.17.1",
+    "fs": "0.0.1-security",
+    "jimp": "^0.14.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.31",
+    "mongoose": "^5.5.4",
+    "multer": "^1.4.2",
+    "node-cron": "^2.0.3",
+    "nodemailer": "^6.4.12",
+    "nodemailer-html-to-text": "^3.1.0",
+    "pug": "^2.0.3",
+    "serve-favicon": "^2.5.0",
+    "validator": "^13.1.1"
+  }
+}
