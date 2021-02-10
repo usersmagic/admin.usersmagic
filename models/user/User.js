@@ -8,7 +8,9 @@ const Project = require('../project/Project');
 const Question = require('../question/Question');
 const Submition = require('../submition/Submition');
 
+const hashPassword = require('./functions/hashPassword');
 const getUser = require('./functions/getUser');
+const verifyPassword = require('./functions/verifyPassword');
 
 const Schema = mongoose.Schema;
 
@@ -136,6 +138,9 @@ const UserSchema = new Schema({
     default: false
   }
 });
+
+// Before saving the user to database, hash its password
+UserSchema.pre('save', hashPassword);
 
 UserSchema.statics.getUsersByFilters = function (filters, callback) {
   // Find all the users with given filters and return their ids, or an error if it exists
