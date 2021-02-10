@@ -125,6 +125,13 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
             country: target.country
           });
 
+          // Do not repeat users in users_list array
+          filters.$and.push({
+            _id: {
+              $nin: target.users_list
+            }
+          });
+
           User.getUsersByFilters(filters, (err, user_ids) => {
             if (err) return next(err);
 
