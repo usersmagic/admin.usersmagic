@@ -4,8 +4,8 @@ module.exports = (req, res) => {
     title: res.__('Root Admin Login'),
     includes: {
       external: {
-        css: ['page', 'general', 'inputs', 'buttons', 'fontawesome'],
-        js: ['page']
+        css: ['general', 'auth', 'inputs', 'buttons', 'fontawesome'],
+        js: ['page', 'serverRequest']
       }
     }
   });

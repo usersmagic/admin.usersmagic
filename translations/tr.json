@@ -1,3 +1,13 @@
 {
-	"Root Admin Login": "Root Admin Login"
+	"Root Admin Login": "Root Admin Login",
+	"Username": "Username",
+	"Password": "Password",
+	"Login": "Login",
+	"Please write your username and password": "Please write your username and password",
+	"This account does not exist": "This account does not exist",
+	"Your password is wrong": "Your password is wrong",
+	"Please check your internet connection and try again": "Please check your internet connection and try again",
+	"An unknown error occured, please try again later": "An unknown error occured, please try again later",
+	"Please write your password": "Please write your password",
+	"Root Admin": "Root Admin"
 }

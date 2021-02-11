@@ -6,10 +6,10 @@ module.exports = (req, res) => {
       return res.end();
     }
 
-    res.write(JSON.stringify({ success: false }));
+    res.write(JSON.stringify({ error: 'password_verification', success: false }));
     return res.end();
   } else {
-    res.write(JSON.stringify({ success: false }));
+    res.write(JSON.stringify({ error: 'bad_request', success: false }));
     return res.end();
   }
 }
