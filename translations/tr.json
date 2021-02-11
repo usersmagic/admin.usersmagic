@@ -9,5 +9,10 @@
 	"Please check your internet connection and try again": "Please check your internet connection and try again",
 	"An unknown error occured, please try again later": "An unknown error occured, please try again later",
 	"Please write your password": "Please write your password",
-	"Root Admin": "Root Admin"
+	"Root Admin": "Root Admin",
+	"Admin Users": "Admin Users",
+	"Create and organize admin users": "Create and organize admin users",
+	"Countries": "Countries",
+	"Create and edit countries": "Create and edit countries",
+	"role": "role"
 }

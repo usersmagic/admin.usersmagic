@@ -1,3 +1,12 @@
 extends ../partials/head
 block content
-  span admin
+  .all-wrapper
+    .all-header-wrapper
+      span.header-admin-name= __('Root Admin')
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each menu in menus
+          a.each-menu-wrapper(href=menu.link)
+            span.menu-title= menu.name
+            span.menu-subtitle= menu.details
+            span.menu-role #{__('role')}: #{__(menu.role)}

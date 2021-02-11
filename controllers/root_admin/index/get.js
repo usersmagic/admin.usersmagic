@@ -4,9 +4,23 @@ module.exports = (req, res) => {
     title: res.__('Root Admin'),
     includes: {
       external: {
-        css: ['page', 'general', 'inputs', 'buttons', 'fontawesome'],
+        css: ['page', 'general', 'menu', 'inputs', 'buttons', 'fontawesome'],
         js: ['page']
       }
-    }
+    },
+    menus: [
+      {
+        name: res.__('Admin Users'),
+        details: res.__('Create and organize admin users'),
+        role: res.__('Root Admin'),
+        link: '/root_admin/admins'
+      },
+      {
+        name: res.__('Countries'),
+        details: res.__('Create and edit countries'),
+        role: res.__('Root Admin'),
+        link: '/root_admin/countries'
+      }
+    ]
   });
 };
