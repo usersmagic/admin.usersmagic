@@ -34,6 +34,13 @@ textarea {
   font-weight: 600;
   text-align: left;
 }
+.general-input-explanation-text {
+  color: rgb(78, 75, 102);
+  font-weight: 300;
+  font-size: 14px;
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
 
 .general-input-with-border {
   height: 55px;
@@ -144,6 +151,7 @@ textarea {
   width: 100%;
 }
 .general-input-error-line span {
+  display: none;
   color: rgb(255, 0, 0);
   font-size: 12px;
   font-weight: 600;
@@ -224,6 +232,43 @@ textarea {
 .general-drop-down-list-close-up-animation-class {
   animation: generalDropDownCloseUp 0.5s ease-in-out 0s 1 forwards;
   -webkit-animation: generalDropDownCloseUp 0.5s ease-in-out 0s 1 forwards;
+}
+
+.general-checked-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+  margin-top: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+.general-checked-input-value {
+  display: none;
+}
+.general-each-checked-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.general-each-checked-input-icon {
+  width: 15px;
+  height: 15px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(254, 254, 254);
+}
+.general-each-checked-input-icon i {
+  color: rgb(254, 254, 254);
+  font-size: 10px;
+}
+.general-each-checked-input span {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 12px;
+  margin-left: 7px;
 }
 
 @keyframes generalDropDownOpenBottom {

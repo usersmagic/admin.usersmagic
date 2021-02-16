@@ -63,3 +63,29 @@ function listenDropDownListInputs (document) {
     }
   });
 }
+
+function listenCheckedInputs (document) {
+  document.addEventListener('click', event => {
+    if (event.target.classList.contains('general-each-checked-input') || event.target.parentNode.classList.contains('general-each-checked-input') || event.target.parentNode.parentNode.classList.contains('general-each-checked-input')) {
+      let target = event.target;
+      if (event.target.parentNode.classList.contains('general-each-checked-input'))
+        target = event.target.parentNode;
+      if (event.target.parentNode.parentNode.classList.contains('general-each-checked-input'))
+        target = event.target.parentNode.parentNode;
+        
+      let values = JSON.parse(target.parentNode.childNodes[0].value.length ? target.parentNode.childNodes[0].value : "[]"); // Parse the array of old values or an empty array
+
+      if (values.includes(target.childNodes[1].id)) {
+        values = values.filter(value => value != target.childNodes[1].id);
+        target.childNodes[0].style.backgroundColor = 'rgb(254, 254, 254)';
+        target.childNodes[0].style.border = '1px solid rgb(196, 196, 196)';
+      } else {
+        values.push(target.childNodes[1].id);
+        target.childNodes[0].style.backgroundColor = 'rgb(46, 197, 206)';
+        target.childNodes[0].style.border = 'none';
+      }
+
+      target.parentNode.childNodes[0].value = JSON.stringify(values);
+    }
+  })
+}

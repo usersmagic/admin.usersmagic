@@ -21,7 +21,7 @@ const AdminSchema = new Schema({
     // Password of the admin, saved hashed
     type: String,
     required: true,
-    minlength: 6,
+    minlength: 10,
     maxlength: 1000
   },
   name: {
@@ -61,7 +61,7 @@ AdminSchema.statics.createAdmin = function (data, callback) {
   if (!data || typeof data != 'object' || !data.username || !data.password || !data.name || !data.roles)
     return callback('bad_request');
 
-  if (typeof data.password != 'string' || data.password.length < 6)
+  if (typeof data.password != 'string' || data.password.length < 10)
     return callback('password_length');
 
   if (data.roles.find(role => !allowedRoles.includes(role)))

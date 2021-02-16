@@ -1,0 +1,96 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Admins')
+        span.header-subtitle= __('Delete, create and see your admins')
+      .header-create-new-content-item-button.general-seablue-button(style="width: 250px; margin: 0px")
+          span= __('Create New Admin')
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each admin in admins
+          .each-admin-wrapper
+            .each-admin-header
+              span.each-admin-name= admin.name
+              span.each-admin-username (#{admin.username})
+              i.fas.fa-chevron-down.each-admin-details-button
+              i.fas.fa-trash.each-admin-delete-button(id=admin._id)
+            .each-admin-content
+              .each-admin-content-item
+                span.each-admin-content-item-header #{__('Admin Roles')}:
+                span.each-admin-content-item-value #{admin.roles.map(role => __(role)).join(' ')}
+              .each-admin-content-item
+                span.each-admin-content-item-header #{__('Allowed Countries')}:
+                span.each-admin-content-item-value #{admin.is_global ? 'All' : admin.countries.map(country => __(country)).join(' ')}
+      form.all-content-create-new-content-item-wrapper
+        span.content-go-back-button.header-create-new-content-item-back-button < #{__('Back')}
+        span.general-input-title= __('Username')
+        span.general-input-explanation-text= __('Give a username to your admins which they will use while logging in. The recomended format is name.username. DO NOT use any Turkish characters or spaces')
+        input.general-input-with-border#username-input(type="text" placeholder="ex: name.username")
+        span.general-input-title= __('Name')
+        span.general-input-explanation-text= __('Enter the full name of your admin. You may use Turkish characters or spaces')
+        input.general-input-with-border#name-input(type="text" placeholder="ex: Name Surname")
+        span.general-input-title= __('Password')
+        span.general-input-explanation-text= __('Enter the password of the new admin. Please do not use Turkish/special characters or spaces and try to create strong passwords')
+        input.general-input-with-border#password-input(type="password" placeholder="ex: fYjkd8304!dhOs")
+        span.general-input-title= __('Confirm Password')
+        span.general-input-explanation-text= __('Confirm the password of the new admin')
+        input.general-input-with-border#confirm-password-input(type="password" placeholder="ex: fYjkd8304!dhOs")
+        span.general-input-title= __('Admin Roles')
+        span.general-input-explanation-text= __('Choose the appropriate roles for your admin')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#roles-input(type="text" value="[]")
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="organisation_manager")= __('Organisation Manager')
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="financial_manager")= __('Financial Manager')
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="regional_manager")= __('Regional Manager')
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="product_head")= __('Product Head')
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="sales_team")= __('Sales Team')
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="product_developer")= __('Product Developer')
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="product_designer")= __('Product Designer')
+        span.general-input-title= __('Select Admin as Global')
+        span.general-input-explanation-text= __('When you choose an admin as global, he/she can reach all the countries that are currently created and will be created')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#is-global-input(type="text" value="[]")
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check 
+            span(id="global")= __('Choose as Global')
+        span.general-input-title= __('Admin Countries')
+        span.general-input-explanation-text= __('Choose the countries this admin can reach. If the global option is selected, these selections will be uneffective')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#countries-input(type="text" value="[]")
+          each country in countries
+            .general-each-checked-input
+              .general-each-checked-input-icon
+                i.fas.fa-check 
+              span(id=country.alpha2_code)= __(country.name)
+        .general-input-error-line
+          span#bad-request-error= __('Please enter all the fields and choose at least one role for your admin')
+          span#password-length-error= __('The password should be at least 10 digits')
+          span#password-confirm-error= __('Please confirm the password')
+          span#already-used-username-error= __('This username is already on use, please use another')
+          span#unknown-error= __('An unknown error occured, please try again later')
+        button.general-seablue-button(style="width: 250px;")
+          span= __('Create')
