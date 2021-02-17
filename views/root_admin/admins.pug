@@ -10,19 +10,19 @@ block content
     .all-content-wrapper
       .all-content-inner-wrapper
         each admin in admins
-          .each-admin-wrapper
-            .each-admin-header
-              span.each-admin-name= admin.name
-              span.each-admin-username (#{admin.username})
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= admin.name
+              span.each-item-subtitle (#{admin.username})
               i.fas.fa-chevron-down.each-admin-details-button
               i.fas.fa-trash.each-admin-delete-button(id=admin._id)
-            .each-admin-content
-              .each-admin-content-item
-                span.each-admin-content-item-header #{__('Admin Roles')}:
-                span.each-admin-content-item-value #{admin.roles.map(role => __(role)).join(' ')}
-              .each-admin-content-item
-                span.each-admin-content-item-header #{__('Allowed Countries')}:
-                span.each-admin-content-item-value #{admin.is_global ? 'All' : admin.countries.map(country => __(country)).join(' ')}
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Admin Roles')}:
+                span.each-item-content-item-value #{admin.roles.map(role => __(role)).join(' ')}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Allowed Countries')}:
+                span.each-item-content-item-value #{admin.is_global ? 'All' : admin.countries.map(country => __(country)).join(' ')}
       form.all-content-create-new-content-item-wrapper
         span.content-go-back-button.header-create-new-content-item-back-button < #{__('Back')}
         span.general-input-title= __('Username')

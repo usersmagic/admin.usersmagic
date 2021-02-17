@@ -47,7 +47,7 @@
   display: flex;
   flex-direction: column;
 }
-.each-admin-wrapper {
+.each-item-wrapper {
   width: 100%;
   height: 50px;
   overflow: hidden;
@@ -57,7 +57,7 @@
   border: 1px solid rgb(196, 196, 196);
   margin-bottom: 10px;
 }
-.each-admin-header {
+.each-item-header {
   width: 100%;
   height: 50px;
   min-height: 50px;
@@ -65,43 +65,43 @@
   align-items: center;
   padding: 0px 20px;
 }
-.each-admin-name {
+.each-item-title {
   color: rgb(78, 75, 102);
   font-weight: 600;
   font-size: 14px;
   margin-right: 10px;
 }
-.each-admin-username {
+.each-item-subtitle {
   color: rgb(78, 75, 102);
   font-weight: 300;
   font-size: 14px;
   margin-right: auto;
 }
-.each-admin-header i {
+.each-item-header i {
   color: rgba(78, 75, 102, 0.6);
   font-size: 15px;
   margin-left: 10px;
   cursor: pointer;
 }
-.each-admin-header i:hover {
+.each-item-header i:hover {
   color: rgb(78, 75, 102);
 }
-.each-admin-content {
+.each-item-content {
   padding: 20px;
   display: flex;
   flex-direction: column;
 }
-.each-admin-content-item {
+.each-item-content-item {
   margin-bottom: 10px;
   display: block;
 }
-.each-admin-content-item-header {
+.each-item-content-item-header {
   display: inline;
   color: rgb(78, 75, 102);
   font-weight: 600;
   font-size: 14px;
 }
-.each-admin-content-item-value {
+.each-item-content-item-value {
   color: rgb(78, 75, 102);
   font-weight: 300;
   font-size: 14px;

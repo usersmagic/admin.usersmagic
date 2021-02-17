@@ -133,10 +133,10 @@ AdminSchema.statics.getAdminsByFilters = function (data, callback) {
   const filters = {};
 
   if (data.username && typeof data.username == 'string')
-    filters.username = { $text: { $search: data.username } };
+    filters.username = { $regex: data.username.trim().toString() };
 
   if (data.name && typeof data.name == 'string')
-    filters.name = { $text: { $search: filters.name } };
+    filters.name = { $regex: data.name.trim().toString() };
 
   if (data.roles && Array.isArray(data.roles))
     filters.roles = { $in: data.roles };

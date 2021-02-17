@@ -154,6 +154,89 @@ UserSchema.statics.getUsersByFilters = function (filters, callback) {
     .find(filters)
     .then(users => callback(null, users.map(user => user._id.toString())))
     .catch(err => callback('database_error'));
-}
+};
+
+UserSchema.statics.getWaitlistUsers = function (filters, options, callback) {
+  // Find all users matching filters and options that are on waitlist
+  // Allowed filters: name, email, city, town, countries, genders, max_birth_year, min_birth_year
+  // Allowed options: skip, limit. Default to 0 and 100, respectively. Limit can be max 100
+
+  const _filters = {
+    on_waitlist: true,
+    completed: true
+  }, _options = {
+    skip: 0, limit: 100
+  };
+
+  if (!filters)
+    filters = {};
+
+  if (!options)
+    options = {};
+
+  if (filters.name && typeof filters.name == 'string')
+    _filters.name = { $regex: filters.name.trim().toString() };
+
+  if (filters.email && validator.isEmail(filters.email.trim()))
+    _filters.email = filters.email.trim();
+
+  if (filters.city && typeof filters.city == 'string')
+    _filters.city = { $regex: filters.city.trim().toString() };
+
+  if (filters.town && typeof filters.town == 'string')
+    _filters.town = { $regex: filters.town.trim().toString() };
+
+  if (filters.countries && Array.isArray(filters.countries))
+    _filters.country = { $in: filters.countries };
+
+  if (filters.genders && Array.isArray(filters.genders))
+    _filters.gender = { $in: filters.genders };
+
+  if (filters.max_birth_year && Number.isInteger(filters.max_birth_year))
+    _filters.birth_year = { $lte: filters.max_birth_year };
+
+  if (filters.min_birth_year && Number.isInteger(filters.min_birth_year))
+    _filters.birth_year = { $gte: filters.min_birth_year };
+
+  if (options.skip && !isNaN(parseInt(options.skip)))
+    _options.skip = parseInt(options.skip);
+
+  if (options.limit && !isNaN(parseInt(options.limit)) && parseInt(options.limit) < 100)
+    _options.limit = parseInt(options.limit);
+
+  const User = this;
+
+  User
+    .find(_filters)
+    .skip(_options.skip)
+    .limit(_options.limit)
+    .sort({ _id: 1 })
+    .then(users => {
+      async.timesSeries(
+        users.length,
+        (time, next) => getUser(users[time], (err, user) => next(err, user)),
+        (err, users) => callback(err, users)
+      );
+    })
+    .catch(err => {console.log(err);callback('database_error')});
+};
+
+UserSchema.statics.removeUserFromWaitlist = function (id, callback) {
+  // Find and update on_waitlist status of the User with the given id, return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const User = this;
+
+  User.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+    on_waitlist: false
+  }}, (err, user) => {
+    if (err) return callback('database_error');
+    if (!user) return callback('document_not_found');
+
+    return callback(null);
+  });
+};
 
 module.exports = mongoose.model('User', UserSchema);

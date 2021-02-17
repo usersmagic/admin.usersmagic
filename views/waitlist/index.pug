@@ -1,0 +1,85 @@
+extends ../partials/head
+block content
+  span.display-none#country= __('Country')
+  span.display-none#city= __('City')
+  span.display-none#town= __('Town')
+  span.display-none#gender= __('Gender')
+  span.display-none#phone= __('Phone')
+  span.display-none#birth-year= __('Birth Year')
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Waitlist')
+        span.header-subtitle= __('See, filter and remove users in waitlist')
+      .header-create-new-content-item-button.general-seablue-button(style="width: 250px; margin: 0px")
+          span= __('See Filters')
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each user in users
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= user.name
+              span.each-item-subtitle (#{user.email})
+              i.fas.fa-chevron-down.each-user-details-button
+              i.fas.fa-check.each-user-remove-button(id=user._id)
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Country')}:
+                span.each-item-content-item-value #{user.country}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('City')}:
+                span.each-item-content-item-value= user.city || '-'
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Town')}:
+                span.each-item-content-item-value= user.town || '-'
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Gender')}:
+                span.each-item-content-item-value= user.gender
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Phone')}:
+                span.each-item-content-item-value= user.phone
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Birth Year')}:
+                span.each-item-content-item-value= user.birth_year
+      form.all-content-create-new-content-item-wrapper
+        span.content-go-back-button.header-create-new-content-item-back-button < #{__('Back')}
+        span.general-input-title= __('Email')
+        span.general-input-explanation-text= __('The user who\'s email exactly match the given email will be returned')
+        input.general-input-with-border#email-input(type="text" placeholder="Email")
+        span.general-input-title= __('Name')
+        span.general-input-explanation-text= __('Users who\'s name contains the given string will be returned')
+        input.general-input-with-border#name-input(type="text" placeholder="Name")
+        span.general-input-title= __('City')
+        span.general-input-explanation-text= __('Users who\'s city contains the given string will be returned')
+        input.general-input-with-border#city-input(type="text" placeholder="City")
+        span.general-input-title= __('Town')
+        span.general-input-explanation-text= __('Users who\'s town contains the given string will be returned')
+        input.general-input-with-border#town-input(type="text" placeholder="Town")
+        span.general-input-title= __('Countries')
+        span.general-input-explanation-text= __('Check the countries you want your users to match')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#countries-input(type="text" value="[]")
+          each country in countries
+            .general-each-checked-input
+              .general-each-checked-input-icon
+                i.fas.fa-check 
+              span(id=country.alpha2_code)= __(country.name)
+        span.general-input-title= __('Genders')
+        span.general-input-explanation-text= __('Check the genders you want your users to match')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#genders-input(type="text" value="[]")
+          each gender in genders
+            .general-each-checked-input
+              .general-each-checked-input-icon
+                i.fas.fa-check 
+              span(id=gender.id)= __(gender.name)
+        span.general-input-title= __('Max Birth Year')
+        span.general-input-explanation-text= __('The users birth year will be smaller or equal to given maximum birth year')
+        input.general-input-with-border#max-birth-year-input(type="number" placeholder="Max Birth Year")
+        span.general-input-title= __('Min Birth Year')
+        span.general-input-explanation-text= __('The users birth year will be bigger or equal to given minimum birth year')
+        input.general-input-with-border#min-birth-year-input(type="number" placeholder="Min Birth Year")
+        .general-input-error-line
+          span#unknown-error= __('An unknown error occured, please try again later')
+        button.general-seablue-button(style="width: 250px;")
+          span= __('Filter')
