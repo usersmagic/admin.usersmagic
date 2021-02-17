@@ -51,6 +51,31 @@ const AdminSchema = new Schema({
 // Before saving the admin to database, hash its password
 AdminSchema.pre('save', hashPassword);
 
+AdminSchema.statics.findAdmin = function (data, callback) {
+  // Authenticate the given admin and return the admin
+
+  if (!data || !data.username || !data.password)
+    return callback('bad_request')
+
+  const Admin = this;
+
+  Admin.findOne({
+    username: data.username.trim()
+  }, (err, admin) => {
+    if (err || !admin) return callback('document_not_found');
+
+    verifyPassword(data.password, admin.password, res => {
+      if (!res) return callback('password_verification');
+
+      getAdmin(admin, (err, admin) => {
+        if (err) return callback(err);
+
+        callback(null, admin);
+      });
+    });
+  });
+};
+
 AdminSchema.statics.createAdmin = function (data, callback) {
   // Create a new Admin document with the given data and return its id, or return an error if it exists
 
@@ -145,7 +170,7 @@ AdminSchema.statics.getAdminById = function (id, callback) {
 
   const Admin = this;
 
-  Admin.findById(mongoose.Types.ObjectId(id.toString), (err, admin) => {
+  Admin.findById(mongoose.Types.ObjectId(id.toString()), (err, admin) => {
     getAdmin(admin, (err, admin) => callback(err, admin));
   });
 };

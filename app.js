@@ -50,6 +50,7 @@ if (cluster.isMaster) {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
     
     const indexRouteController = require('./routes/indexRoute');
+    const authRouteController = require('./routes/authRoute');
     const rootAdminRouteController = require('./routes/rootAdminRoute');
     
     app.set('views', path.join(__dirname, 'views'));
@@ -85,6 +86,7 @@ if (cluster.isMaster) {
     });
   
     app.use('/', indexRouteController);
+    app.use('/auth', authRouteController);
     app.use('/root_admin', rootAdminRouteController);
     
     server.listen(PORT, () => {

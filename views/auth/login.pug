@@ -3,7 +3,8 @@ block content
   form.all-wrapper.login-form
     .all-inner-wrapper
       span.logo-name admin.usersmagic
-      input.general-input-with-border#password-input(type="password" autofocus placeholder=__('Password') autocomplete="off")
+      input.general-input-with-border#username-input(type="text" autofocus placeholder=__('Username') autocomplete="off")
+      input.general-input-with-border#password-input(type="password" placeholder=__('Password') autocomplete="off")
       button.general-seablue-button
         span #{__('Login')}
       span.error-text#bad-request-error #{__('Please write your password')}

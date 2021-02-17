@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-// const isLoggedIn = require('../middleware/isLoggedIn');
+const isLoggedIn = require('../middleware/isLoggedIn');
 
 const indexGetController = require('../controllers/index/get');
 
 router.get(
   '/',
-    // isLoggedIn,
+    isLoggedIn,
     indexGetController
 );
 

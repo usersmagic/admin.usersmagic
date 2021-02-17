@@ -55,5 +55,8 @@
 	"The password should be at least 10 digits": "The password should be at least 10 digits",
 	"Please confirm the password": "Please confirm the password",
 	"This username is already on use, please use another": "This username is already on use, please use another",
-	"Allowed Countries": "Allowed Countries"
+	"Allowed Countries": "Allowed Countries",
+	"Waitlist": "Waitlist",
+	"See users in the waitlist and take them out of the waitlist": "See users in the waitlist and take them out of the waitlist",
+	"Roles": "Roles"
 }
