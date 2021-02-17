@@ -161,9 +161,10 @@ UserSchema.statics.getWaitlistUsers = function (filters, options, callback) {
   // Allowed filters: name, email, city, town, countries, genders, max_birth_year, min_birth_year
   // Allowed options: skip, limit. Default to 0 and 100, respectively. Limit can be max 100
 
-  const _filters = {
-    on_waitlist: true,
-    completed: true
+  const _filters = { $and: [
+    { on_waitlist: true },
+    { completed: true }
+  ]
   }, _options = {
     skip: 0, limit: 100
   };
@@ -175,28 +176,28 @@ UserSchema.statics.getWaitlistUsers = function (filters, options, callback) {
     options = {};
 
   if (filters.name && typeof filters.name == 'string')
-    _filters.name = { $regex: filters.name.trim().toString() };
+    _filters.$and.push({ name: { $regex: filters.name.trim().toString() } });
 
   if (filters.email && validator.isEmail(filters.email.trim()))
-    _filters.email = filters.email.trim();
+    _filters.$and.push({ email: filters.email.trim() });
 
   if (filters.city && typeof filters.city == 'string')
-    _filters.city = { $regex: filters.city.trim().toString() };
+    _filters.$and.push({ city: { $regex: filters.city.trim().toString() } });
 
   if (filters.town && typeof filters.town == 'string')
-    _filters.town = { $regex: filters.town.trim().toString() };
+    _filters.$and.push({ town: { $regex: filters.town.trim().toString() } });
 
   if (filters.countries && Array.isArray(filters.countries))
-    _filters.country = { $in: filters.countries };
+    _filters.$and.push({ country: { $in: filters.countries } });
 
   if (filters.genders && Array.isArray(filters.genders))
-    _filters.gender = { $in: filters.genders };
+    _filters.$and.push({ gender: { $in: filters.genders } });
 
   if (filters.max_birth_year && Number.isInteger(filters.max_birth_year))
-    _filters.birth_year = { $lte: filters.max_birth_year };
+    _filters.$and.push({ birth_year: { $lte: filters.max_birth_year } });
 
   if (filters.min_birth_year && Number.isInteger(filters.min_birth_year))
-    _filters.birth_year = { $gte: filters.min_birth_year };
+    _filters.$and.push({ birth_year: { $gte: filters.min_birth_year } });
 
   if (options.skip && !isNaN(parseInt(options.skip)))
     _options.skip = parseInt(options.skip);
