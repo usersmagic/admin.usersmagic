@@ -155,7 +155,7 @@ QuestionSchema.statics.updateQuestion = function (id, data, callback) {
 
 QuestionSchema.statics.findQuestion = function (_filters, _options, callback) {
   // Find Questions with given filters and options, return an object with questions, filters and options used in search or an error if it exists
-  // Allowed filters: name (string), text (string), types: [short_text, long_text, checked, radio, range]
+  // Allowed filters: name (string), text (string), types: [short_text, long_text, checked, radio, range], countries: []
   // Allowed options: limit (int), skip (int)
 
   const allowed_types = ['short_text', 'long_text', 'checked', 'radio', 'range'];
@@ -185,10 +185,11 @@ QuestionSchema.statics.findQuestion = function (_filters, _options, callback) {
       }
     });
     filter_values.text = _filters.text.trim()
-  }
+  };
 
-  if (_filters && _filters.types && typeof _filters.types == 'string')
+  if (_filters && _filters.types && typeof _filters.types == 'string') {
     _filters.types = _filters.types.split(',');
+  };
   if (_filters && _filters.types && Array.isArray(_filters.types) && !_filters.types.find(filter => !allowed_types.includes(filter))) {
     filters.$and.push({
       type: { $in: _filters.types }
@@ -196,19 +197,38 @@ QuestionSchema.statics.findQuestion = function (_filters, _options, callback) {
     filter_values.types = _filters.types.join(',');
   };
 
-  const Question = this;
+  Country.findCountries((err, countries) => {
+    if (err) return callback(err);
 
-  Question
-    .find(filters.$and.length ? filters : {})
-    .sort({ _id: -1 })
-    .skip(options.skip)
-    .limit(options.limit)
-    .then(questions => callback(null, {
-      questions,
-      filters: filter_values,
-      options
-    }))
-    .catch(err => callback('database_error'));
+    if (_filters && _filters.countries && typeof _filters.countries == 'string') {
+      _filters.countries = _filters.countries.split(',');
+    };
+    if (_filters && _filters.countries && Array.isArray(_filters.countries) && _filters.countries.length && !_filters.countries.find(filter => !countries.includes(filter))) {
+      const countries_filter = [];
+      for (let i = 0; i < _filters.countries.length; i++)
+        countries_filter.push({
+          countries: _filters.countries[i]
+        });
+      filters.$and.push({
+        $or: countries_filter
+      });
+      filter_values.countries = _filters.countries.join(',');
+    };
+  
+    const Question = this;
+  
+    Question
+      .find(filters.$and.length ? filters : {})
+      .sort({ _id: -1 })
+      .skip(options.skip)
+      .limit(options.limit)
+      .then(questions => callback(null, {
+        questions,
+        filters: filter_values,
+        options
+      }))
+      .catch(err => callback('database_error'));
+  });
 };
 
 QuestionSchema.statics.getQuestionById = function (id, callback) {
