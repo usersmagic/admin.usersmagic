@@ -51,6 +51,7 @@ if (cluster.isMaster) {
     
     const indexRouteController = require('./routes/indexRoute');
     const authRouteController = require('./routes/authRoute');
+    const questionsRouteController = require('./routes/questionsRoute');
     const rootAdminRouteController = require('./routes/rootAdminRoute');
     const waitlistRouteController = require('./routes/waitlistRoute');
     
@@ -88,6 +89,7 @@ if (cluster.isMaster) {
   
     app.use('/', indexRouteController);
     app.use('/auth', authRouteController);
+    app.use('/questions', questionsRouteController);
     app.use('/root_admin', rootAdminRouteController);
     app.use('/waitlist', waitlistRouteController);
     

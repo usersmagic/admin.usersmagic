@@ -44,6 +44,17 @@ const CountrySchema = new Schema({
     // The minimum amount that the users in this country can withdraw from their accont
     type: Number,
     required: true
+  },
+  credit_per_user: {
+    // The credit that should be given by Company per user, minimum one. Should be an Integer
+    type: Number,
+    required: true
+  },
+  completed: {
+    // Field showing if the country if completed or not.
+    // A developer should complete a Country, after adding if to translations folder
+    type: Boolean,
+    default: false
   }
 });
 
@@ -118,7 +129,9 @@ CountrySchema.statics.getCountries = function (callback) {
   const Country = this;
 
   Country
-    .find({})
+    .find({
+      completed: true
+    })
     .sort({ name: -1 })
     .then(countries => {
       async.timesSeries(

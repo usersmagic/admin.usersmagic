@@ -8,6 +8,12 @@ module.exports = (req, res) => {
       role: 'product_head',
       link: '/waitlist'
     },
+    {
+      name: res.__('Questions'),
+      details: res.__('See, create and edit questions'),
+      role: 'product_head',
+      link: '/questions'
+    },
   ];
 
   return res.render('index/index', {

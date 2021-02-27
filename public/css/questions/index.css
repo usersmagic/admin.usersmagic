@@ -1,0 +1,41 @@
+.questions-page-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.change-page-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.change-page-button {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  height: 100%;
+  cursor: pointer;
+}
+.change-page-button span {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 12px;
+  margin: 0px 5px;
+}
+.change-page-button i {
+  color: rgb(78, 75, 102);
+  font-size: 12px;
+}
+
+.filter-questions-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  min-height: fit-content;
+  margin-bottom: 10px;
+}
+.filter-each-item-wrapper {
+  width: 200px;
+  margin-left: 10px;
+  margin-bottom: -20px;
+}
