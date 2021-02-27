@@ -1,0 +1,56 @@
+extends ../partials/head
+block content
+  input.display-none#question-id(type="text" value=question._id.toString())
+  input.display-none#question-type(type="text" value=question.type)
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= question.name
+        span.header-subtitle= __('Edit this question')
+    .all-content-wrapper
+      form.all-content-create-new-content-item-wrapper(style="display: flex")
+        span.content-go-back-button.edit-go-back-button < #{__('Back')}
+        span.general-input-title= __('Question Name')
+        span.general-input-explanation-text= __('Enter the name that the question will be identified by. This name will be shown in filters part of app.usersmagic')
+        input.general-input-with-border#name-input(type="text" placeholder="Name" value=question.name)
+        span.general-input-title= __('Question Description')
+        span.general-input-explanation-text= __('Enter a description that will help you remember the question\'s content')
+        input.general-input-with-border#description-input(type="text" placeholder="Description" value=question.description)
+        span.general-input-title= __('Question Text')
+        span.general-input-explanation-text= __('Enter the text of the question')
+        input.general-input-with-border#question-text-input(type="text" placeholder="Text" value=question.text)
+        if question.type == 'short_text' || question.type == 'long_text'
+          span.general-input-title= __('Answer Length')
+          span.general-input-explanation-text= __('Enter the answer length for the question (Short Text or Long Text). Default is 1000')
+          input.general-input-with-border#answer-length-input(type="number" placeholder="Answer Length" value=question.answer_length)
+        if question.type == 'radio' || question.type == 'checked'
+          span.general-input-title= __('Choices')
+          span.general-input-explanation-text= __('Enter the choices of the question (Radio or Checked) by putting a comma (,) in between each choice. You must have at least one choice')
+          input.general-input-with-border#choices-input(type="text" placeholder="Choices" value=question.choices.join(', '))
+          span.general-input-title= __('Other Option')
+          span.general-input-explanation-text= __('Check if you want an other option for the question (Radio or Checked)')
+          .general-checked-input-wrapper
+            input.general-checked-input-value#other-option-input(type="text" value=(question.other_option ? "[\"true\"]" : "[]"))
+            .general-each-checked-input
+              .general-each-checked-input-icon(style=(question.other_option ? "background-color: rgb(46, 197, 206); border: none" : ""))
+                i.fas.fa-check
+              span(id="true")= __('Other Option')
+        if question.type == 'range'
+          span.general-input-title= __('Range Minimum')
+          span.general-input-explanation-text= __('Enter the minumum range of the question (Range). Should be at least 0 and required')
+          input.general-input-with-border#range-minimum-input(type="number" placeholder="Range Minumum" value=question.minimum_value)
+          span.general-input-title= __('Range Maximum')
+          span.general-input-explanation-text= __('Enter the minumum range of the question (Range). Should be at most 10 and required')
+          input.general-input-with-border#range-maximum-input(type="number" placeholder="Range Maximum" value=question.maximum_value)
+          span.general-input-title= __('Minumum Explanation')
+          span.general-input-explanation-text= __('Enter an explanation for the minumum range. Optional')
+          input.general-input-with-border#minimum-explanation-input(type="text" placeholder="Minimum Explanation" value=question.minimum_explanation)
+          span.general-input-title= __('Maximum Explanation')
+          span.general-input-explanation-text= __('Enter an explanation for the maximum range. Optional')
+          input.general-input-with-border#maximum-explanation-input(type="text" placeholder="Maximum Explanation" value=question.maximum_explanation)
+        .general-input-error-line
+          span#bad-request-error= __('You seem to have a missing field. Please check that you have entered all the required fields for your question type.')
+        .general-input-error-line
+          span#unknown-error= __('An unknown error occured, please try again later')
+        button.general-seablue-button(style="width: 250px;")
+          span= __('Save')

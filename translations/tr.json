@@ -130,5 +130,7 @@
 	"Enter an explanation for the maximum range. Optional": "Enter an explanation for the maximum range. Optional",
 	"Check the countries you want your question be active for": "Check the countries you want your question be active for",
 	"You seem to have a missing field. Please check you have entered all the required fields for your question type.": "You seem to have a missing field. Please check that you have entered all the required fields for your question type.",
-	"You seem to have a missing field. Please check that you have entered all the required fields for your question type.": "You seem to have a missing field. Please check that you have entered all the required fields for your question type."
+	"You seem to have a missing field. Please check that you have entered all the required fields for your question type.": "You seem to have a missing field. Please check that you have entered all the required fields for your question type.",
+	"Edit this question": "Edit this question",
+	"Save": "Save"
 }

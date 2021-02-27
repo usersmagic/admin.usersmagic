@@ -126,7 +126,7 @@ QuestionSchema.statics.updateQuestion = function (id, data, callback) {
   // Find the question with the given id and update it, updates on the given fields and if they are in valid format
   // Return an error if it exists
 
-  if (!id || !validator.isMongodId(id.toString()) || !data || typeof data != 'object')
+  if (!id || !validator.isMongoId(id.toString()) || !data || typeof data != 'object')
     return callback('bad_request');
 
   const Question = this;
@@ -214,8 +214,17 @@ QuestionSchema.statics.findQuestion = function (_filters, _options, callback) {
 QuestionSchema.statics.getQuestionById = function (id, callback) {
   // Find and return the Question with the given id, or an error if it exists
 
-  if (!id || !validator.isMongodId(id.toString()))
+  if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
+
+  const Question = this;
+
+  Question.findById(mongoose.Types.ObjectId(id.toString()), (err, question) => {
+    if (err) return callback('database_error');
+    if (!question) return callback('document_not_found');
+
+    return callback(null, question);
+  });
 };
 
 module.exports = mongoose.model('Question', QuestionSchema);

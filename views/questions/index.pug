@@ -1,11 +1,5 @@
 extends ../partials/head
 block content
-  span.display-none#country= __('Country')
-  span.display-none#city= __('City')
-  span.display-none#town= __('Town')
-  span.display-none#gender= __('Gender')
-  span.display-none#phone= __('Phone')
-  span.display-none#birth-year= __('Birth Year')
   input.display-none#filters(type="text" value=JSON.stringify(filters))
   input.display-none#options(type="text" value=JSON.stringify(options))
   input.display-none#questions(type="text" value=JSON.stringify(questions))
@@ -40,8 +34,8 @@ block content
               span.each-item-title= question.name
               span.each-item-subtitle= question.text
               i.fas.fa-chevron-down.each-question-details-button
+              i.fas.fa-cog.each-question-edit-button(id=question._id)
               //- i.fas.fa-check.each-question-delete-button(id=question._id)
-              //- i.fas.fa-cog.each-question-edit-button(id=question._id)
             .each-item-content
               .each-item-content-item
                 span.each-item-content-item-header #{__('Name')}:

@@ -18,7 +18,7 @@ window.onload = () => {
     const type = document.getElementById('question-type-input').value.trim();
     const answerLength = document.getElementById('answer-length-input').value.trim();
     const choices = document.getElementById('choices-input').value.split(',').map(each => each.trim()).filter(each => each.length);
-    const otherOption = document.getElementById('other-option-input').value.length ? true : false;
+    const otherOption = JSON.parse(document.getElementById('other-option-input').value).length ? true : false;
     const rangeMinimum = document.getElementById('range-minimum-input').value.trim();
     const rangeMaximum = document.getElementById('range-maximum-input').value.trim();
     const minimumExplanation = document.getElementById('minimum-explanation-input').value.trim();
@@ -34,7 +34,7 @@ window.onload = () => {
     };
 
     if ((type == 'short_text' || type == 'long_text') && answerLength.length)
-      data.answerLength = answerLength;
+      data.answer_length = answerLength;
 
     if (type == 'checked' || type == 'radio') {
       data.choices = choices;
