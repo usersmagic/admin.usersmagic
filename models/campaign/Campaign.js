@@ -2,6 +2,9 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const Country = require('../country/Country');
+const Question = require('../question/Question');
+
 const getCampaign = require('./functions/getCampaign');
 
 const Schema = mongoose.Schema;
@@ -53,7 +56,7 @@ const CampaignSchema = new Schema({
     required: true
   },
   gender: {
-    // Filter for user's gender: [erkek, kadın, both]
+    // Filter for user's gender: [male, female, other, not_specified]
     type: String,
     required: true
   },
@@ -93,6 +96,88 @@ CampaignSchema.statics.getCampaignById = function (id, callback) {
       return callback(null, campaign);
     });
   });
+};
+
+CampaignSchema.statics.getCampaigns = function (callback) {
+  // Return all campaigns after formatting, or an error if it exists
+
+  const Campaign = this;
+
+  Campaign
+    .find({})
+    .sort({ _id: 1 })
+    .then(campaigns => {
+      async.timesSeries(
+        campaigns.length,
+        (time, next) => getCampaign(campaigns[time], (err, campaign) => next(err, campaign)),
+        (err, campaigns) => {
+          if (err) return callback(err);
+
+          return callback(null, campaigns);
+        }
+      );
+    })
+    .catch(err => callback('database_error'));
+};
+
+CampaignSchema.statics.createCampaign = function (data, callback) {
+  // Create a new campaign with the given data
+  // Return new campaign or and error if it exists
+
+  const allowed_gender_values = ['male', 'female', 'other', 'not_specified'];
+
+  if (!data || typeof data != 'object' || !data.name || !data.image || !data.description || !data.information || (!data.price && !data.is_free) || !data.questions || !data.questions.length || !data.countries || !data.countries.length) 
+    return callback('bad_request');
+
+  async.timesSeries(
+    data.countries.length,
+    (time, next) => Country.getCountryById(data.countries[time], (err, country) => next(err, country.alpha2_code)),
+    (err, countries) => {
+      if (err) return callback('bad_request');
+
+      async.timesSeries(
+        data.questions.length,
+        (time, next) => Question.getQuestionById(data.questions[time], (err, question) => next(err, question)),
+        (err, questions) => {
+          if (err) return callback('bad_request');
+
+          const Campaign = this;
+
+          if (data.min_birth_year && !isNaN(parseInt(data.min_birth_year)) && parseInt(data.min_birth_year) >= 1920 && parseInt(data.min_birth_year) <= 2020)
+            data.min_birth_year = parseInt(data.min_birth_year);
+          else
+            data.min_birth_year = 1920;
+
+          if (data.max_birth_year && !isNaN(parseInt(data.max_birth_year)) && parseInt(data.max_birth_year) >= 1920 && parseInt(data.max_birth_year) <= 2020)
+            data.max_birth_year = parseInt(data.max_birth_year);
+          else
+            data.max_birth_year = 1920;
+
+          const newCampaignData = {
+            name: data.name,
+            image: data.image,
+            description: data.description,
+            information: data.information,
+            price: data.price ? data.price : 0,
+            is_free: data.is_free ? true : false,
+            questions,
+            countries,
+            gender: data.gender && allowed_gender_values.includes(data.gender) ? data.gender : null,
+            min_birth_year: data.min_birth_year,
+            max_birth_year: data.max_birth_year
+          };
+
+          const newCampaign = new Campaign(newCampaignData);
+
+          newCampaign.save((err, campaign) => {
+            if (err) return callback('database_error');
+
+            return callback(null, campaign._id.toString());
+          });
+        }
+      );
+    }
+  );
 };
 
 module.exports = mongoose.model('Campaign', CampaignSchema);
