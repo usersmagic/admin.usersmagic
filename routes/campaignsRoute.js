@@ -8,8 +8,11 @@ const indexGetController = require('../controllers/campaigns/index/get');
 const questionsGetController = require('../controllers/campaigns/questions/get');
 const startGetController = require('../controllers/campaigns/start/get');
 const stopGetController = require('../controllers/campaigns/stop/get');
+const submitionsIndexGetController = require('../controllers/campaigns/submitions/index/get');
+const submitionsApproveGetController = require('../controllers/campaigns/submitions/approve/get');
 
 const createPostController = require('../controllers/campaigns/create/post');
+const submitionsRejectPostController = require('../controllers/campaigns/submitions/reject/post');
 
 router.get(
   '/',
@@ -35,12 +38,30 @@ router.get(
     checkAdminRolePermissions,
     stopGetController
 );
+router.get(
+  '/submitions',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    submitionsIndexGetController
+);
+router.get(
+  '/submitions/approve',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    submitionsApproveGetController
+);
 
 router.post(
   '/create',
     isLoggedIn,
     checkAdminRolePermissions,
     createPostController
+);
+router.post(
+  '/submitions/reject',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    submitionsRejectPostController
 );
 
 module.exports = router;

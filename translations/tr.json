@@ -172,5 +172,18 @@
 	"Search and add campaigns below to add questions": "Search and add campaigns below to add questions",
 	"You seem to have a missing field. Please check that you have entered all the required fields and selected at least one question.": "You seem to have a missing field. Please check that you have entered all the required fields and selected at least one question.",
 	"Search questions to add. Only first 20 results are shown": "Search questions to add. Only first 20 results are shown",
-	"Uploading": "Uploading"
+	"Uploading": "Uploading",
+	"Submitions": "Submitions",
+	"See the submitions in the campaign": "See the submitions in the campaign",
+	"Question": "Question",
+	"Answer": "Answer",
+	"User Name": "User Name",
+	"User Email": "User Email",
+	"User Phone": "User Phone",
+	"User Country": "User Country",
+	"User Gender": "User Gender",
+	"User Birth Year": "User Birth Year",
+	"User City": "User City",
+	"User Town": "User Town",
+	"Reject Reason": "Reject Reason"
 }

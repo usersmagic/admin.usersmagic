@@ -94,7 +94,16 @@ CampaignSchema.statics.getCampaignById = function (id, callback) {
     getCampaign(campaign, (err, campaign) => {
       if (err) return callback(err);
 
-      return callback(null, campaign);
+      async.timesSeries(
+        campaign.questions.length,
+        (time, next) => Question.getQuestionById(campaign.questions[time], (err, question) => next(err, question)),
+        (err, questions) => {
+          if (err) return callback(err);
+          campaign.questions = questions;
+
+          return callback(null, campaign);
+        }
+      );
     });
   });
 };
@@ -138,7 +147,7 @@ CampaignSchema.statics.createCampaign = function (data, callback) {
 
       async.timesSeries(
         data.questions.length,
-        (time, next) => Question.getQuestionById(data.questions[time], (err, question) => next(err, question)),
+        (time, next) => Question.getQuestionById(data.questions[time], (err, question) => next(err, question ? question._id.toString() : null)),
         (err, questions) => {
           if (err) return callback('bad_request');
 

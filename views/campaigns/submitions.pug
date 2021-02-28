@@ -1,0 +1,53 @@
+extends ../partials/head
+block content
+  input.display-none#filters(type="text" value=JSON.stringify(filters))
+  input.display-none#options(type="text" value=JSON.stringify(options))
+  input.display-none#questions(type="text" value=JSON.stringify(questions))
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Submitions')
+        span.header-subtitle #{__('See the submitions in the campaign')}: #{campaign.name}
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each submition in submitions
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= submition.user.name
+              span.each-item-subtitle (#{submition.user.email})
+              input.general-input-with-border.reject-submition-input(type="text" placeholder=__('Reject Reason'))
+              i.fas.fa-chevron-down.each-submition-details-button
+              i.fas.fa-times.each-submition-reject-button(id=submition._id)
+              i.fas.fa-check.each-submition-approve-button(id=submition._id)
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User Name')}:
+                span.each-item-content-item-value #{submition.user.name}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User Email')}:
+                span.each-item-content-item-value #{submition.user.email}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User Phone')}:
+                span.each-item-content-item-value #{submition.user.phone}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User Country')}:
+                span.each-item-content-item-value #{__(submition.user.country)}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User Gender')}:
+                span.each-item-content-item-value #{__(submition.user.gender.substr(0, 1).toUpperCase() + submition.user.gender.substr(1, submition.user.gender.length))}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User Birth Year')}:
+                span.each-item-content-item-value #{submition.user.birth_year}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User City')}:
+                span.each-item-content-item-value #{submition.user.city ? submition.user.city : '-'}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User Town')}:
+                span.each-item-content-item-value #{submition.user.town ? submition.user.town : '-'}
+              each question, i in campaign.questions
+                .each-item-content-item
+                  span.each-item-content-item-header #{__('Question')} #{i+1}:
+                  span.each-item-content-item-value #{question.text}
+                .each-item-content-item
+                  span.each-item-content-item-header #{__('Answer')} #{i+1}:
+                  span.each-item-content-item-value #{Array.isArray(submition.answers[question._id]) ? submition.answers[question._id].join(', ') : submition.answers[question._id]}

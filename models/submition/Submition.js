@@ -2,6 +2,7 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const Campaign = require('../campaign/Campaign');
 const User = require('../user/User');
 
 const approveSubmition = require('./functions/approveSubmition');
@@ -169,6 +170,7 @@ SubmitionSchema.statics.getSubmitionsByProjectId = function (data, callback) {
 
 SubmitionSchema.statics.approveSubmitionById = function (id, callback) {
   // Finds and updates status of submition with the given id as 'approved', returns an error if exists
+  // Can be used for Project submitions
 
   if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
@@ -192,8 +194,60 @@ SubmitionSchema.statics.approveSubmitionById = function (id, callback) {
   });
 };
 
+SubmitionSchema.statics.approveCampaignSubmitionById = function (id, callback) {
+  // Finds and updates status of submition with the given id as 'approved', returns an error if exists
+  // Can be used for Campaign submitions
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Submition = this;
+
+  Submition.findById(mongoose.Types.ObjectId(id.toString()), (err, submition) => {
+    if (err || !submition) return callback('document_not_found');
+
+    Campaign.getCampaignById(submition.campaign_id, (err, campaign) => {
+      if (err) return callback(err);
+
+      User.getUserById(submition.user_id, (err, user) => {
+        if (err) return callback(err);
+
+        const information = user.information;
+
+        Object.keys(submition.answers).forEach((id, index) => {
+          information[id] = Object.values(submition.answers)[index];
+        });
+  
+        User.updateUserById(submition.user_id, {
+          $set: {
+            information
+          },
+          $inc: {
+            credit: user.paid_campaigns.includes(submition.campaign_id) ? 0 : (campaign.is_free ? 0 : campaign.price)
+          },
+          $push: {
+            paid_campaigns: submition.campaign_id
+          }
+        }, err => {
+          if (err) return callback(err);
+
+          Submition.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+            status: 'approved',
+            ended_at: (new Date()).getTime()
+          }}, {}, err => {
+            if (err) return callback('database_error');
+
+            return callback(null);
+          });
+        });
+      });
+    });
+  });
+};
+
 SubmitionSchema.statics.rejectSubmitionById = function (id, data, callback) {
   // Finds and updates status of submition with the given id as 'unapproved' and sets its reject_message to the given error, returns an error if it exists
+  // Can be used for both Campaign and Project submitions
 
   if (!data || !id || !validator.isMongoId(id.toString()) || !data.reason || !data.reason.length)
     return callback('bad_request');

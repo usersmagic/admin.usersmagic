@@ -2,12 +2,6 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const Campaign = require('../campaign/Campaign');
-const Country = require('../country/Country');
-const Project = require('../project/Project');
-const Question = require('../question/Question');
-const Submition = require('../submition/Submition');
-
 const hashPassword = require('./functions/hashPassword');
 const getUser = require('./functions/getUser');
 const verifyPassword = require('./functions/verifyPassword');
@@ -239,5 +233,43 @@ UserSchema.statics.removeUserFromWaitlist = function (id, callback) {
     return callback(null);
   });
 };
+
+UserSchema.statics.getUserById = function (id, callback) {
+  // Finds the user with the given id and returns it without deleting any field, or an error if there is one
+  // Do NOT use this function while sending it to frontend, use the user object on the cookie instead
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const User = this;
+
+  User.findById(mongoose.Types.ObjectId(id), (err, user) => {
+    if (err) return callback(err);
+
+    return callback(null, user);
+  });
+};
+
+UserSchema.statics.updateUserById = function (id, update, callback) {
+  // Find and update the User with the given id
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()) || !update || typeof update != 'object')
+    return callback('bad_request');
+
+  try {
+    const User = this;
+    
+    User.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), update, (err, user) => {
+      if (err) return callback('database_error');
+      if (!user) return callback('document_not_found');
+
+      return callback(null);
+    });
+  } catch (err) {
+    // This function does not check if the given update is a valid MongoDB update object, so use try/catch block to avoid any error
+    return callback('database_error');
+  }
+}
 
 module.exports = mongoose.model('User', UserSchema);

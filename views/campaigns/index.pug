@@ -15,6 +15,7 @@ block content
               span.each-item-title= campaign.name
               span.each-item-subtitle= campaign.description
               i.fas.fa-chevron-down.each-campaign-details-button
+              i.fas.fa-tasks.each-campaign-submitions-button(id=campaign._id)
               //- i.fas.fa-cog.each-campaign-edit-button(id=campaign._id)
               if campaign.paused
                 i.fas.fa-play.each-campaign-start-button(id=campaign._id)

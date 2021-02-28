@@ -102,23 +102,31 @@ window.onload = () => {
       }
     }
 
+    if (event.target.classList.contains('each-campaign-submitions-button')) {
+      window.location = `/campaigns/submitions?id=${event.target.id}`;
+    }
+
     // if (event.target.classList.contains('each-campaign-edit-button')) {
     //   window.location = `/questions/edit?id=${event.target.id}`;
     // }
 
     if (event.target.classList.contains('each-campaign-start-button')) {
-      serverRequest('/campaigns/start?id=' + event.target.id, 'GET', {}, res => {
-        if (!res.success)
-          return alert("An error occured. Error message: " + res.error);
-        return location.reload();
-      });
+      if (confirm("Are you sure you want to start this campaign?")) {
+        serverRequest('/campaigns/start?id=' + event.target.id, 'GET', {}, res => {
+          if (!res.success)
+            return alert("An error occured. Error message: " + res.error);
+          return location.reload();
+        });
+      }
     }
     if (event.target.classList.contains('each-campaign-stop-button')) {
-      serverRequest('/campaigns/stop?id=' + event.target.id, 'GET', {}, res => {
-        if (!res.success)
-          return alert("An error occured. Error message: " + res.error);
-        return location.reload();
-      });
+      if (confirm("Are you sure you want to stop this campaign?")) {
+        serverRequest('/campaigns/stop?id=' + event.target.id, 'GET', {}, res => {
+          if (!res.success)
+            return alert("An error occured. Error message: " + res.error);
+          return location.reload();
+        });
+      }
     }
 
     if (event.target.classList.contains('add-question-button')) {
