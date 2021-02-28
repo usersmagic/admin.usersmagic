@@ -17,9 +17,9 @@ block content
               i.fas.fa-chevron-down.each-campaign-details-button
               //- i.fas.fa-cog.each-campaign-edit-button(id=campaign._id)
               if campaign.paused
-                i.fas.fa-play.each-campaign-play-button(id=campaign._id)
+                i.fas.fa-play.each-campaign-start-button(id=campaign._id)
               else
-                i.fas.fa-pause.each-campaign-pause-button(id=campaign._id)
+                i.fas.fa-pause.each-campaign-stop-button(id=campaign._id)
             .each-item-content
               .each-item-content-item
                 span.each-item-content-item-header #{__('Name')}:

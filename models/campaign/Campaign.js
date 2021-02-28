@@ -181,4 +181,18 @@ CampaignSchema.statics.createCampaign = function (data, callback) {
   );
 };
 
+CampaignSchema.statics.stopOrStartCampaign = function (id, type, callback) {
+  // Stop or start the Campaign with the given id
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()) || !type || (type != 'stop' && type != 'start'))
+    return callback('bad_request');
+  
+  const Campaign = this;
+
+  Campaign.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+    paused: type == 'stop'
+  }}, err => callback(err));
+};
+
 module.exports = mongoose.model('Campaign', CampaignSchema);

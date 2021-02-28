@@ -6,6 +6,8 @@ const checkAdminRolePermissions = require('../middleware/checkAdminRolePermissio
 
 const indexGetController = require('../controllers/campaigns/index/get');
 const questionsGetController = require('../controllers/campaigns/questions/get');
+const startGetController = require('../controllers/campaigns/start/get');
+const stopGetController = require('../controllers/campaigns/stop/get');
 
 const createPostController = require('../controllers/campaigns/create/post');
 
@@ -20,6 +22,18 @@ router.get(
     isLoggedIn,
     checkAdminRolePermissions,
     questionsGetController
+);
+router.get(
+  '/start',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    startGetController
+);
+router.get(
+  '/stop',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    stopGetController
 );
 
 router.post(

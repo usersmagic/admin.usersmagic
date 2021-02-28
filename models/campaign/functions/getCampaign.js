@@ -16,6 +16,7 @@ module.exports = (campaign, callback) => {
     countries: campaign.countries,
     gender: campaign.gender,
     min_birth_year: campaign.min_birth_year,
-    max_birth_year: campaign.max_birth_year
+    max_birth_year: campaign.max_birth_year,
+    paused: campaign.paused
   });
 }
