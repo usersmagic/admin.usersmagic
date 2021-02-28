@@ -155,7 +155,7 @@ QuestionSchema.statics.updateQuestion = function (id, data, callback) {
 
 QuestionSchema.statics.findQuestion = function (_filters, _options, callback) {
   // Find Questions with given filters and options, return an object with questions, filters and options used in search or an error if it exists
-  // Allowed filters: name (string), text (string), types: [short_text, long_text, checked, radio, range], countries: []
+  // Allowed filters: name (string), text (string), types: [short_text, long_text, checked, radio, range], countries: [], not_id: []
   // Allowed options: limit (int), skip (int)
 
   const allowed_types = ['short_text', 'long_text', 'checked', 'radio', 'range'];
@@ -197,7 +197,17 @@ QuestionSchema.statics.findQuestion = function (_filters, _options, callback) {
     filter_values.types = _filters.types.join(',');
   };
 
-  Country.findCountries((err, countries) => {
+  if (_filters && _filters.not_id && typeof _filters.not_id == 'string') {
+    _filters.not_id = _filters.not_id.split(',');
+  };
+  if (_filters && _filters.not_id && Array.isArray(_filters.not_id) && !_filters.not_id.find(filter => !validator.isMongoId(filter.toString()))) {
+    filters.$and.push({
+      _id: { $nin: _filters.not_id }
+    });
+    filter_values.not_id = _filters.not_id.join(',');
+  };
+
+  Country.getCountries((err, countries) => {
     if (err) return callback(err);
 
     if (_filters && _filters.countries && typeof _filters.countries == 'string') {

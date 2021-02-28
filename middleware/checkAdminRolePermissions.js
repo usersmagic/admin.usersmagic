@@ -10,6 +10,10 @@ const menus = [
     role: 'product_head',
     link: '/questions'
   },
+  {
+    role: 'product_head',
+    link: '/campaigns'
+  }
 ];
 
 module.exports = (req, res, next) => {

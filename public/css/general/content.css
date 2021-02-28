@@ -70,12 +70,22 @@
   font-weight: 600;
   font-size: 14px;
   margin-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  white-space: nowrap;
+  max-width: 150px;
 }
 .each-item-subtitle {
   color: rgb(78, 75, 102);
   font-weight: 300;
   font-size: 14px;
   margin-right: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  white-space: nowrap;
+  max-width: 350px;
 }
 .each-item-header i {
   color: rgba(78, 75, 102, 0.6);

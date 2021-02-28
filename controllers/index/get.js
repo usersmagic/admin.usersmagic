@@ -14,6 +14,12 @@ module.exports = (req, res) => {
       role: 'product_head',
       link: '/questions'
     },
+    {
+      name: res.__('Campaigns'),
+      details: res.__('See, create, edit and check submitions of campaigns'),
+      role: 'product_head',
+      link: '/campaigns'
+    }
   ];
 
   return res.render('index/index', {

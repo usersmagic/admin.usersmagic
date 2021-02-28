@@ -11,20 +11,25 @@ block content
       form.all-content-create-new-content-item-wrapper(style="display: flex")
         span.content-go-back-button.edit-go-back-button < #{__('Back')}
         span.general-input-title= __('Question Name')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Enter the name that the question will be identified by. This name will be shown in filters part of app.usersmagic')
         input.general-input-with-border#name-input(type="text" placeholder="Name" value=question.name)
         span.general-input-title= __('Question Description')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Enter a description that will help you remember the question\'s content')
         input.general-input-with-border#description-input(type="text" placeholder="Description" value=question.description)
         span.general-input-title= __('Question Text')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Enter the text of the question')
         input.general-input-with-border#question-text-input(type="text" placeholder="Text" value=question.text)
         if question.type == 'short_text' || question.type == 'long_text'
           span.general-input-title= __('Answer Length')
+            span.general-input-required-sign *
           span.general-input-explanation-text= __('Enter the answer length for the question (Short Text or Long Text). Default is 1000')
           input.general-input-with-border#answer-length-input(type="number" placeholder="Answer Length" value=question.answer_length)
         if question.type == 'radio' || question.type == 'checked'
           span.general-input-title= __('Choices')
+            span.general-input-required-sign *
           span.general-input-explanation-text= __('Enter the choices of the question (Radio or Checked) by putting a comma (,) in between each choice. You must have at least one choice')
           input.general-input-with-border#choices-input(type="text" placeholder="Choices" value=question.choices.join(', '))
           span.general-input-title= __('Other Option')
@@ -37,9 +42,11 @@ block content
               span(id="true")= __('Other Option')
         if question.type == 'range'
           span.general-input-title= __('Range Minimum')
+            span.general-input-required-sign *
           span.general-input-explanation-text= __('Enter the minumum range of the question (Range). Should be at least 0 and required')
           input.general-input-with-border#range-minimum-input(type="number" placeholder="Range Minumum" value=question.minimum_value)
           span.general-input-title= __('Range Maximum')
+            span.general-input-required-sign *
           span.general-input-explanation-text= __('Enter the minumum range of the question (Range). Should be at most 10 and required')
           input.general-input-with-border#range-maximum-input(type="number" placeholder="Range Maximum" value=question.maximum_value)
           span.general-input-title= __('Minumum Explanation')

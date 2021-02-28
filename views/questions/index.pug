@@ -82,15 +82,19 @@ block content
       form.all-content-create-new-content-item-wrapper
         span.content-go-back-button.header-create-new-content-item-back-button < #{__('Back')}
         span.general-input-title= __('Question Name')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Enter the name that the question will be identified by. This name will be shown in filters part of app.usersmagic')
         input.general-input-with-border#name-input(type="text" placeholder="Name")
         span.general-input-title= __('Question Description')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Enter a description that will help you remember the question\'s content')
         input.general-input-with-border#description-input(type="text" placeholder="Description")
         span.general-input-title= __('Question Text')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Enter the text of the question')
         input.general-input-with-border#question-text-input(type="text" placeholder="Text")
         span.general-input-title= __('Question Type')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Select the type of this question')
         .general-drop-down-list-outer-wrapper(style="z-index: 2;")
           .general-drop-down-list-wrapper(style="z-index: 2;")
@@ -127,6 +131,7 @@ block content
         span.general-input-explanation-text= __('Enter an explanation for the maximum range. Optional')
         input.general-input-with-border#maximum-explanation-input(type="text" placeholder="Maximum Explanation")
         span.general-input-title= __('Countries')
+          span.general-input-required-sign *
         span.general-input-explanation-text= __('Check the countries you want your question be active for')
         .general-checked-input-wrapper
           input.general-checked-input-value#countries-input(type="text" value="[]")

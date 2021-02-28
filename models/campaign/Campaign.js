@@ -23,7 +23,8 @@ const CampaignSchema = new Schema({
   photo: {
     // Image of the campaign, an url to AWS database. (For old campaigns)
     type: String,
-    required: true
+    default: null,
+    required: false
   },
   description: {
     // Description of the campaign
@@ -58,7 +59,7 @@ const CampaignSchema = new Schema({
   gender: {
     // Filter for user's gender: [male, female, other, not_specified]
     type: String,
-    required: true
+    default: null
   },
   min_birth_year: {
     // Filter for user's birth_year, the birth_year should be bigger than this field (younger)
@@ -105,7 +106,7 @@ CampaignSchema.statics.getCampaigns = function (callback) {
 
   Campaign
     .find({})
-    .sort({ _id: 1 })
+    .sort({ _id: -1 })
     .then(campaigns => {
       async.timesSeries(
         campaigns.length,
@@ -131,7 +132,7 @@ CampaignSchema.statics.createCampaign = function (data, callback) {
 
   async.timesSeries(
     data.countries.length,
-    (time, next) => Country.getCountryById(data.countries[time], (err, country) => next(err, country.alpha2_code)),
+    (time, next) => Country.getCountryWithAlpha2Code(data.countries[time], (err, country) => next(err, country ? country.alpha2_code : null)),
     (err, countries) => {
       if (err) return callback('bad_request');
 

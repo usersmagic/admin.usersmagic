@@ -1,0 +1,129 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Campaigns')
+        span.header-subtitle= __('See, create, edit and check submitions of campaigns')
+      .header-create-new-content-item-button.general-seablue-button(style="width: 250px; margin: 0px")
+          span= __('Create Campaign')
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each campaign in campaigns
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= campaign.name
+              span.each-item-subtitle= campaign.description
+              i.fas.fa-chevron-down.each-campaign-details-button
+              //- i.fas.fa-cog.each-campaign-edit-button(id=campaign._id)
+              if campaign.paused
+                i.fas.fa-play.each-campaign-play-button(id=campaign._id)
+              else
+                i.fas.fa-pause.each-campaign-pause-button(id=campaign._id)
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Name')}:
+                span.each-item-content-item-value #{campaign.name}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Description')}:
+                span.each-item-content-item-value #{campaign.description}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Information')}:
+                span.each-item-content-item-value #{campaign.information}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Price')}:
+                span.each-item-content-item-value #{campaign.price}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Is Free')}:
+                span.each-item-content-item-value #{__(campaign.is_free)}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Question Number')}:
+                span.each-item-content-item-value #{campaign.questions.length}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Countries')}:
+                span.each-item-content-item-value #{campaign.countries.map(country => __(country)).join(' ')}
+              if campaign.gender
+                .each-item-content-item
+                  span.each-item-content-item-header #{__('Gender Filter')}:
+                  span.each-item-content-item-value #{__(campaign.gender.substr(0, 1).toUpperCase() + campaign.gender.substr(1, campaign.gender.length))}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Minimum Age')}:
+                span.each-item-content-item-value #{(new Date).getFullYear() - campaign.max_birth_year}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Maximum Age')}:
+                span.each-item-content-item-value #{(new Date).getFullYear() - campaign.min_birth_year}
+      form.all-content-create-new-content-item-wrapper
+        span.content-go-back-button.header-create-new-content-item-back-button < #{__('Back')}
+        span.general-input-title= __('Campaign Name')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter the name that the campaign. Please use a short name for a better UI design')
+        input.general-input-with-border#name-input(type="text" placeholder=__('Name'))
+        span.general-input-title= __('Campaign Image')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Please choose an image to show as campaign logo. An image with closer width and height values would result in a better UI')
+        .general-image-input-outer-wrapper
+          input.display-none#image-input(type="text" name="image")
+          label.general-choose-image-input-text
+            span.general-choose-image-text= __('Choose')
+            span.general-uploading-image-text #{__('Uploading')}...
+            input.display-none.upload-image-input(type="file" accept="image/*")
+          .general-image-input-wrapper(style="display: none")
+            .general-image-input-wrapper-image
+              img
+            i.fas.fa-times.delete-image-button
+        span.general-input-title= __('Campaign Description')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter a description that will explain the campaign to users')
+        input.general-input-with-border#description-input(type="text" placeholder=__('Description'))
+        span.general-input-title= __('Campaign Information')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter the information / tasks that the user should know before starting the campaign')
+        input.general-input-with-border#information-input(type="text" placeholder=__('Information'))
+        span.general-input-title= __('Campaign Price')
+        span.general-input-explanation-text= __('Enter the price that will be given for each user. The price will be paid in the currency of the selected user')
+        input.general-input-with-border#price-input(type="number" placeholder=__('Price'))
+        span.general-input-title= __('Mark Campaign as Free')
+        span.general-input-explanation-text= __('Check this field if you want to select this campaign as free. The price you have entered will not be used if you select this field')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#is-free-input(type="text" value="[]")
+          .general-each-checked-input
+            .general-each-checked-input-icon
+              i.fas.fa-check
+            span(id="true")= __('Select as Free')
+        span.general-input-title= __('Countries')
+        span.general-input-explanation-text= __('Check the countries you want your campaign be active for. You will be able to select questions that are created for these countries')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#countries-input(type="text" value="[]")
+          each country in countries
+            .general-each-checked-input
+              .general-each-checked-input-icon
+                i.fas.fa-check 
+              span(id=country.alpha2_code)= __(country.name)
+        span.general-input-title= __('Gender Filter')
+        span.general-input-explanation-text= __('You may spesify the gender that will be able to access this campaign')
+        .general-drop-down-list-outer-wrapper(style="z-index: 2;")
+          .general-drop-down-list-wrapper(style="z-index: 2;")
+            input.general-drop-down-list-input#gender-visible-input(type="text" autocomplete="none" placeholder=__('Gender'))
+            input.general-drop-down-list-input-not-visible#gender-input(type="text")
+            input.general-drop-down-list-items-json(type="text" value=JSON.stringify(genders.map(gender => { return {name: __(gender.name), id: gender.id} })))
+            .general-drop-down-choices-wrapper
+              each gender in genders
+                span.general-drop-down-list-each-item(id=gender.id)= __(gender.name)
+        span.general-input-title= __('Minimum Age Filter')
+        span.general-input-explanation-text= __('Enter the minimum age that can access this campaign. Should be at least 1')
+        input.general-input-with-border#min-age-input(type="number" placeholder=__('Min Age'))
+        span.general-input-title= __('Maximum Age Filter')
+        span.general-input-explanation-text= __('Enter the maximum age that can access this campaign. Should be at most 100')
+        input.general-input-with-border#max-age-input(type="number" placeholder=__('Max Age'))
+        span.general-input-title= __('Questions')
+        span.general-input-explanation-text= __('Choose the questions to add to the campaign')
+        .questions-wrapper
+        span.general-input-explanation-text= __('Search questions to add. Only first 20 results are shown')
+        input.general-input-with-border#search-question-input(type="text" placeholder=__('Search Questions'))
+        .search-questions-wrapper
+        .general-input-error-line
+          span#bad-request-error= __('You seem to have a missing field. Please check that you have entered all the required fields and selected at least one question.')
+        .general-input-error-line
+          span#unknown-error= __('An unknown error occured, please try again later')
+        button.general-seablue-button(style="width: 250px;")
+          span= __('Create')

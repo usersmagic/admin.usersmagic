@@ -1,3 +1,43 @@
+// Deletes the image with the given url from the server, returns an error it is exists
+function deleteImage (url, callback) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/image/delete');
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify({ url }));
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      const response = JSON.parse(xhr.responseText);
+
+      if (!response.success && response.error)
+        return callback(response.error);
+
+      return callback(null);
+    }
+  };
+}
+
+// Uploads the file as image, returns its url or an error if it exists
+function uploadImage (file, callback) {
+  const formdata = new FormData();
+  formdata.append('file', file);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/image/upload');
+  xhr.send(formdata);
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      const response = JSON.parse(xhr.responseText);
+
+      if (!response.success)
+        return callback(response.error);
+
+      callback(null, response.url);
+    }
+  };
+}
+
 function listenDropDownListInputs (document) {
   // Listen for drop down input focus in event
   document.addEventListener('focusin', event => {
@@ -86,6 +126,47 @@ function listenCheckedInputs (document) {
       }
 
       target.parentNode.childNodes[0].value = JSON.stringify(values);
+    }
+  })
+}
+
+function listenImageInputs (document) {
+  document.addEventListener('input', event => {
+    if (event.target.classList.contains('upload-image-input')) {
+      const imageInput = event.target;
+      const file = imageInput.files[0];
+      imageInput.parentNode.childNodes[0].style.display = 'none';
+      imageInput.parentNode.childNodes[1].style.display = 'block';
+      imageInput.type = 'text';
+      imageInput.parentNode.style.cursor = 'progress';
+  
+      uploadImage(file, (err, url) => {
+        if (err)
+          return alert("An error occured. Error Message: " + err);
+  
+        event.target.parentNode.parentNode.childNodes[0].value = url;
+        event.target.parentNode.style.display = 'none';
+        event.target.parentNode.parentNode.childNodes[2].style.display = 'flex';
+        event.target.parentNode.parentNode.childNodes[2].childNodes[0].childNodes[0].src = url;
+      });
+    }
+  });
+
+  document.addEventListener('click', event => {
+    if (event.target.classList.contains('delete-image-button')) {
+      deleteImage(event.target.parentNode.childNodes[0].childNodes[0].src, err => {
+        if (err)
+          return alert("An error occured. Error Message: " + err);
+
+        event.target.parentNode.parentNode.childNodes[0].value = '';
+        event.target.parentNode.style.display = 'none';
+        event.target.parentNode.childNodes[0].childNodes[0].src = '';
+        event.target.parentNode.parentNode.childNodes[1].style.display = 'flex';
+        event.target.parentNode.parentNode.childNodes[1].childNodes[0].style.display = 'block';
+        event.target.parentNode.parentNode.childNodes[1].childNodes[1].style.display = 'none';
+        event.target.parentNode.parentNode.childNodes[1].childNodes[2].type = 'file';
+        event.target.parentNode.parentNode.childNodes[1].style.cursor = 'pointer';
+      });
     }
   })
 }

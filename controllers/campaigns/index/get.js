@@ -1,17 +1,17 @@
 // Get / page
 
+const Campaign = require('../../../models/campaign/Campaign');
 const Country = require('../../../models/country/Country');
-const Question = require('../../../models/question/Question');
 
 module.exports = (req, res) => {
   Country.getCountries((err, countries) => {
     if (err) return res.redirect('/');
 
-    Question.findQuestion(req.query, req.query, (err, data) => {
+    Campaign.getCampaigns((err, campaigns) => {
       if (err) return res.redirect('/');
   
-      return res.render('questions/index', {
-        page: 'questions/index',
+      return res.render('campaigns/index', {
+        page: 'campaigns/index',
         title: res.__('Questions'),
         includes: {
           external: {
@@ -21,10 +21,13 @@ module.exports = (req, res) => {
         },
         admin: req.session.admin,
         countries,
-        questions: data.questions,
-        filters: data.filters,
-        options: data.options,
-        question_types: ['short_text', 'long_text', 'checked', 'radio', 'range']
+        campaigns,
+        genders: [
+          {name: 'Female', id: 'female'},
+          {name: 'Male', id: 'male'},
+          {name: 'Other', id: 'other'},
+          {name: 'Prefer not to say', id: 'not_specified'}
+        ]
       });
     });
   });

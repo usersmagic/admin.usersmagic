@@ -104,6 +104,9 @@ textarea {
   letter-spacing: 1px;
   cursor: pointer;
 }
+.general-uploading-image-text {
+  display: none;
+}
 .general-image-input-wrapper {
   height: 55px;
   min-height: 55px;

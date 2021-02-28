@@ -12,6 +12,10 @@ module.exports = (campaign, callback) => {
     information: campaign.information,
     price: campaign.price,
     is_free: campaign.is_free,
-    questions: campaign.questions
+    questions: campaign.questions,
+    countries: campaign.countries,
+    gender: campaign.gender,
+    min_birth_year: campaign.min_birth_year,
+    max_birth_year: campaign.max_birth_year
   });
 }
