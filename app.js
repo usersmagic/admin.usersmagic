@@ -53,6 +53,7 @@ if (cluster.isMaster) {
     const authRouteController = require('./routes/authRoute');
     const campaignsRouteController = require('./routes/campaignsRoute');
     const imageRouteController = require('./routes/imageRoute');
+    const paymentsRouteController = require('./routes/paymentsRoute');
     const questionsRouteController = require('./routes/questionsRoute');
     const rootAdminRouteController = require('./routes/rootAdminRoute');
     const waitlistRouteController = require('./routes/waitlistRoute');
@@ -93,6 +94,7 @@ if (cluster.isMaster) {
     app.use('/auth', authRouteController);
     app.use('/campaigns', campaignsRouteController);
     app.use('/image', imageRouteController);
+    app.use('/payments', paymentsRouteController);
     app.use('/questions', questionsRouteController);
     app.use('/root_admin', rootAdminRouteController);
     app.use('/waitlist', waitlistRouteController);

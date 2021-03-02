@@ -19,6 +19,12 @@ module.exports = (req, res) => {
       details: res.__('See, create, edit and check submitions of campaigns'),
       role: 'product_head',
       link: '/campaigns'
+    },
+    {
+      name: res.__('Payments'),
+      details: res.__('See and approve payments of users'),
+      role: 'financial_manager',
+      link: '/payments'
     }
   ];
 

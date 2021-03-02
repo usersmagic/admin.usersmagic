@@ -13,6 +13,10 @@ const menus = [
   {
     role: 'product_head',
     link: '/campaigns'
+  },
+  {
+    role: 'financial_manager',
+    link: '/payments'
   }
 ];
 

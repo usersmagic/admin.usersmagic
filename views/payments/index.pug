@@ -1,0 +1,16 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Payments')
+        span.header-subtitle #{__('See and approve payments of users')}
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each payment in payments
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= payment.payment_number
+              span.each-item-subtitle (#{payment.created_at})
+              i.fas.fa-check.each-submition-approve-button(id=payment._id.toString())
+              

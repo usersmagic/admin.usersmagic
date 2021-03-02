@@ -270,6 +270,6 @@ UserSchema.statics.updateUserById = function (id, update, callback) {
     // This function does not check if the given update is a valid MongoDB update object, so use try/catch block to avoid any error
     return callback('database_error');
   }
-}
+};
 
 module.exports = mongoose.model('User', UserSchema);
