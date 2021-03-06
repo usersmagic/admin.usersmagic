@@ -17,6 +17,10 @@ const menus = [
   {
     role: 'financial_manager',
     link: '/payments'
+  },
+  {
+    role: 'regional_manager',
+    link: '/countries'
   }
 ];
 

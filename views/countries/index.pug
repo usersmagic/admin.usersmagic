@@ -1,0 +1,79 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Countries')
+        span.header-subtitle= __('Create and edit countries. Once you create a country, you must contact a developer to activate this country. The developer will update the country\'s cities and towns')
+      .header-create-new-content-item-button.general-seablue-button(style="width: 250px; margin: 0px")
+          span= __('Create Country')
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each country in countries
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= country.name
+              span.each-item-subtitle= country.alpha2_code
+              i.fas.fa-chevron-down.each-country-details-button
+              i.fas.fa-cog.each-country-edit-button(id=country._id)
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Name')}:
+                span.each-item-content-item-value #{country.name}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('ISO Code')}:
+                span.each-item-content-item-value #{country.alpha2_code}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Is Completed')}:
+                span.each-item-content-item-value #{country.completed ? __('Yes') : __('No')}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Phone Code')}:
+                span.each-item-content-item-value #{country.phone_code}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Currency')}:
+                span.each-item-content-item-value #{country.currency}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Minimum Payment Amond')}:
+                span.each-item-content-item-value #{country.min_payment_amount}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Payment Credit Per User')}:
+                span.each-item-content-item-value #{country.credit_per_user}
+              each city, i in country.cities
+                .each-item-content-item
+                  span.each-item-content-item-header #{__('City')} #{i+1}:
+                  span.each-item-content-item-value #{city}
+                .each-item-content-item
+                  span.each-item-content-item-header #{__('Towns')}:
+                  span.each-item-content-item-value #{towns[city] ? towns[city].join(', ') : __('None')}
+      form.all-content-create-new-content-item-wrapper
+        span.content-go-back-button.header-create-new-content-item-back-button < #{__('Back')}
+        span.general-input-title= __('Name')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter the name of the country in English')
+        input.general-input-with-border#name-input(type="text" placeholder=__('ex: Turkey'))
+        span.general-input-title= __('ISO Code')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Please enter the two-lettered and lowercase alpha-2 code of the country. You can see a list of country codes from this list: https://www.iban.com/country-codes')
+        input.general-input-with-border#alpha2-code-input(type="text" size="2" placeholder=__('ex: tr'))
+        span.general-input-title= __('Phone Code')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Please enter the international phone code of the country without a plus')
+        input.general-input-with-border#phone-code-input(type="number" placeholder=__('ex: 90'))
+        span.general-input-title= __('Currency')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter the currency of the country. If you do not enter, it well be € by default')
+        input.general-input-with-border#currency-input(type="text" placeholder=__('ex: ₺'))
+        span.general-input-title= __('Minimum Payment Amount on User')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('This field shows at least how much credit should a user have from this country to withdraw his/her money ')
+        input.general-input-with-border#minimum-payment-amount-input(type="number" placeholder=__('ex: 10'))
+        span.general-input-title= __('Credit per User')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('This field shows how how much credit a company should pay for each tester from this country')
+        input.general-input-with-border#credit-per-user-input(type="number" placeholder=__('ex: 1'))
+        .general-input-error-line
+          span#bad-request-error= __('You seem to have a missing field. Please check that you have entered all the required fields.')
+        .general-input-error-line
+          span#unknown-error= __('An unknown error occured, please try again later')
+        button.general-seablue-button(style="width: 250px;")
+          span= __('Create')

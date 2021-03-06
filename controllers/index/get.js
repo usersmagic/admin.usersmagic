@@ -25,6 +25,12 @@ module.exports = (req, res) => {
       details: res.__('See and approve payments of users'),
       role: 'financial_manager',
       link: '/payments'
+    },
+    {
+      name: res.__('Countries'),
+      details: res.__('Create and edit countries'),
+      role: 'regional_manager',
+      link: '/countries'
     }
   ];
 
