@@ -8,7 +8,7 @@ module.exports = (project, options, callback) => {
   if (!project || !project._id)
     return callback('document_not_found');
 
-  let timezone;
+  let timezone = null;
 
   if (options && options.timezone) {
     if (!moment.tz.zone(options.timezone))
@@ -54,7 +54,8 @@ module.exports = (project, options, callback) => {
         opening: project.welcome_screen.opening,
         details: project.welcome_screen.details,
         image: project.welcome_screen.image
-      } : {}
+      } : {},
+      creator: project.creator
     });
   }
 }

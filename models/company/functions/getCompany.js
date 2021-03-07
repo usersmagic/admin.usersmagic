@@ -15,7 +15,7 @@ module.exports = (company, callback) => {
       timezone: company.timezone
     });
   } else {
-    Country.getCountryWithAlphe2Code(company.country, (err, country) => {
+    Country.getCountryWithAlpha2Code(company.country, (err, country) => {
       if (err || !country) return callback(err || 'bad_request');
 
       return callback(null, {

@@ -21,7 +21,7 @@ window.onload = () => {
     }
 
     if (event.target.classList.contains('each-submition-reject-button')) {
-      const reason = document.querySelector('.reject-submition-input').value.trim();
+      const reason = event.target.parentNode.childNodes[2].value.trim();
 
       if (!reason || !reason.length)
         return alert("Please write a reason to reject");

@@ -78,7 +78,7 @@ ProjectSchema.statics.findProjectById = function (id, callback) {
     if (err || !project)
       return callback('document_not_found');
   
-    getProject(project, (err, project) => {
+    getProject(project, {}, (err, project) => {
       if (err) return callback(err);
 
       return callback(null, project);

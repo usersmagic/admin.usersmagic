@@ -31,6 +31,12 @@ module.exports = (req, res) => {
       details: res.__('Create and edit countries'),
       role: 'regional_manager',
       link: '/countries'
+    },
+    {
+      name: res.__('Targets'),
+      details: res.__('See and approve filter groups of Company\'s'),
+      role: 'sales_team',
+      link: '/targets'
     }
   ];
 

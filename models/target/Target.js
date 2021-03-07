@@ -7,6 +7,8 @@ const filterObjectToArray = require('./functions/filterObjectToArray');
 const filtersArrayToSearchQuery = require('./functions/filtersArrayToSearchQuery');
 const getTarget = require('./functions/getTarget');
 
+const Company = require('../company/Company');
+const Project = require('../project/Project');
 const User = require('../user/User');
 
 const Schema = mongoose.Schema;
@@ -71,6 +73,11 @@ const TargetSchema = new Schema({
     // List of ids from User model. The users in this list have already joined the project, they cannot join one more time
     type: Array,
     default: []
+  },
+  price: {
+    // The price that will be paid to each user
+    type: Number,
+    default: null
   }
 });
 
@@ -96,6 +103,24 @@ TargetSchema.statics.updateTargetStatus = function (id, data, callback) {
 
       return callback(null, target);
     });
+  });
+};
+
+TargetSchema.statics.approveTarget = function (id, data, callback) {
+  // Gets an id and updates the Target with the given id as {status: 'approved'} and {price: data.price}. Returns an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()) || !data || !data.price || !Number.isInteger(data.price))
+    return callback('bad_request');
+
+  const Target = this;
+  
+  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+    status: 'approved',
+    price: data.price
+  }}, err => {
+    if (err) return callback(err);
+
+    return callback(null);
   });
 };
 
@@ -173,7 +198,7 @@ TargetSchema.statics.getWaitingTargets = function (callback) {
 
   Target
     .find({
-      status: 'approved',
+      status: 'waiting',
       submition_limit: {
         $gt: 0
       }
@@ -184,7 +209,33 @@ TargetSchema.statics.getWaitingTargets = function (callback) {
     .then(targets => {
       async.timesSeries(
         targets.length,
-        (time, next) => getTarget(targets[time], (err, target) => next(err, target)),
+        (time, next) => {
+          target = targets[time];
+
+          filterArrayToObject(target.filters, (err, filters) =>{
+            if (err) return next(err);
+
+            getTarget(targets[time], {
+              filters
+            }, (err, target) => {
+              if (err) return next(err);
+              
+              Project.findProjectById(target.project_id, (err, project) => {
+                if (err) return next(err);
+    
+                target.project = project;
+
+                Company.findCompanyById(project.creator, (err, company) => {
+                  if (err) return next(err);
+                  
+                  target.company = company;
+
+                  return next(null, target);
+                });
+              });
+            });
+          });
+        },
         (err, targets) => {
           if (err) return callback(err);
 

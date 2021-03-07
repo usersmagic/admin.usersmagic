@@ -6,7 +6,7 @@ module.exports = (target, options, callback) => {
   if (!target || !target._id)
     return callback('document_not_found');
 
-  let timezone;
+  let timezone = null;
 
   if ((options && options.timezone)) {
     if (!moment.tz.zone(options.timezone))

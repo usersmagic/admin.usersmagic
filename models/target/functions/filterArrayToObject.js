@@ -1,7 +1,9 @@
 // Gets an array of filters from Target model and converts them to an object for client side
 
-const async = require('async');
+const mongoose = require('mongoose');
 const validator = require('validator');
+
+const Question = require('../../question/Question');
 
 const getFilter = (filter, callback) => {
   // Takes a filter object, returns a new key / value pair that can be used in client side
@@ -12,14 +14,22 @@ const getFilter = (filter, callback) => {
   const value = Object.values(filter)[0];
 
   if (key == 'and') {
-    const max = value[0].birth_year.lte;
-    const min = value[1].birth_year.gte;
+    const max = (new Date()).getFullYear() - value[0].birth_year.gte;
+    const min = (new Date()).getFullYear() - value[1].birth_year.lte;
 
     return callback(null, 'age', { min, max });
   } else if (key == 'gender') {
     return callback(null, key, value.in);
   } else {
-    return callback(null, key.split('.')[1], value.in);
+    if (!validator.isMongoId(key.split('.')[1]))
+      return callback(null, key.split('.')[1], value.in);
+    
+    Question.findById(mongoose.Types.ObjectId(key.split('.')[1].toString()), (err, question) => {
+      if (err || !question)
+        return callback('document_not_found');
+
+      return callback(null, question.name, value.in);
+    });
   }
 }
 

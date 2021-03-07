@@ -220,5 +220,15 @@
 	"Create and edit countries. Once you create a country, you must contact a developer to activate this country. The developer will update the country's cities and towns": "Create and edit countries. Once you create a country, you must contact a developer to activate this country. The developer will update the country's cities and towns",
 	"No": "No",
 	"Targets": "Targets",
-	"See and approve filter groups of Company's": "See and approve filter groups of Company's"
+	"See and approve filter groups of Company's": "See and approve filter groups of Company's",
+	"Filters": "Filters",
+	"Accepted Answers": "Accepted Answers",
+	"Age": "Age",
+	"Click to See": "Click to See",
+	"Company Name": "Company Name",
+	"Company Email": "Company Email",
+	"Company Phone Number": "Company Phone Number",
+	"Company Account Holder Name": "Company Account Holder Name",
+	"Company Country": "Company Country",
+	"Enter the calculated price for the Target": "Enter the calculated price for the Target"
 }

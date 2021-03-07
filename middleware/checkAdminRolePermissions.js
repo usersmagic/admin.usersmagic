@@ -21,6 +21,10 @@ const menus = [
   {
     role: 'regional_manager',
     link: '/countries'
+  },
+  {
+    role: 'sales_team',
+    link: '/targets'
   }
 ];
 
