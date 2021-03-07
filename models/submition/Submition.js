@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 
 const Campaign = require('../campaign/Campaign');
+const Target = require('../target/Target');
 const User = require('../user/User');
 
 const approveSubmition = require('./functions/approveSubmition');
@@ -339,5 +340,48 @@ SubmitionSchema.statics.submitAnswers = function (id, user_id, callback) {
     });
   });
 };
+
+SubmitionSchema.statics.terminatePassedDueSubmitions = function (callback) {
+  // Find and terminate the oldest 100 Submition that are passed due
+  // Return an error if it exists
+
+  const Submition = this;
+
+  Submition
+    .find({
+      will_terminate_at: {
+        $lt: (new Date()).getTime()
+      }
+    })
+    .sort({ _id: 1 })
+    .limit(100)
+    .then(submitions => {
+      async.timesSeries(
+        submitions.length,
+        (time, next) => {
+          const submition = submitions[time];
+
+          Target.findByIdAndUpdate(mongoose.Types.ObjectId(submition.target_id.toString()), {
+            $push: { users_list: submition.user_id.toString() },
+            $pull: { joined_users_list: submition.user_id.toString() },
+            $inc: { submition_limit: 1 }
+          }, {}, (err, target) => {
+            if (err || !target) return callback('document_not_found');
+        
+            Submition
+              .findByIdAndUpdate(mongoose.Types.ObjectId(submition._id.toString()), {$set: {
+                status: 'timeout'
+              }}, err => next(err ? 'database_error' : null));
+          });
+        },
+        err => {
+          if (err) return callback(err);
+
+          return callback(null);
+        }
+      );
+    })
+    .catch(err => callback('database_error') );
+}
 
 module.exports = mongoose.model('Submition', SubmitionSchema);

@@ -194,7 +194,7 @@
 	"Yes": "Yes",
 	"Phone Code": "Phone Code",
 	"Currency": "Currency",
-	"Minimum Payment Amond": "Minimum Payment Amond",
+	"Minimum Payment Amount": "Minimum Payment Amount",
 	"Payment Credit Per User": "Payment Credit Per User",
 	"Enter the name of the country in English": "Enter the name of the country in English",
 	"ex: Turkey": "ex: Turkey",
@@ -218,5 +218,7 @@
 	"City Name ex: İstanbul": "City Name ex: İstanbul",
 	"Towns ex: Sarıyer, Beşiktaş, Üsküdar": "Towns ex: Sarıyer, Beşiktaş, Üsküdar",
 	"Create and edit countries. Once you create a country, you must contact a developer to activate this country. The developer will update the country's cities and towns": "Create and edit countries. Once you create a country, you must contact a developer to activate this country. The developer will update the country's cities and towns",
-	"No": "No"
+	"No": "No",
+	"Targets": "Targets",
+	"See and approve filter groups of Company's": "See and approve filter groups of Company's"
 }

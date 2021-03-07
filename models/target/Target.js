@@ -165,4 +165,34 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
   });
 };
 
+TargetSchema.statics.getWaitingTargets = function (callback) {
+  // Get a list of Targets that are on status waiting an have more than 0 submition_limit
+  // Return an error if it exists
+
+  const Target = this;
+
+  Target
+    .find({
+      status: 'approved',
+      submition_limit: {
+        $gt: 0
+      }
+    })
+    .sort({
+      _id: 1
+    })
+    .then(targets => {
+      async.timesSeries(
+        targets.length,
+        (time, next) => getTarget(targets[time], (err, target) => next(err, target)),
+        (err, targets) => {
+          if (err) return callback(err);
+
+          return callback(null, targets);
+        }
+      );
+    })
+    .catch(err => callback('database_error'));
+};
+
 module.exports = mongoose.model('Target', TargetSchema);

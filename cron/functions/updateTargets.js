@@ -4,6 +4,6 @@ const Target = require('../../models/target/Target');
 
 module.exports = () => {
   Target.updateTargetsUsersList(err => {
-    if (err) console.log(err);
+    if (err) console.log('Update Approved Targets\' Users Lists Error: ' + err);
   });
 }
