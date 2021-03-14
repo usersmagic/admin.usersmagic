@@ -105,6 +105,12 @@
   margin-bottom: 10px;
   display: block;
 }
+.each-item-content-item-inner {
+  margin-left: 20px;
+}
+.each-item-content-item-inner-inner {
+  margin-left: 40px;
+}
 .each-item-content-item-header {
   display: inline;
   color: rgb(78, 75, 102);

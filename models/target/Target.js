@@ -8,6 +8,7 @@ const filtersArrayToSearchQuery = require('./functions/filtersArrayToSearchQuery
 const getTarget = require('./functions/getTarget');
 
 const Company = require('../company/Company');
+const Country = require('../country/Country');
 const Project = require('../project/Project');
 const User = require('../user/User');
 
@@ -230,7 +231,13 @@ TargetSchema.statics.getWaitingTargets = function (callback) {
                   
                   target.company = company;
 
-                  return next(null, target);
+                  Country.getCountryWithAlpha2Code(target.country, (err, country) => {
+                    if (err) return next(err);
+                  
+                    target.country = country;
+
+                    return next(null, target);
+                  });
                 });
               });
             });

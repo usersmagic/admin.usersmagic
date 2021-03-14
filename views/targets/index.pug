@@ -12,7 +12,7 @@ block content
             .each-item-header
               span.each-item-title= target.name
               span.each-item-subtitle (#{target.company.company_name})
-              input.general-input-with-border.approve-price-input(type="number" placeholder=__('Enter the calculated price for the Target'))
+              input.general-input-with-border.approve-price-input(type="number" placeholder=`${__('The calculated price for target')}: ${target.country.currency}`)
               i.fas.fa-chevron-down.each-question-details-button
               i.fas.fa-check-circle.each-question-approve-button(id=target._id.toString())
             .each-item-content
@@ -38,50 +38,56 @@ block content
                 span.each-item-content-item-header #{__('Company Country')}:
                 span.each-item-content-item-value #{target.company.country}
               .each-item-content-item
-                span.each-item-content-item-header #{__('Filters')}:
+                span.each-item-content-item-header #{__('Target Size')}:
+                span.each-item-content-item-value #{target.submition_limit}
               .each-item-content-item
+                span.each-item-content-item-header #{__('Total Credit Payed')}:
+                span.each-item-content-item-value #{target.submition_limit * target.country.credit_per_user}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Filters')}:
+              .each-item-content-item.each-item-content-item-inner
                 span.each-item-content-item-header #{__('Country')}:
-                span.each-item-content-item-value #{target.country}
+                span.each-item-content-item-value #{target.country.alpha2_code}
               each filter in Object.keys(target.filters)
                 if filter == 'age'
-                  .each-item-content-item
+                  .each-item-content-item.each-item-content-item-inner
                     span.each-item-content-item-header #{__('Age')}:
                     span.each-item-content-item-value #{target.filters[filter].min} - #{target.filters[filter].max}
                 else
-                  .each-item-content-item
+                  .each-item-content-item.each-item-content-item-inner
                     span.each-item-content-item-header #{filter}:
                     span.each-item-content-item-value #{Array.isArray(target.filters[filter]) ? target.filters[filter].join(', ') : target.filters[filter]}
               .each-item-content-item
                 span.each-item-content-item-header #{__('Questions')}:
               each question, i in target.project.questions
-                .each-item-content-item
+                .each-item-content-item.each-item-content-item-inner
                   span.each-item-content-item-header #{'Question'} #{i+1}:
-                .each-item-content-item
+                .each-item-content-item.each-item-content-item-inner-inner
                   span.each-item-content-item-header #{'Question Text'}:
                   span.each-item-content-item-value #{question.text}
-                .each-item-content-item
+                .each-item-content-item.each-item-content-item-inner-inner
                   span.each-item-content-item-header #{'Question Required'}:
                   span.each-item-content-item-value #{question.required ? __('Yes') : __('No')}
                 if question.details && question.details.length
-                  .each-item-content-item
+                  .each-item-content-item.each-item-content-item-inner-inner
                     span.each-item-content-item-header #{'Question Details'}:
                     span.each-item-content-item-value #{question.details}
                 if question.image
-                  .each-item-content-item
+                  .each-item-content-item.each-item-content-item-inner-inner
                     span.each-item-content-item-header #{'Question Image'}:
                     a.each-item-content-item-value(href=question.image target="_blank") #{__('Click to See')}
-                .each-item-content-item
+                .each-item-content-item.each-item-content-item-inner-inner
                   span.each-item-content-item-header #{'Question Type'}:
                   span.each-item-content-item-value #{__(question.type)}
                 if question.type == 'multiple_choice'
-                  .each-item-content-item
+                  .each-item-content-item.each-item-content-item-inner-inner
                     span.each-item-content-item-header #{'Answers'}:
                     span.each-item-content-item-value #{question.choices.join(', ')}
                 else if question.type == 'opinion_scale'
-                  .each-item-content-item
+                  .each-item-content-item.each-item-content-item-inner-inner
                     span.each-item-content-item-header #{'Range'}:
                     span.each-item-content-item-value #{question.range.min} - #{question.range.max}
                   if question.labels && (question.labels.left || question.labels.middle || question.labels.right)
-                    .each-item-content-item
+                    .each-item-content-item.each-item-content-item-inner-inner
                       span.each-item-content-item-header #{'Labels'}:
                       span.each-item-content-item-value #{question.labels.left} - #{question.labels.middle} - #{question.labels.right}
