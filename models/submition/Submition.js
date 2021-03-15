@@ -351,7 +351,8 @@ SubmitionSchema.statics.terminatePassedDueSubmitions = function (callback) {
     .find({
       will_terminate_at: {
         $lt: (new Date()).getTime()
-      }
+      },
+      status: 'saved'
     })
     .sort({ _id: 1 })
     .limit(100)
