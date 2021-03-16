@@ -352,7 +352,12 @@ SubmitionSchema.statics.terminatePassedDueSubmitions = function (callback) {
       will_terminate_at: {
         $lt: (new Date()).getTime()
       },
-      status: 'saved'
+      status: 'saved',
+      is_private_campaign: true,
+      target_id: {
+        $exists: true,
+        $ne: null
+      }
     })
     .sort({ _id: 1 })
     .limit(100)
@@ -367,12 +372,18 @@ SubmitionSchema.statics.terminatePassedDueSubmitions = function (callback) {
             $pull: { joined_users_list: submition.user_id.toString() },
             $inc: { submition_limit: 1 }
           }, {}, (err, target) => {
-            if (err || !target) return callback('document_not_found');
-        
-            Submition
-              .findByIdAndUpdate(mongoose.Types.ObjectId(submition._id.toString()), {$set: {
-                status: 'timeout'
-              }}, err => next(err ? 'database_error' : null));
+            if (err || !target) {
+              Submition
+                .findByIdAndDelete(
+                  mongoose.Types.ObjectId(submition._id.toString()),
+                  err => next(err ? 'database_error' : null)
+                );
+            } else {
+              Submition
+                .findByIdAndUpdate(mongoose.Types.ObjectId(submition._id.toString()), {$set: {
+                  status: 'timeout'
+                }}, err => next(err ? 'database_error' : null));
+            }
           });
         },
         err => {
@@ -382,7 +393,7 @@ SubmitionSchema.statics.terminatePassedDueSubmitions = function (callback) {
         }
       );
     })
-    .catch(err => callback('database_error') );
+    .catch(err => callback('database_error'));
 }
 
 module.exports = mongoose.model('Submition', SubmitionSchema);

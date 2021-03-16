@@ -26,6 +26,8 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
+  dotenv.config({ path: path.join(__dirname, '.env') });
+
   if (cluster.worker.id == 2) { // Use the second worker only for CronJobs, to never block traffic on the site
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
     mongoose.connect(mongoUri, { useNewUrlParser: true, auto_reconnect: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
@@ -36,8 +38,6 @@ if (cluster.isMaster) {
   } else {
     const app = express();
     const server = http.createServer(app);
-    
-    dotenv.config({ path: path.join(__dirname, '.env') });
 
     i18n.configure({
       locales:['tr', 'en'],
