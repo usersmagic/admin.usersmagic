@@ -110,7 +110,7 @@ TargetSchema.statics.updateTargetStatus = function (id, data, callback) {
 TargetSchema.statics.approveTarget = function (id, data, callback) {
   // Gets an id and updates the Target with the given id as {status: 'approved'} and {price: data.price}. Returns an error if it exists
 
-  if (!id || !validator.isMongoId(id.toString()) || !data || !data.price || !Number.isInteger(data.price))
+  if (!id || !validator.isMongoId(id.toString()) || !data || !Number.isInteger(data.price))
     return callback('bad_request');
 
   const Target = this;
