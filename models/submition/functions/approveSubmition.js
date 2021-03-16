@@ -7,9 +7,7 @@ const Target = require('../../target/Target');
 const User = require('../../user/User');
 
 module.exports = (submition, callback) => {
-  Project.findOneByFields({
-    _id: submition.campaign_id
-  }, {}, (err, project) => {
+  Project.findProjectById(submition.campaign_id, (err, project) => {
     if (err || !project) return callback('project_not_found');
 
     Target.findById(mongoose.Types.ObjectId(submition.target_id), (err, target) => {

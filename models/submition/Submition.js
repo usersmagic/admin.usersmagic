@@ -4,6 +4,7 @@ const validator = require('validator');
 
 const Campaign = require('../campaign/Campaign');
 const Target = require('../target/Target');
+const Project = require('../project/Project');
 const User = require('../user/User');
 
 const approveSubmition = require('./functions/approveSubmition');
@@ -372,24 +373,79 @@ SubmitionSchema.statics.terminatePassedDueSubmitions = function (callback) {
             $pull: { joined_users_list: submition.user_id.toString() },
             $inc: { submition_limit: 1 }
           }, {}, (err, target) => {
-            if (err || !target) {
-              Submition
+            if (err || !target)
+              return Submition
                 .findByIdAndDelete(
                   mongoose.Types.ObjectId(submition._id.toString()),
                   err => next(err ? 'database_error' : null)
                 );
-            } else {
-              Submition
-                .findByIdAndUpdate(mongoose.Types.ObjectId(submition._id.toString()), {$set: {
-                  status: 'timeout'
-                }}, err => next(err ? 'database_error' : null));
-            }
+
+            Submition
+              .findByIdAndUpdate(mongoose.Types.ObjectId(submition._id.toString()), {$set: {
+                status: 'timeout'
+              }}, err => next(err ? 'database_error' : null));
           });
         },
         err => {
           if (err) return callback(err);
 
           return callback(null);
+        }
+      );
+    })
+    .catch(err => callback('database_error'));
+};
+
+SubmitionSchema.statics.getWaitingSubmitions = function (callback) {
+  // Get the oldest 100 waiting submitions, with campaign and user fields replaced with respective information
+  // Return an array of submition or an error if it exists
+
+  const Submition = this;
+
+  Submition
+    .find({
+      status: 'waiting',
+      is_private_campaign: true
+    })
+    .sort({ _id: 1 })
+    .limit(100)
+    .then(submitions => {
+      async.timesSeries(
+        submitions.length,
+        (time, next) => {
+          const submition = submitions[time];
+
+          Target.findById(mongoose.Types.ObjectId(submition.target_id.toString()), (err, target) => {
+            if (err || !target)
+              return Submition
+                .findByIdAndDelete(
+                  mongoose.Types.ObjectId(submition._id.toString()),
+                  err => next(err ? 'database_error' : null)
+                );
+            
+            Project.findProjectById(target.project_id, (err, project) => {
+              if (err || !project) return next('database_error');
+
+              User.getUserById(submition.user_id, (err, user) => {
+                if (err || !user)
+                  return Submition
+                    .findByIdAndDelete(
+                      mongoose.Types.ObjectId(submition._id.toString()),
+                      err => next(err ? 'database_error' : null)
+                    );
+
+                submition.campaign = project;
+                submition.user = user;
+
+                return next(null, submition);
+              });
+            });
+          });
+        },
+        (err, submitions) => {
+          if (err) return callback(err);
+
+          return callback(null, submitions);
         }
       );
     })

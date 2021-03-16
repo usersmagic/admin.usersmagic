@@ -233,5 +233,12 @@
 	"Enter the calculated price for the Target": "Enter the calculated price for the Target",
 	"Target Size": "Target Size",
 	"Total Credit Payed": "Total Credit Payed",
-	"The calculated price for target": "The calculated price for target"
+	"The calculated price for target": "The calculated price for target",
+	"See submitions to projects made by companies": "See submitions to projects made by companies",
+	"You see the oldest 100 submitions to any projects. Please approve or reject any submitions to see more": "You see the oldest 100 submitions to any projects. Please approve or reject any submitions to see more",
+	"Reason to reject": "Reason to reject",
+	"Project Name": "Project Name",
+	"Project": "Project",
+	"User": "User",
+	"Answers": "Answers"
 }

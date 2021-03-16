@@ -37,6 +37,12 @@ module.exports = (req, res) => {
       details: res.__('See and approve filter groups of Company\'s'),
       role: 'sales_team',
       link: '/targets'
+    },
+    {
+      name: res.__('Submitions'),
+      details: res.__('See submitions to projects made by companies'),
+      role: 'sales_team',
+      link: '/submitions'
     }
   ];
 

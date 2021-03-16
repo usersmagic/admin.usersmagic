@@ -1,0 +1,46 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Submitions')
+        span.header-subtitle= __('You see the oldest 100 submitions to any projects. Please approve or reject any submitions to see more')
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each submition in submitions
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= submition.campaign.name
+              span.each-item-subtitle (#{submition.user.email})
+              input.general-input-with-border.reject-submition-input(type="text" placeholder=__('Reason to reject'))
+              i.fas.fa-chevron-down.each-submition-details-button
+              i.fas.fa-times-circle.each-submition-reject-button(id=submition._id.toString())
+              i.fas.fa-check-circle.each-submition-approve-button(id=submition._id.toString())
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Project')}:
+              .each-item-content-item.each-item-content-item-inner
+                span.each-item-content-item-header #{__('Name')}:
+                span.each-item-content-item-value #{submition.campaign.name}
+              .each-item-content-item.each-item-content-item-inner
+                span.each-item-content-item-header #{__('Description')}:
+                span.each-item-content-item-value #{submition.campaign.description}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('User')}:
+              .each-item-content-item.each-item-content-item-inner
+                span.each-item-content-item-header #{__('Email')}:
+                span.each-item-content-item-value #{submition.user.email}
+              .each-item-content-item.each-item-content-item-inner
+                span.each-item-content-item-header #{__('Name')}:
+                span.each-item-content-item-value #{submition.user.name}
+              .each-item-content-item.each-item-content-item-inner
+                span.each-item-content-item-header #{__('Phone')}:
+                span.each-item-content-item-value #{submition.user.phone}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Answers')}:
+              each question, i in submition.campaign.questions
+                .each-item-content-item.each-item-content-item-inner
+                  span.each-item-content-item-header #{__('Question')} #{i+1}:
+                  span.each-item-content-item-value #{question.text}
+                .each-item-content-item.each-item-content-item-inner-inner
+                  span.each-item-content-item-value #{submition.answers[question._id]}

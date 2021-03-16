@@ -1,0 +1,8 @@
+.reject-submition-input {
+  width: 250px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  margin: 0px !important;
+  margin-right: 5px !important;
+  padding: 2px 5px !important;
+}
