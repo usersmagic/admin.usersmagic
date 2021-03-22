@@ -58,11 +58,6 @@ const ProjectSchema = new Schema({
       details: '',
       image: ''
     }
-  },
-  country: {
-    // The country of testers that the Project will use
-    type: String,
-    default: null
   }
 });
 

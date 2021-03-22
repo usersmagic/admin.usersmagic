@@ -59,6 +59,7 @@ if (cluster.isMaster) {
     const rootAdminRouteController = require('./routes/rootAdminRoute');
     const submitionsRouteController = require('./routes/submitionsRoute');
     const targetsRouteController = require('./routes/targetsRoute');
+    const templatesRouteController = require('./routes/templatesRoute');
     const waitlistRouteController = require('./routes/waitlistRoute');
     
     app.set('views', path.join(__dirname, 'views'));
@@ -103,6 +104,7 @@ if (cluster.isMaster) {
     app.use('/root_admin', rootAdminRouteController);
     app.use('/submitions', submitionsRouteController);
     app.use('/targets', targetsRouteController);
+    app.use('/templates', templatesRouteController);
     app.use('/waitlist', waitlistRouteController);
     
     server.listen(PORT, () => {
