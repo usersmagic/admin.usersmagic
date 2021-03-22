@@ -11,6 +11,25 @@ block content
           .each-item-wrapper
             .each-item-header
               span.each-item-title= payment.payment_number
-              span.each-item-subtitle (#{payment.created_at})
-              i.fas.fa-check.each-submition-approve-button(id=payment._id.toString())
-              
+              span.each-item-subtitle (#{payment.amount}#{payment.currency})
+              i.fas.fa-chevron-down.each-payment-details-button
+              i.fas.fa-check.each-payment-approve-button(id=payment._id.toString())
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Name')}:
+                span.each-item-content-item-value #{payment.user.name}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Email')}:
+                span.each-item-content-item-value #{payment.user.email}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Phone')}:
+                span.each-item-content-item-value #{payment.user.phone}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Amount')}:
+                span.each-item-content-item-value #{payment.amount}#{payment.currency}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Payment Number')}:
+                span.each-item-content-item-value #{payment.payment_number}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Created At')}:
+                span.each-item-content-item-value #{payment.created_at}
