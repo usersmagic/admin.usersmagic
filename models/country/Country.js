@@ -122,7 +122,6 @@ CountrySchema.statics.createCountry = function (data, callback) {
   });
 };
 
-
 CountrySchema.statics.getCountriesByFilters = function (filters, callback) {
   // Finds and returns all countries sorted by their name
 
