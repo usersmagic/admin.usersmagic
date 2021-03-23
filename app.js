@@ -1,6 +1,6 @@
 const bodyParser = require('body-parser');
 const cluster = require('cluster');
-const cookieParser = require('cookie-parser');  
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const express = require('express');
 const favicon = require('serve-favicon');
@@ -31,7 +31,7 @@ if (cluster.isMaster) {
   if (cluster.worker.id == 2) { // Use the second worker only for CronJobs, to never block traffic on the site
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
     mongoose.connect(mongoUri, { useNewUrlParser: true, auto_reconnect: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
-  
+
     CronJob.start(() => {
       console.log(`Cron jobs are started for every minute on worker ${cluster.worker.id}`);
     });
@@ -45,14 +45,15 @@ if (cluster.isMaster) {
       queryParameter: 'lang',
       defaultLocale: 'en'
     });
-    
+
     const PORT = process.env.PORT || 3000;
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
-    
+
     const indexRouteController = require('./routes/indexRoute');
     const authRouteController = require('./routes/authRoute');
     const campaignsRouteController = require('./routes/campaignsRoute');
     const countriesRouteController = require('./routes/countriesRoute');
+    const companiesRouteController = require('./routes/companiesRoute');
     const imageRouteController = require('./routes/imageRoute');
     const paymentsRouteController = require('./routes/paymentsRoute');
     const questionsRouteController = require('./routes/questionsRoute');
@@ -60,19 +61,19 @@ if (cluster.isMaster) {
     const submitionsRouteController = require('./routes/submitionsRoute');
     const targetsRouteController = require('./routes/targetsRoute');
     const waitlistRouteController = require('./routes/waitlistRoute');
-    
+
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'pug');
-    
+
     mongoose.connect(mongoUri, { useNewUrlParser: true, auto_reconnect: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
-    
+
     app.use(express.static(path.join(__dirname, 'public')));
-    
+
     app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-    
+
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-    
+
     const sessionOptions = session({
       secret: process.env.SESSION_SECRET,
       resave: false,
@@ -84,7 +85,7 @@ if (cluster.isMaster) {
         mongooseConnection: mongoose.connection
       })
     });
-    
+
     app.use(sessionOptions);
     app.use(cookieParser());
     app.use(i18n.init);
@@ -92,11 +93,12 @@ if (cluster.isMaster) {
       req.query = (req.query && typeof req.query == 'object' ? req.query : {});
       next();
     });
-  
+
     app.use('/', indexRouteController);
     app.use('/auth', authRouteController);
     app.use('/campaigns', campaignsRouteController);
     app.use('/countries', countriesRouteController);
+    app.use('/companies', companiesRouteController);
     app.use('/image', imageRouteController);
     app.use('/payments', paymentsRouteController);
     app.use('/questions', questionsRouteController);
@@ -104,7 +106,7 @@ if (cluster.isMaster) {
     app.use('/submitions', submitionsRouteController);
     app.use('/targets', targetsRouteController);
     app.use('/waitlist', waitlistRouteController);
-    
+
     server.listen(PORT, () => {
       console.log(`Server is on port ${PORT} as Worker ${cluster.worker.id} running @ process ${cluster.worker.process.pid}`);
     });

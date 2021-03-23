@@ -78,4 +78,22 @@ CompanySchema.statics.findCompanyById = function (id, callback) {
   });
 }
 
+CompanySchema.statics.findCompaniesByFilter = function(req, callback) {
+
+  const Company = this;
+
+  if(req.body == null) {
+    Company
+      .find({})
+      .sort({ company_name: -1})
+      .then(companies => callback(null, companies))
+      .catch(err => callback('database_error'))
+  }
+  //default case is returning all companies
+  else{
+    
+
+  }
+}
+
 module.exports = mongoose.model('Company', CompanySchema);

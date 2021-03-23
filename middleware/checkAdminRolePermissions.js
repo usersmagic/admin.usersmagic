@@ -29,6 +29,10 @@ const menus = [
   {
     role: 'sales_team',
     link: '/submitions'
+  },
+  {
+    role: 'organisation_manager',
+    link: '/companies'
   }
 ];
 
