@@ -78,21 +78,44 @@ CompanySchema.statics.findCompanyById = function (id, callback) {
   });
 }
 
-CompanySchema.statics.findCompaniesByFilter = function(req, callback) {
+CompanySchema.statics.findCompaniesByFilter = function(query, callback) {
 
   const Company = this;
 
-  if(req.body == null) {
+  //get filters from request
+  const email = query["email"];
+  const company_name = query["company_name"];
+
+  //default case: no filters --> return all companies
+  if(email == undefined || company_name == undefined) {
     Company
       .find({})
-      .sort({ company_name: -1})
+      .sort({ company_name: 1})
       .then(companies => callback(null, companies))
       .catch(err => callback('database_error'))
   }
-  //default case is returning all companies
   else{
-    
+    let filters = [];
+    //prepearing parameters for mongo
+    if (email) {
+        const email_mongo = {email: {$regex: email, $options:"i"}}
+        filters.push(email_mongo);
+    };
+    if (company_name){
+        const company_name_mongo = {company_name: {$regex: company_name, $options:"i"}};
+        filters.push(company_name_mongo);
+    }
+    if(filters.length == 0) callback('bad_request');
 
+    const query = {$or : filters};
+
+    Company
+      .find(query)
+      .sort({ company_name: 1})
+      .then(companies => {
+        callback(null, companies)
+      })
+      .catch(err => callback('database_error'))
   }
 }
 

@@ -19,11 +19,11 @@ block content
               i.fas.fa-chevron-right
           .filter-questions-wrapper
             .filter-each-item-wrapper
-              input.general-input-with-border#filter-name-input(type="text" value=filters.name placeholder=__('Name'))
+              input.general-input-with-border#filter-companyname-input(type="text" placeholder=__('Company Name'))
             .filter-each-item-wrapper
-              input.general-input-with-border#filter-text-input(type="text" value=filters.text placeholder=__('Text'))
+              input.general-input-with-border#filter-email-input(type="text" placeholder=__('E-mail'))
             .filter-each-item-wrapper
-              .general-seablue-border-button.filter-questions-button
+              .general-seablue-border-button.filter-companies-button
                 span= __('Filter Questions')
         each company in companies
           .each-item-wrapper
