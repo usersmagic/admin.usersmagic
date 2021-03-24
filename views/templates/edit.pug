@@ -1,0 +1,73 @@
+extends ../partials/head
+block content
+  input.display-none#json-template-data(type="text" value=JSON.stringify(template))
+  //- .general-beta-text beta version 1.0.0
+  .all-content-header-wrapper
+    span.header-title #{template.name} #{__('Template')}
+    .header-buttons-wrapper
+      .general-seablue-button.finish-template-button
+        span Publish
+  .all-content-inner-wrapper
+    .blocks-wrapper
+      .welcome-block-wrapper
+        img.each-type-image(src="/res/images/block_icons/welcome.png" alt="usersmagic welcome block")
+        span.each-type-title Welcome Screen
+      .custom-blocks-wrapper.drag-and-drop-wrapper
+        each question in template.questions_update
+          .each-block-wrapper(id=question._id)
+            img.each-type-image(src="/res/images/block_icons/" + question.type + ".png" alt="usersmagic " + question.type)
+            .each-block-text-wrapper
+              span.each-type-title.custom-block-type-title= question.text.length ? question.text : 'New question'
+              span.each-type-subtitle= question.type.split('_').map(each => each.substr(0, 1).toUpperCase() + each.substr(1, each.length)).join(' ')
+      .add-block-wrapper
+        .add-block-button
+          .add-block-plus-wrapper
+            i.fas.fa-plus
+          .add-block-text-wrapper
+            span.add-block-title Add a Block
+            span.add-block-subtitle Rating, question...
+        .each-add-block-wrapper#yes_no
+          img.each-type-image(src="/res/images/block_icons/yes_no.png" alt="usersmagic yes/no")
+          .each-block-text-wrapper
+            span.each-type-title.custom-block-type-title Yes/No
+            span.each-type-subtitle Pick the next type you need
+        .each-add-block-wrapper#multiple_choice
+          img.each-type-image(src="/res/images/block_icons/multiple_choice.png" alt="usersmagic multiple choice")
+          .each-block-text-wrapper
+            span.each-type-title.custom-block-type-title Multiple Choice
+            span.each-type-subtitle Pick the next type you need
+        .each-add-block-wrapper#opinion_scale
+          img.each-type-image(src="/res/images/block_icons/opinion_scale.png" alt="usersmagic opinion scale")
+          .each-block-text-wrapper
+            span.each-type-title.custom-block-type-title Opinion Scale
+            span.each-type-subtitle Pick the next type you need
+        .each-add-block-wrapper#open_answer
+          img.each-type-image(src="/res/images/block_icons/open_answer.png" alt="usersmagic open answer")
+          .each-block-text-wrapper
+            span.each-type-title.custom-block-type-title Open Answer
+            span.each-type-subtitle Pick the next type you need
+    .block-settings-wrapper
+      .block-settings-header-wrapper
+        img.each-type-image(src="/res/images/block_icons/welcome.png" alt="usersmagic welcome")
+        span.each-type-title.settings-title Welcome Screen
+        span.required-text(style="display: none;") Required
+        .general-slider-button.required-slide-button(style="display: none;")
+          div
+        i.far.fa-clone.settings-duplicate-button(style="display: none;")
+        i.far.fa-trash-alt.settings-delete-button(style="display: none;")
+      .block-settings-content-wrapper
+        span.general-input-title Opening Message
+          span.general-input-required-sign *
+        input.general-input-with-border(type="text" name="opening" value=template.welcome_screen_update.opening placeholder="Welcome your testers")
+        span.general-input-title Task & Details
+          span.general-input-required-sign *
+        textarea.general-input-with-border-long(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")= template.welcome_screen_update.details
+        span.general-input-title Image
+        label.general-choose-image-input-text
+          span Add an image to explain the task. This is optional.
+          input.display-none#image-input(type="file" accept="image/*")
+    .block-preview-wrapper
+      .block-preview-header
+        span.block-preview-header-title Preview
+        span.block-preview-header-subtitle Preview automatically reloads after auto save
+      .block-preview-content

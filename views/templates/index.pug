@@ -1,0 +1,85 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= __('Templates')
+        span.header-subtitle= __('See, create and edit templates')
+      .header-create-new-content-item-button.general-seablue-button(style="width: 250px; margin: 0px")
+          span= __('Create Template')
+    .all-content-wrapper
+      .all-content-inner-wrapper
+        each template in templates
+          .each-item-wrapper
+            .each-item-header
+              span.each-item-title= template.name
+              span.each-item-subtitle (#{template.title})
+              i.fas.fa-chevron-down.each-template-details-button
+              i.fas.fa-arrow-up.each-template-order-button(id=template._id)
+              i.fas.fa-cog.each-template-edit-button(id=template._id)
+              if template.paused
+                i.fas.fa-play.each-template-start-button(id=template._id)
+              else
+                i.fas.fa-pause.each-template-stop-button(id=template._id)
+            .each-item-content
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Title')}:
+                span.each-item-content-item-value #{template.title}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Name')}:
+                span.each-item-content-item-value #{template.name}
+              .each-item-content-item
+                span.each-item-content-item-header #{'Image'}:
+                a.each-item-content-item-value(href=template.image target="_blank") #{__('Click to See')}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Description')}:
+                span.each-item-content-item-value #{template.description}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Countries')}:
+                span.each-item-content-item-value #{template.countries.map(country => __(country)).join(' ')}
+              .each-item-content-item
+                span.each-item-content-item-header #{__('Question Number')}:
+                span.each-item-content-item-value #{template.questions.length}
+      form.all-content-create-new-content-item-wrapper
+        span.content-go-back-button.header-create-new-content-item-back-button < #{__('Back')}
+        span.general-input-title= __('Template Title')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter a title for your template. The templates will be showed under their title')
+        input.general-input-with-border#title-input(type="text" placeholder=__('Name'))
+        span.general-input-title= __('Template Name')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter the name of the template. Please use a short name for a better UI design')
+        input.general-input-with-border#name-input(type="text" placeholder=__('Name'))
+        span.general-input-title= __('Template Image')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Please choose an image to show as template logo. An image with closer width and height values would result in a better UI')
+        .general-image-input-outer-wrapper
+          input.display-none#image-input(type="text" name="image")
+          label.general-choose-image-input-text
+            span.general-choose-image-text= __('Choose')
+            span.general-uploading-image-text #{__('Uploading')}...
+            input.display-none.upload-image-input(type="file" accept="image/*")
+          .general-image-input-wrapper(style="display: none")
+            .general-image-input-wrapper-image
+              img
+            i.fas.fa-times.delete-image-button
+        span.general-input-title= __('Template Description')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter a description that will explain the template to companies')
+        input.general-input-with-border#description-input(type="text" placeholder=__('Description'))
+        span.general-input-title= __('Countries')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Check the countries that the template will be seen for')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#countries-input(type="text" value="[]")
+          each country in countries
+            .general-each-checked-input
+              .general-each-checked-input-icon
+                i.fas.fa-check 
+              span(id=country.alpha2_code)= __(country.name)
+        .general-input-error-line
+          span#bad-request-error= __('You seem to have a missing field. Please check that you have entered all the required fields')
+        .general-input-error-line
+          span#unknown-error= __('An unknown error occured, please try again later')
+        button.general-seablue-button(style="width: 250px;")
+          span= __('Create')

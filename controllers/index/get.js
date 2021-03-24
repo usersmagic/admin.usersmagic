@@ -43,6 +43,12 @@ module.exports = (req, res) => {
       details: res.__('See submitions to projects made by companies'),
       role: 'sales_team',
       link: '/submitions'
+    },
+    {
+      name: res.__('Templates'),
+      details: res.__('See, create and edit templates'),
+      role: 'product_head',
+      link: '/templates'
     }
   ];
 

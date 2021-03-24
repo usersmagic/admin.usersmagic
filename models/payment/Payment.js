@@ -34,9 +34,9 @@ PaymentSchema.statics.findLatestPayments = function (callback) {
   Payment
     .find({})
     .sort({ _id: 1 })
-    .limit(100)
+    .limit(50)
     .then(payments => {
-      async.timesSeries(
+      async.times(
         payments.length,
         (time, next) => {
           const payment = payments[time];
