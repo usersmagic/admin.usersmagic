@@ -78,45 +78,51 @@ CompanySchema.statics.findCompanyById = function (id, callback) {
   });
 }
 
-CompanySchema.statics.findCompaniesByFilter = function(query, callback) {
+CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callback) {
+  // findCompaniesByFilter returns a tuple of objects with Companies, Filters and Options or an error if it exists
+  // _filters: company_name (string), email (string)
+  // _options: limit(int), skip(int)
 
   const Company = this;
 
-  //get filters from request
-  const email = query["email"];
-  const company_name = query["company_name"];
+  const filters = {
+    $and: []
+  }, filter_values = [], options = {
+    limit: _options.limit && !isNan(parseInt(_options.limit)) ? parseInt(_options.limit) : 100,
+    skip:  _options.skip && !isNaN(parseInt(_options.skip)) ? parseInt(_options.skip) : 0
+  };
 
-  //default case: no filters --> return all companies
-  if(email == undefined || company_name == undefined) {
-    Company
-      .find({})
-      .sort({ company_name: 1})
-      .then(companies => callback(null, companies))
-      .catch(err => callback('database_error'))
+  if(_filters && _filters.company_name && typeof _filters.company_name == 'string'){
+    filters.$and.push({
+      company_name: {
+        $regex: _filters.company_name.trim(),
+        $options: 'i'
+      }
+    })
+    filter_values.company_name = _filters.company_name.trim();
   }
-  else{
-    let filters = [];
-    //prepearing parameters for mongo
-    if (email) {
-        const email_mongo = {email: {$regex: email, $options:"i"}}
-        filters.push(email_mongo);
-    };
-    if (company_name){
-        const company_name_mongo = {company_name: {$regex: company_name, $options:"i"}};
-        filters.push(company_name_mongo);
-    }
-    if(filters.length == 0) callback('bad_request');
 
-    const query = {$or : filters};
-
-    Company
-      .find(query)
-      .sort({ company_name: 1})
-      .then(companies => {
-        callback(null, companies)
-      })
-      .catch(err => callback('database_error'))
+  if(_filters && _filters.email && typeof _filters.email == 'string'){
+    filters.$and.push({
+      email: {
+        $regex: _filters.email.trim(),
+        $options: 'i'
+      }
+    })
+    filter_values.email = _filters.email.trim();
   }
+
+  Company
+    .find(filters.$and.length ? filters: {})
+    .sort({ company_name: 1})
+    .skip(options.skip)
+    .limit(options.limit)
+    .then(companies => callback(null, {
+      companies,
+      filters: filter_values,
+      options
+    }))
+    .catch(err => callback('database_error'))
 }
 
 module.exports = mongoose.model('Company', CompanySchema);

@@ -14,14 +14,14 @@ block content
             .change-page-button.previous-page-button(href=`/companies?` style=("cursor: not-allowed")) 
               i.fas.fa-chevron-left
               span #{__('Previous')}
-            .change-page-button.next-page-button(href=`/companies?` style=("cursor: not-allowed")) 
+            .change-page-button.next-page-button(href=`/companies?` style=(options.skip ? "" : "cursor: not-allowed")) 
               span #{__('Next')}
               i.fas.fa-chevron-right
           .filter-questions-wrapper
             .filter-each-item-wrapper
-              input.general-input-with-border#filter-companyname-input(type="text" placeholder=__('Company Name'))
+              input.general-input-with-border#filter-companyname-input(type="text" value=filters.company_name placeholder=__('Company Name'))
             .filter-each-item-wrapper
-              input.general-input-with-border#filter-email-input(type="text" placeholder=__('E-mail'))
+              input.general-input-with-border#filter-email-input(type="text" value=filters.email placeholder=__('E-mail'))
             .filter-each-item-wrapper
               .general-seablue-border-button.filter-companies-button
                 span= __('Filter Questions')

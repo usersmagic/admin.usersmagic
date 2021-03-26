@@ -3,8 +3,8 @@ const Company = require('../../../models/company/Company');
 module.exports = (req, res) =>{
 
   //default return all companies
-  Company.findCompaniesByFilter(req.query, (err, companies) =>{
-    if(err) {
+  Company.findCompaniesByFilter(req.query, req.query, (err, data) =>{
+    if(err || data == 'database_error') {
       console.log(err)
       res.redirect('/companies');
     }
@@ -19,7 +19,9 @@ module.exports = (req, res) =>{
       }
     },
     admin: req.session.admin,
-    companies
+    companies: data.companies,
+    filters: data.filters,
+    options: data.options
   })
 })
 }
