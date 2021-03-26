@@ -2,6 +2,8 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const validateQuestions = require('./functions/validateQuestions');
+
 const Schema = mongoose.Schema;
 
 const TemplateSchema = new Schema({
@@ -39,7 +41,7 @@ const TemplateSchema = new Schema({
     maxlength: 1000
   },
   description: {
-    // Description of the project,
+    // Description of the template,
     type: String,
     default: '',
     maxlength: 1000
@@ -49,7 +51,21 @@ const TemplateSchema = new Schema({
     type: Array,
     default: []
   },
+  questions_update: {
+    // Questions array, save updated field
+    type: Array,
+    default: []
+  },
   welcome_screen: {
+    // Content of the welcome_screen
+    type: Object,
+    default: {
+      opening: '',
+      details: '',
+      image: ''
+    }
+  },
+  welcome_screen_update: {
     // Content of the welcome_screen
     type: Object,
     default: {
@@ -206,6 +222,124 @@ TemplateSchema.statics.getTemplateById = function (id, callback) {
     if (!template) return callback('document_not_found');
 
     return callback(null, template);
+  });
+};
+
+TemplateSchema.statics.updateTemplate = function (id, data, callback) {
+  // Update template fields, returns error if it exists or null
+
+  const Template = this;
+
+  if (!id || !validator.isMongoId(id.toString()) || !data)
+    return callback('bad_request');
+
+  Template.findById(mongoose.Types.ObjectId(id), (err, template) => {
+    if (err || !template) return callback('document_not_found');
+
+    const newData = {
+      name: data.name || template.name,
+      image: data.image || template.image,
+      description: data.description || template.description,
+      welcome_screen_update: data.welcome_screen ? {
+        opening: data.welcome_screen.opening ? data.welcome_screen.opening : template.welcome_screen.opening,
+        details: data.welcome_screen.details ? data.welcome_screen.details : template.welcome_screen.details,
+        image: data.welcome_screen.image ? data.welcome_screen.image : template.welcome_screen.image,
+      } : template.welcome_screen_update
+    };
+
+    if (!newData.name.length)
+      newData.name = template.name;
+
+    Template.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: newData}, err => {
+      if (err) return callback(err);
+      
+      return callback(null);
+    });
+  });
+};
+
+TemplateSchema.statics.saveQuestions = function (id, data, callback) {
+  // Save data.questions on the document with the given id, returns error if it exists
+  
+  const Template = this;
+
+  if (!id || !validator.isMongoId(id.toString()) || !data)
+    return callback('bad_request');
+
+  validateQuestions(data.questions, {}, (err, questions) => {
+    if (err) return callback(err);
+
+    Template.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+      questions_update: questions
+    }}, (err, template) => {
+      if (err || !template) return callback(err);
+
+      return callback(null);
+    });
+  });
+};
+
+TemplateSchema.statics.finishTemplate = function (id, callback) {
+  // Set the questions and welcome screen fields of the template to the update of the respective field
+  // Return an error if it exists
+
+  const Template = this;
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  Template.findById(mongoose.Types.ObjectId(id), (err, template) => {
+    if (err || !template)
+      return callback('document_not_found');
+
+    validateQuestions(template.questions_update, {final: true}, (err, questions) => {
+      if (err) return callback('document_validation');
+
+      Template.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+        questions,
+        welcome_screen: template.welcome_screen_update
+      }}, err => {
+        if (err) return callback('unknown_error');
+
+        return callback(null);
+      });
+    });
+  });
+};
+
+TemplateSchema.statics.startTemplate = function (id, callback) {
+  // Set the field paused: false of the template with the given id
+  // Return an error if exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Template = this;
+
+  Template.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+    paused: false
+  }}, err => {
+    if (err) return callback('database_error');
+
+    return callback();
+  });
+};
+
+TemplateSchema.statics.stopTemplate = function (id, callback) {
+  // Set the field paused: false of the template with the given id
+  // Return an error if exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Template = this;
+
+  Template.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+    paused: true
+  }}, err => {
+    if (err) return callback('database_error');
+
+    return callback();
   });
 };
 
