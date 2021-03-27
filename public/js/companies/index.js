@@ -22,10 +22,20 @@ window.onload = () => {
     }
 
     if(event.target.classList.contains('password-reset') || event.target.parentNode.classList.contains('password-reset')){
-      const company_name = event.target.attributes.value.nodeValue;
+      const company = event.target.attributes.value.nodeValue.split(",");
+      const company_id = company[0];
+
+      //if company_name contains ','
+      let company_name = "";
+      let parameters_length = company.length;
+
+      for(var i = 1; i < company.length; i++){
+        company_name = company[i];
+      }
+
       const new_pass = document.getElementsByClassName("general-input-with-border "+company_name)[0];
       const data = {
-        company_name: company_name,
+        company_id: company_id,
         password: new_pass.value,
       }
       serverRequest(`/companies/reset`, 'POST',data, res =>{

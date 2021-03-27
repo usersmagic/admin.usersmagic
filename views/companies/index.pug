@@ -31,9 +31,10 @@ block content
               span.each-item-title= company.company_name 
               span.each-item-subtitle= company.country
               .password-reset-wrapper
+                input.display-none#options(type="text" value=`${company._id},${company.company_name}`)
                 input.general-input-with-border#password-reset(class=company.company_name type="password" placeholder=__('New Password'))
-                .general-seablue-border-button.password-reset#password-reset-button(value=company.company_name)
-                  span(value=company.company_name)=__('Change Password')
+                .general-seablue-border-button.password-reset#password-reset-button(value=`${company._id},${company.company_name}`)
+                  span(value=`${company._id},${company.company_name}`)=__('Change Password')
               i.fas.fa-chevron-down.each-company-details-button
             .each-item-content
               .each-item-content-item

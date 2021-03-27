@@ -138,20 +138,23 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
     .catch(err => callback('database_error'))
 }
 
-CompanySchema.statics.resetPassword = function (name, password, callback) {
+CompanySchema.statics.resetPassword = function (id, password, callback) {
   const Company = this;
 
-  Company.getCompanyByName(name, (err, company) => {
-    console.log(company)
+  if(!id || !validator.isMongoId(id.toString()) || password.length < 6)
+    return callback('bad_request')
+
+  Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) =>{
     if(err || !company) return callback('document_not_found');
+
     company.password = password;
 
     company.save(err => {
-      if (err) return callback(err);
-      return null;
+      if(err) return callback(err);
+
+      return callback(null);
     })
   })
-  return callback("Test error")
 }
 
 module.exports = mongoose.model('Company', CompanySchema);
