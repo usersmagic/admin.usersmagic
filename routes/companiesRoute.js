@@ -6,11 +6,20 @@ const checkAdminRolePermissions = require('../middleware/checkAdminRolePermissio
 
 const indexGetController = require('../controllers/companies/index/get');
 
+const resetPostController = require('../controllers/companies/reset/post');
+
 router.get(
   '/',
     isLoggedIn,
     checkAdminRolePermissions,
     indexGetController
+);
+
+router.post(
+  '/reset',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    resetPostController
 );
 
 module.exports = router;

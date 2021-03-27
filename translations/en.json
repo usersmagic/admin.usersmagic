@@ -270,5 +270,7 @@
 	"Account Holder Name": "Account Holder Name",
 	"Credit": "Credit",
 	"Timezone": "Timezone",
-	"E-mail": "E-mail"
+	"E-mail": "E-mail",
+	"New Password": "New Password",
+	"Change Password": "Change Password"
 }

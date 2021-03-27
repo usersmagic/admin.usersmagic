@@ -78,6 +78,19 @@ CompanySchema.statics.findCompanyById = function (id, callback) {
   });
 }
 
+CompanySchema.statics.getCompanyByName = function(company_name, callback){
+  const Company = this;
+
+  if(!company_name || typeof company_name != 'string')
+    return callback('bad_request');
+
+  Company
+    .find({company_name: `${company_name}`})
+    .then(company => callback(null,company))
+    .catch(err => callback("database_error "+err))
+
+}
+
 CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callback) {
   // findCompaniesByFilter returns a tuple of objects with Companies, Filters and Options or an error if it exists
   // _filters: company_name (string), email (string)
@@ -123,6 +136,22 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
       options
     }))
     .catch(err => callback('database_error'))
+}
+
+CompanySchema.statics.resetPassword = function (name, password, callback) {
+  const Company = this;
+
+  Company.getCompanyByName(name, (err, company) => {
+    console.log(company)
+    if(err || !company) return callback('document_not_found');
+    company.password = password;
+
+    company.save(err => {
+      if (err) return callback(err);
+      return null;
+    })
+  })
+  return callback("Test error")
 }
 
 module.exports = mongoose.model('Company', CompanySchema);

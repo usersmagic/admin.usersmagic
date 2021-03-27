@@ -20,5 +20,20 @@ window.onload = () => {
 
       window.location = `/companies?company_name=${company_name}&email=${email}`;
     }
+
+    if(event.target.classList.contains('password-reset') || event.target.parentNode.classList.contains('password-reset')){
+      const company_name = event.target.attributes.value.nodeValue;
+      const new_pass = document.getElementsByClassName("general-input-with-border "+company_name)[0];
+      const data = {
+        company_name: company_name,
+        password: new_pass.value,
+      }
+      serverRequest(`/companies/reset`, 'POST',data, res =>{
+        if (!res.success) return alert('An error occured. Error message: '+res.error);
+        alert('Password changed successfully');
+        new_pass.value = "";
+      })
+
+    }
   });
 }

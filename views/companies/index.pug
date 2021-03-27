@@ -30,8 +30,11 @@ block content
             .each-item-header
               span.each-item-title= company.company_name 
               span.each-item-subtitle= company.country
+              .password-reset-wrapper
+                input.general-input-with-border#password-reset(class=company.company_name type="password" placeholder=__('New Password'))
+                .general-seablue-border-button.password-reset#password-reset-button(value=company.company_name)
+                  span(value=company.company_name)=__('Change Password')
               i.fas.fa-chevron-down.each-company-details-button
-              i.fas.fa-cog.each-country-edit-button(id=company._id)
             .each-item-content
               .each-item-content-item
                 span.each-item-content-item-header #{__('Name')}:
