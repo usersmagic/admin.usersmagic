@@ -5,8 +5,9 @@ const isLoggedIn = require('../middleware/isLoggedIn');
 const checkAdminRolePermissions = require('../middleware/checkAdminRolePermissions');
 
 const indexGetController = require('../controllers/companies/index/get');
+const editGetController = require('../controllers/companies/edit/get');
 
-const resetPostController = require('../controllers/companies/reset/post');
+const updatePostController = require('../controllers/companies/update/post');
 
 router.get(
   '/',
@@ -15,11 +16,18 @@ router.get(
     indexGetController
 );
 
-router.post(
-  '/reset',
+router.get(
+  '/edit',
     isLoggedIn,
     checkAdminRolePermissions,
-    resetPostController
+    editGetController
+);
+
+router.post(
+  '/update',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    updatePostController
 );
 
 module.exports = router;

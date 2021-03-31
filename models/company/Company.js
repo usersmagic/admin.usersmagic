@@ -34,6 +34,10 @@ const CompanySchema = new Schema({
     default: null,
     maxlenght: 1000
   },
+  credit: {
+    type: Number,
+    default: 0
+  },
   phone_number: {
     // Phone number of the company
     type: String,
@@ -138,22 +142,33 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
     .catch(err => callback('database_error'))
 }
 
-CompanySchema.statics.resetPassword = function (id, password, callback) {
+CompanySchema.statics.updateCompany = function (id, data, callback) {
   const Company = this;
 
-  if(!id || !validator.isMongoId(id.toString()) || password.length < 6)
+
+  if(!id || !validator.isMongoId(id.toString()) || (data.password && data.password != "" && data.password.length < 6))
     return callback('bad_request')
 
   Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) =>{
     if(err || !company) return callback('document_not_found');
+    if(typeof data.credit_amount == "number"){
 
-    company.password = password;
+      Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()),{$set: {
+        credit: data.credit_amount
+      }}, err =>{
+        if(err) return callback('document_not_found');
+      })
+    }
 
+    if(data.password && data.password != ""){
+    company.password = data.password;
     company.save(err => {
       if(err) return callback(err);
 
       return callback(null);
     })
+  }
+    return callback(null);
   })
 }
 

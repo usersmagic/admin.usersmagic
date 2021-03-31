@@ -12,6 +12,7 @@ module.exports = (company, callback) => {
       profile_photo: company.profile_photo,
       phone_number: company.phone_number,
       account_holder_name: company.account_holder_name,
+      credit: company.credit,
       timezone: company.timezone
     });
   } else {
@@ -27,6 +28,7 @@ module.exports = (company, callback) => {
         profile_photo: company.profile_photo,
         phone_number: company.phone_number,
         account_holder_name: company.account_holder_name,
+        credit: company.credit,
         timezone: company.timezone
       });
     });
