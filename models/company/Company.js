@@ -34,6 +34,10 @@ const CompanySchema = new Schema({
     default: null,
     maxlenght: 1000
   },
+  credit: {
+    type: Number,
+    default: 0
+  },
   phone_number: {
     // Phone number of the company
     type: String,
@@ -76,6 +80,96 @@ CompanySchema.statics.findCompanyById = function (id, callback) {
       return callback(null, company);
     });
   });
+}
+
+CompanySchema.statics.getCompanyByName = function(company_name, callback){
+  const Company = this;
+
+  if(!company_name || typeof company_name != 'string')
+    return callback('bad_request');
+
+  Company
+    .find({company_name: `${company_name}`})
+    .then(company => callback(null,company))
+    .catch(err => callback("database_error "+err))
+
+}
+
+CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callback) {
+  // findCompaniesByFilter returns a tuple of objects with Companies, Filters and Options or an error if it exists
+  // _filters: company_name (string), email (string)
+  // _options: limit(int), skip(int)
+
+  const Company = this;
+
+  const filters = {
+    $and: []
+  }, filter_values = [], options = {
+    limit: _options.limit && !isNan(parseInt(_options.limit)) ? parseInt(_options.limit) : 100,
+    skip:  _options.skip && !isNaN(parseInt(_options.skip)) ? parseInt(_options.skip) : 0
+  };
+
+  if(_filters && _filters.company_name && typeof _filters.company_name == 'string'){
+    filters.$and.push({
+      company_name: {
+        $regex: _filters.company_name.trim(),
+        $options: 'i'
+      }
+    })
+    filter_values.company_name = _filters.company_name.trim();
+  }
+
+  if(_filters && _filters.email && typeof _filters.email == 'string'){
+    filters.$and.push({
+      email: {
+        $regex: _filters.email.trim(),
+        $options: 'i'
+      }
+    })
+    filter_values.email = _filters.email.trim();
+  }
+
+  Company
+    .find(filters.$and.length ? filters: {})
+    .sort({ company_name: 1})
+    .skip(options.skip)
+    .limit(options.limit)
+    .then(companies => callback(null, {
+      companies,
+      filters: filter_values,
+      options
+    }))
+    .catch(err => callback('database_error'))
+}
+
+CompanySchema.statics.updateCompany = function (id, data, callback) {
+  const Company = this;
+
+
+  if(!id || !validator.isMongoId(id.toString()) || (data.password && data.password != "" && data.password.length < 6))
+    return callback('bad_request')
+
+  Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) =>{
+    if(err || !company) return callback('document_not_found');
+    if(typeof data.credit_amount == "number"){
+
+      Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()),{$set: {
+        credit: data.credit_amount
+      }}, err =>{
+        if(err) return callback('document_not_found');
+      })
+    }
+
+    if(data.password && data.password != ""){
+    company.password = data.password;
+    company.save(err => {
+      if(err) return callback(err);
+
+      return callback(null);
+    })
+  }
+    return callback(null);
+  })
 }
 
 module.exports = mongoose.model('Company', CompanySchema);

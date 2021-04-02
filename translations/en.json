@@ -260,5 +260,17 @@
 	"Germany": "Germany",
 	"Amount": "Amount",
 	"Payment Number": "Payment Number",
-	"Created At": "Created At"
+	"Created At": "Created At",
+	"Liberland": "Liberland",
+	"Both": "Both",
+	"Companies": "Companies",
+	"Edit Company Accounts": "Edit Company Accounts",
+	"You can edit and filter companies": "You can edit and filter companies",
+	"Phone Number": "Phone Number",
+	"Account Holder Name": "Account Holder Name",
+	"Credit": "Credit",
+	"Timezone": "Timezone",
+	"E-mail": "E-mail",
+	"New Password": "New Password",
+	"Change Password": "Change Password"
 }
