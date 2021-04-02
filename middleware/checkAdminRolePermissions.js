@@ -31,10 +31,6 @@ const menus = [
     link: '/submitions'
   },
   {
-    role: 'organisation_manager',
-    link: '/companies'
-  },
-  {
     role: 'product_head',
     link: '/templates'
   }
