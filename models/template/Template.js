@@ -164,7 +164,7 @@ TemplateSchema.statics.getTemplates = function (filter, callback) {
     filters.country = filter.country;
 
   Template
-    .find({})
+    .find(filters)
     .sort({ order: 1 })
     .then(templates => callback(null, templates))
     .catch(err => callback('database_error'));
@@ -182,7 +182,7 @@ TemplateSchema.statics.getTemplatesGroupedByTitle = function (filter, callback) 
     filters.country = filter.country;
 
   Template
-    .find({})
+    .find(filters)
     .sort({ order: 1 })
     .then(templates => {
       const grouped_templates = {};
@@ -207,7 +207,7 @@ TemplateSchema.statics.getTemplatesGroupedByTitle = function (filter, callback) 
       )
     })
     .catch(err => callback('database_error'));
-}
+};
 
 TemplateSchema.statics.getTemplateById = function (id, callback) {
   // Find and return the Template with the given id, or an error if it exists
