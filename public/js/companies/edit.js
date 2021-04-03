@@ -7,30 +7,22 @@ window.onload = (event) => {
     event.preventDefault();
     badRequestError.style.display = unknownError.style.display = 'none';
 
-    const password = document.getElementById("new-password").value;
-    const credit_amount = parseInt(document.getElementById("credit-amount").value);
-    const company_id = document.getElementById("company_id").value
+    const password = document.getElementById('new-password').value;
+    const credit_amount = parseInt(document.getElementById('credit-amount').value);
+    const company_id = document.getElementById('company_id').value
 
-    const data = {
-      company_id: company_id,
-      password: password,
-      credit_amount: credit_amount
-    }
-
-    let status; // 0 not decided -> do nothing, 1 password changed -> send new password, 2 password not changed -> do nothing
-
-    if (password == "") status = 1; // if password == "" -> true, the database doesnt update empty password
+    let wait_for_password = false;
 
     // check if the password is intentionally entered --> for example firefox sometimes generates automatically a password,
     // to prevent that behaviour, I wrote such a if condition
     // if no password given, password will not be changed
-    if(password != ""){
-      status = 0;
+    if(password != ''){
+      wait_for_password = true;
 
       if(password.length < 6){
         createConfirm({
-          title: "Please enter a password longer than 6 characters",
-          text: "",
+          title: 'Please enter a password longer than 6 characters',
+          text: '',
           accept: 'Continue'
         });
       }
@@ -40,39 +32,39 @@ window.onload = (event) => {
           text: "If you don't want to change password, please delete Company Password field",
           accept: 'Continue',
           reject: 'Cancel'
-        }, res =>{
-          if(res) status = 1;
-          else status = 2;
-        })
+        }, res => {
+        wait_for_password = false;
+        if(res) {
+          const data = {
+            company_id: company_id,
+            password: password
+          }
+          sendUpdateData(data, "Password");
+        }
+      });
       }
     }
 
     if(isNaN(credit_amount)){
-      status = 2;
       createConfirm({
-        title: "Please give a number as Credit Amount",
-        text: "",
+        title: 'Please give a number as Credit Amount',
+        text: '',
         accept: 'Continue'
       });
     }
-      const interval = setInterval(() => {
+    else {
+      setInterval(() => {
+        if(!wait_for_password){
+          wait_for_password = true; //this for preventing infinite loop
 
-        if(status == 1){
-          serverRequest(`/companies/update`, 'POST',data, res =>{
-            status = 2;
-            if (!res.success) return alert('An error occured. Error message: '+res.error);
-            createConfirm({
-              title: 'Changes made successfully',
-              text: '',
-              accept: 'Continue'
-            }, () =>{
-              window.location.reload();
-            });
-          })
+          const data = {
+            company_id: company_id,
+            credit_amount: credit_amount
+          }
+          sendUpdateData(data, "Credit Amount");
         }
-        if(status == 2) window.location.reload();
-      }, 1000)
-
+      }, 1000);
+    }
 }
 
   document.addEventListener('click', event => {
@@ -80,4 +72,17 @@ window.onload = (event) => {
       window.history.back();
     }
   });
+}
+
+function sendUpdateData(data, updatedField){
+
+  serverRequest(`/companies/update`, 'POST',data, res =>{
+    if (!res.success) return alert('An error occured. Error message: '+res.error);
+    createConfirm({
+      title: 'This field updated successfully: '+updatedField,
+      text: '',
+      accept: 'Continue'
+    },() => window.location.reload());
+  })
+
 }

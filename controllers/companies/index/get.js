@@ -4,7 +4,7 @@ module.exports = (req, res) =>{
 
   //default return all companies
   Company.findCompaniesByFilter(req.query, req.query, (err, data) =>{
-    if(err || data == 'database_error') {
+    if(err) {
       console.log(err)
       res.redirect('/companies');
     }
@@ -22,6 +22,6 @@ module.exports = (req, res) =>{
     companies: data.companies,
     filters: data.filters,
     options: data.options
-  })
-})
+  });
+});
 }

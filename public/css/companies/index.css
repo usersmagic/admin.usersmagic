@@ -40,15 +40,6 @@
   margin-bottom: -20px;
 }
 
-#password-reset{
-  width: 200px;
-}
-
-#password-reset-button{
-  width: 125px;
-  margin-left: 15px;
-}
-
 .password-reset-wrapper{
   width: 400px;
   flex: 1;
