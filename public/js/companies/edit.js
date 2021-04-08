@@ -11,6 +11,14 @@ window.onload = (event) => {
     const credit_amount = parseInt(document.getElementById('credit-amount').value);
     const company_id = document.getElementById('company_id').value
 
+    const data = {
+      company_id: company_id,
+      password: "",
+      credit_amount: credit_amount
+    }
+
+    let return_message = "Credit Amount";
+
     let wait_for_password = false;
 
     // check if the password is intentionally entered --> for example firefox sometimes generates automatically a password,
@@ -35,11 +43,8 @@ window.onload = (event) => {
         }, res => {
         wait_for_password = false;
         if(res) {
-          const data = {
-            company_id: company_id,
-            password: password
-          }
-          sendUpdateData(data, "Password");
+          data.password = password;
+          return_message = "Password and Credit Amount"
         }
       });
       }
@@ -57,11 +62,7 @@ window.onload = (event) => {
         if(!wait_for_password){
           wait_for_password = true; //this for preventing infinite loop
 
-          const data = {
-            company_id: company_id,
-            credit_amount: credit_amount
-          }
-          sendUpdateData(data, "Credit Amount");
+          sendUpdateData(data, return_message);
         }
       }, 1000);
     }
