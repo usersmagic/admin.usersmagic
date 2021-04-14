@@ -90,7 +90,7 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
   const Company = this;
 
   const filters = {
-    $and: []
+    $and: [],
   }, filter_values = [], options = {
     limit: _options.limit && !isNan(parseInt(_options.limit)) ? parseInt(_options.limit) : 100,
     skip:  _options.skip && !isNaN(parseInt(_options.skip)) ? parseInt(_options.skip) : 0
@@ -116,25 +116,24 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
     filter_values.email = _filters.email.trim();
   }
 
+  filters.$and.push(
+      {company_name: {$ne: null} },
+      {company_name: {$ne: ""} },
+      {country: {$ne: null} },
+      {country: {$ne: ""} }
+    )
+
   Company
     .find(filters.$and.length ? filters: {})
     .sort({ company_name: 1})
     .skip(options.skip)
     .limit(options.limit)
-    .then(companies => {
-      let completed_companies = [];
-
-      for (company of companies){
-        if (company.company_name && company.company_name.length && company.country && company.country.length)
-          completed_companies.push(company)
-      }
-
-      callback(null, {
-        companies: completed_companies,
+    .then(companies => callback(null, {
+        companies,
         filters: filter_values,
         options
-      });
-    })
+      })
+    )
     .catch(err => callback('database_error'))
 }
 
