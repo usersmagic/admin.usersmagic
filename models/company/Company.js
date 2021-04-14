@@ -116,16 +116,30 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
     filter_values.email = _filters.email.trim();
   }
 
+  // callback(null, {
+    // companies,
+    // filters: filter_values,
+    // options
+  //)}
   Company
     .find(filters.$and.length ? filters: {})
     .sort({ company_name: 1})
     .skip(options.skip)
     .limit(options.limit)
-    .then(companies => callback(null, {
-      companies,
-      filters: filter_values,
-      options
-    }))
+    .then(companies => {
+      let completed_companies = [];
+
+      for (company of companies){
+        if (company.company_name && company.company_name.length && company.country && company.country.length)
+          completed_companies.push(company)
+      }
+
+      callback(null, {
+        companies: completed_companies,
+        filters: filter_values,
+        options
+      });
+    })
     .catch(err => callback('database_error'))
 }
 
