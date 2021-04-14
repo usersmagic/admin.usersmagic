@@ -116,11 +116,6 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
     filter_values.email = _filters.email.trim();
   }
 
-  // callback(null, {
-    // companies,
-    // filters: filter_values,
-    // options
-  //)}
   Company
     .find(filters.$and.length ? filters: {})
     .sort({ company_name: 1})
