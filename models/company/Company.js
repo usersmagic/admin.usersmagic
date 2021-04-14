@@ -90,7 +90,7 @@ CompanySchema.statics.findCompaniesByFilter = function(_filters, _options, callb
   const Company = this;
 
   const filters = {
-    $and: [],
+    $and: []
   }, filter_values = [], options = {
     limit: _options.limit && !isNan(parseInt(_options.limit)) ? parseInt(_options.limit) : 100,
     skip:  _options.skip && !isNaN(parseInt(_options.skip)) ? parseInt(_options.skip) : 0
