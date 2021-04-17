@@ -272,7 +272,13 @@ SubmitionSchema.statics.rejectSubmitionById = function (id, data, callback) {
   }}, {new: true}, (err, submition) => {
     if (err) return callback(err);
 
-    return callback(null, submition);
+    Target.findByIdAndUpdate(mongoose.Types.ObjectId(submition.target_id.toString()), {$inc: {
+      submition_limit: 1
+    }}, err => {
+      if (err) return callback(err);
+
+      return callback(null, submition);
+    });
   });
 };
 
