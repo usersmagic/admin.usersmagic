@@ -17,7 +17,8 @@ function createEachContentItem (title, value, wrapper) {
 
 function createAllContentInnerWrapperContent (users) {
   const allContentInnerWrapper = document.querySelector('.all-content-inner-wrapper');
-  allContentInnerWrapper.innerHTML = '';
+  while (allContentInnerWrapper.childElementCount > 1)
+    allContentInnerWrapper.childNodes[1].remove();
 
   users.forEach(user => {
     const eachItemWrapper = document.createElement('div');
@@ -117,6 +118,7 @@ window.onload = () => {
       if (!res.success) {
         return unknownError.style.display = 'block';
       } else {
+        document.querySelector('.user-email-content').innerHTML = res.users.map(user => user.email).join(' ');
         createAllContentInnerWrapperContent(res.users);
         if (document.querySelector('.all-content-inner-wrapper'))
           document.querySelector('.all-content-inner-wrapper').style.display = 'flex';
@@ -149,6 +151,38 @@ window.onload = () => {
             return event.target.parentNode.parentNode.remove();
           });
         };
+      });
+    }
+
+    if (event.target.classList.contains('see-emails-button') || event.target.parentNode.classList.contains('see-emails-button')) {
+      document.querySelector('.email-list-outer-wrapper').style.display = 'flex';
+    }
+
+    if (event.target.classList.contains('email-list-outer-wrapper')) {
+      document.querySelector('.email-list-outer-wrapper').style.display = 'none';
+    }
+
+    if (event.target.classList.contains('approve-all-button') || event.target.parentNode.classList.contains('approve-all-button')) {
+      createConfirm({
+        title: 'Are you sure you want to approve all the users in this page?',
+        text: 'You cannot take this action back. Please wait a few seconds for the process to complete.',
+        accept: 'Continue',
+        reject: 'Cancel'
+      }, res => {
+        if (res) {
+          const removeButtons = document.querySelectorAll('.each-user-remove-button');
+          const removeIds = [];
+          for (let i = 0; i < removeButtons.length; i++)
+            removeIds.push(removeButtons[i].id);
+          
+          serverRequest('/waitlist/remove', 'POST', {
+            users: removeIds
+          }, res => {
+            if (!res.success && res.error)
+              return alert(res.error);
+            return window.location.reload();
+          });
+        }
       });
     }
   });

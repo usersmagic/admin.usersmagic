@@ -8,6 +8,7 @@ const indexGetController = require('../controllers/waitlist/index/get');
 const removeGetController = require('../controllers/waitlist/remove/get');
 
 const indexPostController = require('../controllers/waitlist/index/post');
+const removePostController = require('../controllers/waitlist/remove/post');
 
 router.get(
   '/',
@@ -27,6 +28,12 @@ router.post(
     isLoggedIn,
     checkAdminRolePermissions,
     indexPostController
+);
+router.post(
+  '/remove',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    removePostController
 );
 
 module.exports = router;

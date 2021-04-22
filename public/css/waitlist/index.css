@@ -1,0 +1,49 @@
+.email-list-outer-wrapper {
+  position: absolute;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.user-email-list-wrapper {
+  width: 600px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: rgb(254, 254, 254);
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  cursor: initial;
+}
+.user-email-list-title {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.user-email-content {
+  color: rgb(78, 75, 102);
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.waitlist-options-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.see-emails-button {
+  width: 150px !important;
+  margin: 0px !important;
+}
+.approve-all-button {
+  width: 150px !important;
+  margin: 0px !important;
+  margin-left: 20px !important;
+}

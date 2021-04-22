@@ -49,7 +49,6 @@ function createConfirm (data, callback) {
       confirmOuterWrapper.remove();
       callback(false);
     } else if (event.target.classList.contains('general-confirm-yes-button') && event.target.parentNode.parentNode.parentNode.id == id) {
-      sCofirmWrapperEnded = true;
       confirmOuterWrapper.remove();
       callback(true);
     }
