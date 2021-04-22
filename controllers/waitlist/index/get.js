@@ -15,7 +15,7 @@ module.exports = (req, res) => {
         title: res.__('Waitlist'),
         includes: {
           external: {
-            css: ['general', 'auth', 'inputs', 'buttons', 'fontawesome', 'content', 'confirm'],
+            css: ['page', 'general', 'auth', 'inputs', 'buttons', 'fontawesome', 'content', 'confirm'],
             js: ['page', 'serverRequest', 'contentListeners', 'inputListeners', 'confirm']
           }
         },

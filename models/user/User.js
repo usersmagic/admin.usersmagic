@@ -32,6 +32,11 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false
   },
+  confirmed: {
+    // If the user confirmed his/her mail address, cannot use the app without confirming
+    type: Boolean,
+    default: false
+  },
   country: {
     // Country of the user, required while completing account
     type: String,
@@ -150,6 +155,75 @@ UserSchema.statics.getUsersByFilters = function (filters, callback) {
     .catch(err => callback('database_error'));
 };
 
+UserSchema.statics.getUsersByFiltersAndOptions = function (filters, options, callback) {
+  // Find all users matching filters and options
+  // Allowed filters: completed, confirmed, name, email, city, town, countries, genders, max_birth_year, min_birth_year
+  // Allowed options: skip, limit. Default to 0 and 100, respectively. Limit can be max 100
+
+  const _filters = { $and: [] };
+  const _options = {
+    skip: 0, limit: 100
+  };
+
+  if (!filters)
+    filters = {};
+
+  if (!options)
+    options = {};
+
+  if (filters.completed)
+    _filters.$and.push({ completed: true });
+
+  if (filters.confirmed)
+    _filters.$and.push({ confirmed: true });
+
+  if (filters.name && typeof filters.name == 'string')
+    _filters.$and.push({ name: { $regex: filters.name.trim().toString() } });
+
+  if (filters.email && validator.isEmail(filters.email.trim()))
+    _filters.$and.push({ email: filters.email.trim() });
+
+  if (filters.city && typeof filters.city == 'string')
+    _filters.$and.push({ city: { $regex: filters.city.trim().toString() } });
+
+  if (filters.town && typeof filters.town == 'string')
+    _filters.$and.push({ town: { $regex: filters.town.trim().toString() } });
+
+  if (filters.countries && Array.isArray(filters.countries))
+    _filters.$and.push({ country: { $in: filters.countries } });
+
+  if (filters.genders && Array.isArray(filters.genders))
+    _filters.$and.push({ gender: { $in: filters.genders } });
+
+  if (filters.max_birth_year && Number.isInteger(filters.max_birth_year))
+    _filters.$and.push({ birth_year: { $lte: filters.max_birth_year } });
+
+  if (filters.min_birth_year && Number.isInteger(filters.min_birth_year))
+    _filters.$and.push({ birth_year: { $gte: filters.min_birth_year } });
+
+  if (options.skip && !isNaN(parseInt(options.skip)))
+    _options.skip = parseInt(options.skip);
+
+  if (options.limit && !isNaN(parseInt(options.limit)) && parseInt(options.limit) < 100)
+    _options.limit = parseInt(options.limit);
+
+  const User = this;
+
+  User
+    .find(_filters.$and.length ? _filters : {})
+    .skip(_options.skip)
+    .limit(_options.limit)
+    .sort({ _id: 1 })
+    .then(users => {
+      async.timesSeries(
+        users.length,
+        (time, next) => getUser(users[time], (err, user) => next(err, user)),
+        (err, users) => callback(err, users)
+      );
+    })
+    .catch(err => callback('database_error'));
+};
+
 UserSchema.statics.getWaitlistUsers = function (filters, options, callback) {
   // Find all users matching filters and options that are on waitlist
   // Allowed filters: name, email, city, town, countries, genders, max_birth_year, min_birth_year
@@ -232,6 +306,35 @@ UserSchema.statics.removeUserFromWaitlist = function (id, callback) {
 
     return callback(null);
   });
+};
+
+UserSchema.statics.removeMultipleUsersFromWaitlist = function (data, callback) {
+  // Find and update on_waitlist status of the users with the given ids on the users field, return an error if it exists
+
+  if (!data || !data.users || !Array.isArray(data.users) || data.users.find(id => !validator.isMongoId(id.toString())))
+    return callback('bad_request');
+
+  const User = this;
+
+  async.timesSeries(
+    data.users.length,
+    (time, next) => {
+      const id = data.users[time].toString();
+      User.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+        on_waitlist: false
+      }}, (err, user) => {
+        if (err) return next('database_error');
+        if (!user) return next('document_not_found');
+    
+        return next(null);
+      });
+    },
+    err => {
+      if (err) return callback(err);
+
+      return callback(null);
+    }
+  );
 };
 
 UserSchema.statics.getUserById = function (id, callback) {

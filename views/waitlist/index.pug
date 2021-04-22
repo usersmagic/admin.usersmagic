@@ -6,6 +6,10 @@ block content
   span.display-none#gender= __('Gender')
   span.display-none#phone= __('Phone')
   span.display-none#birth-year= __('Birth Year')
+  .email-list-outer-wrapper
+    .user-email-list-wrapper
+      span.user-email-list-title #{__('Email List')}:
+      span.user-email-content= users.map(user => user.email).join(' ')
   .all-wrapper
     .all-header-wrapper
       .header-title-wrapper
@@ -15,6 +19,11 @@ block content
           span= __('See Filters')
     .all-content-wrapper
       .all-content-inner-wrapper
+        .waitlist-options-wrapper
+          .general-seablue-border-button.see-emails-button
+            span= __('See Emails')
+          .general-seablue-border-button.approve-all-button
+            span= __('Approve All')
         each user in users
           .each-item-wrapper
             .each-item-header
