@@ -1,0 +1,39 @@
+extends ../partials/head
+block content
+  input.display-none#template-id(type="text" value=template._id.toString())
+  .all-wrapper
+    .all-header-wrapper
+      .header-title-wrapper
+        span.header-title= template.name
+        span.header-subtitle= __('Edit this template')
+    .all-content-wrapper
+      form.all-content-create-new-content-item-wrapper(style="display: flex")
+        a.content-go-back-button(href="/templates" style="text-decoration: none;") < #{__('Back')}
+        span.general-input-title= __('Template Title')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter a title for your template. The templates will be showed under their title')
+        input.general-input-with-border#title-input(type="text" placeholder=__('Name') value=template.title)
+        span.general-input-title= __('Template Name')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter the name of the template. Please use a short name for a better UI design')
+        input.general-input-with-border#name-input(type="text" placeholder=__('Name') value=template.name)
+        span.general-input-title= __('Template Description')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Enter a description that will explain the template to companies')
+        input.general-input-with-border#description-input(type="text" placeholder=__('Description') value=template.description)
+        span.general-input-title= __('Countries')
+          span.general-input-required-sign *
+        span.general-input-explanation-text= __('Check the countries that the template will be seen for')
+        .general-checked-input-wrapper
+          input.general-checked-input-value#countries-input(type="text" value=JSON.stringify(template.countries))
+          each country in countries
+            .general-each-checked-input
+              .general-each-checked-input-icon(style=(template.countries.includes(country.alpha2_code) ? "background-color: rgb(46, 197, 206); border: none" : ""))
+                i.fas.fa-check 
+              span(id=country.alpha2_code)= __(country.name)
+        .general-input-error-line
+          span#bad-request-error= __('You seem to have a missing field. Please check that you have entered all the required fields for your question type.')
+        .general-input-error-line
+          span#unknown-error= __('An unknown error occured, please try again later')
+        button.general-seablue-button(style="width: 250px;")
+          span= __('Save')

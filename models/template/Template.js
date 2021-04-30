@@ -233,13 +233,17 @@ TemplateSchema.statics.updateTemplate = function (id, data, callback) {
   if (!id || !validator.isMongoId(id.toString()) || !data)
     return callback('bad_request');
 
+  if ((data.title && !data.title.length) || (data.name && !data.name.length) || (data.description && !data.description.length) || (data.countries && !data.countries.length))
+    return callback('bad_request');
+
   Template.findById(mongoose.Types.ObjectId(id), (err, template) => {
     if (err || !template) return callback('document_not_found');
 
     const newData = {
+      title: data.title || template.title,
       name: data.name || template.name,
-      image: data.image || template.image,
       description: data.description || template.description,
+      countries: data.countries || template.countries,
       welcome_screen_update: data.welcome_screen ? {
         opening: data.welcome_screen.opening ? data.welcome_screen.opening : template.welcome_screen.opening,
         details: data.welcome_screen.details ? data.welcome_screen.details : template.welcome_screen.details,
@@ -247,11 +251,8 @@ TemplateSchema.statics.updateTemplate = function (id, data, callback) {
       } : template.welcome_screen_update
     };
 
-    if (!newData.name.length)
-      newData.name = template.name;
-
     Template.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: newData}, err => {
-      if (err) return callback(err);
+      if (err) return callback('database_error');
       
       return callback(null);
     });
