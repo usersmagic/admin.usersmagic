@@ -151,6 +151,14 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
             country: target.country
           });
 
+          filters.$and.push({
+            completed: true
+          });
+
+          filters.$and.push({
+            on_waitlist: false
+          });
+
           // Do not repeat users in users_list array
           filters.$and.push({
             _id: {
