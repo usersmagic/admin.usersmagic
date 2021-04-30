@@ -56,6 +56,10 @@ window.onload = () => {
       window.location = '/templates/edit?id=' + event.target.id;
     }
 
+    if (event.target.classList.contains('each-template-update-button')) {
+      window.location = '/templates/update?id=' + event.target.id;
+    }
+
     if (event.target.classList.contains('each-template-start-button')) {
       serverRequest('/templates/start?id=' + event.target.id, 'GET', {}, res => {
         if (!res.success)

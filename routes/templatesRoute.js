@@ -10,9 +10,11 @@ const editIndexGetController = require('../controllers/templates/edit/index/get'
 const orderGetController = require('../controllers/templates/order/get');
 const startGetController = require('../controllers/templates/start/get');
 const stopGetController = require('../controllers/templates/stop/get');
+const updateGetController = require('../controllers/templates/update/get');
 
 const createPostController = require('../controllers/templates/create/post');
 const editSavePostController = require('../controllers/templates/edit/save/post');
+const updatePostController = require('../controllers/templates/update/post');
 
 router.get(
   '/',
@@ -50,6 +52,12 @@ router.get(
     checkAdminRolePermissions,
     stopGetController
 );
+router.get(
+  '/update',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    updateGetController
+);
 
 router.post(
   '/create',
@@ -62,6 +70,12 @@ router.post(
     isLoggedIn,
     checkAdminRolePermissions,
     editSavePostController
+);
+router.post(
+  '/update',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    updatePostController
 );
 
 module.exports = router;
