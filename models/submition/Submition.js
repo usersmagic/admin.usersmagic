@@ -256,6 +256,69 @@ SubmitionSchema.statics.approveCampaignSubmitionById = function (id, callback) {
   });
 };
 
+SubmitionSchema.statics.approveAllCampaignSubmitionById = function (data, callback) {
+  // Finds and updates status of submition with the given ids list in data as 'approved', returns an error if exists
+  // Can be used for Campaign submitions
+
+  if (!data || !data.ids || !Array.isArray(data.ids) || data.ids.find(id => !validator.isMongoId(id.toString())))
+    return callback('bad_request');
+
+  const Submition = this;
+
+  async.timesSeries(
+    data.ids.length,
+    (time, next) => {
+      const id = data.ids[time];
+
+      Submition.findById(mongoose.Types.ObjectId(id.toString()), (err, submition) => {
+        if (err || !submition) return next('document_not_found');
+    
+        Campaign.getCampaignById(submition.campaign_id, (err, campaign) => {
+          if (err) return next(err);
+    
+          User.getUserById(submition.user_id, (err, user) => {
+            if (err) return next(err);
+    
+            const information = user.information;
+    
+            Object.keys(submition.answers).forEach((id, index) => {
+              information[id] = Object.values(submition.answers)[index];
+            });
+      
+            User.updateUserById(submition.user_id, {
+              $set: {
+                information
+              },
+              $inc: {
+                credit: user.paid_campaigns.includes(submition.campaign_id) ? 0 : (campaign.is_free ? 0 : campaign.price)
+              },
+              $push: {
+                paid_campaigns: submition.campaign_id
+              }
+            }, err => {
+              if (err) return next(err);
+    
+              Submition.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+                status: 'approved',
+                ended_at: (new Date()).getTime()
+              }}, {}, err => {
+                if (err) return next('database_error');
+    
+                return next(null);
+              });
+            });
+          });
+        });
+      });
+    },
+    err => {
+      if (err) return callback(err);
+
+      return callback(null);
+    }
+  );
+};
+
 SubmitionSchema.statics.rejectSubmitionById = function (id, data, callback) {
   // Finds and updates status of submition with the given id as 'unapproved' and sets its reject_message to the given error, returns an error if it exists
   // Can be used for both Campaign and Project submitions
