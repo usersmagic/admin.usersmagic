@@ -13,6 +13,7 @@ const submitionsApproveGetController = require('../controllers/campaigns/submiti
 
 const createPostController = require('../controllers/campaigns/create/post');
 const submitionsRejectPostController = require('../controllers/campaigns/submitions/reject/post');
+const submitionsApprovePostController = require('../controllers/campaigns/submitions/approve/post');
 
 router.get(
   '/',
@@ -62,6 +63,12 @@ router.post(
     isLoggedIn,
     checkAdminRolePermissions,
     submitionsRejectPostController
+);
+router.post(
+  '/submitions/approve',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    submitionsApprovePostController
 );
 
 module.exports = router;
