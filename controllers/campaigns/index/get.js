@@ -12,7 +12,7 @@ module.exports = (req, res) => {
   
       return res.render('campaigns/index', {
         page: 'campaigns/index',
-        title: res.__('Questions'),
+        title: res.__('Campaigns'),
         includes: {
           external: {
             css: ['general', 'page', 'auth', 'inputs', 'buttons', 'fontawesome', 'content', 'confirm'],

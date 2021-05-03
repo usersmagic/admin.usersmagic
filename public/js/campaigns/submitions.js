@@ -1,4 +1,6 @@
 window.onload = () => {
+  const campaign_id = document.getElementById('campaign-id').value;
+
   document.addEventListener('click', event => {
     if (event.target.classList.contains('each-submition-details-button')) {
       if (event.target.parentNode.parentNode.offsetHeight == 50) {
@@ -50,7 +52,7 @@ window.onload = () => {
           for (let i = 0; i < approveButtons.length; i++)
             approveIds.push(approveButtons[i].id);
           
-          serverRequest('/campaigns/submitions/approve', 'POST', {
+          serverRequest('/campaigns/submitions/approve?id=' + campaign_id, 'POST', {
             ids: approveIds
           }, res => {
             if (!res.success && res.error)

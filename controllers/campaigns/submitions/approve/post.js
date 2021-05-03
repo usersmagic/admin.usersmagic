@@ -4,7 +4,7 @@
 const Submition = require('../../../../models/submition/Submition');
 
 module.exports = (req, res) => {
-  Submition.approveAllCampaignSubmitionById(req.body, err => {
+  Submition.approveAllCampaignSubmitionById(req.query.id, req.body, err => {
     if (err) {
       res.write(JSON.stringify({ success: false, error: err }));
       return res.end();

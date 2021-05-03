@@ -256,26 +256,26 @@ SubmitionSchema.statics.approveCampaignSubmitionById = function (id, callback) {
   });
 };
 
-SubmitionSchema.statics.approveAllCampaignSubmitionById = function (data, callback) {
+SubmitionSchema.statics.approveAllCampaignSubmitionById = function (campaign_id, data, callback) {
   // Finds and updates status of submition with the given ids list in data as 'approved', returns an error if exists
   // Can be used for Campaign submitions
 
-  if (!data || !data.ids || !Array.isArray(data.ids) || data.ids.find(id => !validator.isMongoId(id.toString())))
+  if (!campaign_id || !validator.isMongoId(campaign_id.toString()) || !data || !data.ids || !Array.isArray(data.ids) || data.ids.find(id => !validator.isMongoId(id.toString())))
     return callback('bad_request');
 
   const Submition = this;
 
-  async.timesSeries(
-    data.ids.length,
-    (time, next) => {
-      const id = data.ids[time];
+  Campaign.getCampaignById(mongoose.Types.ObjectId(campaign_id.toString()), (err, campaign) => {
+    if (err) return callback(err);
 
-      Submition.findById(mongoose.Types.ObjectId(id.toString()), (err, submition) => {
-        if (err || !submition) return next('document_not_found');
-    
-        Campaign.getCampaignById(submition.campaign_id, (err, campaign) => {
-          if (err) return next(err);
-    
+    async.timesSeries(
+      data.ids.length,
+      (time, next) => {
+        const id = data.ids[time];
+  
+        Submition.findById(mongoose.Types.ObjectId(id.toString()), (err, submition) => {
+          if (err || !submition) return next('document_not_found');
+      
           User.getUserById(submition.user_id, (err, user) => {
             if (err) return next(err);
     
@@ -308,15 +308,16 @@ SubmitionSchema.statics.approveAllCampaignSubmitionById = function (data, callba
               });
             });
           });
+          
         });
-      });
-    },
-    err => {
-      if (err) return callback(err);
-
-      return callback(null);
-    }
-  );
+      },
+      err => {
+        if (err) return callback(err);
+  
+        return callback(null);
+      }
+    );
+  });
 };
 
 SubmitionSchema.statics.rejectSubmitionById = function (id, data, callback) {
