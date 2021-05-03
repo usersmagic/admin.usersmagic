@@ -148,7 +148,7 @@ SubmitionSchema.statics.getSubmitionsByProjectId = function (data, callback) {
 
   const Submition = this;
   const page = (data.page && !isNaN(parseInt(data.page))) ? parseInt(data.page) : 0;
-  const limit = (data.limit && !isNaN(parseInt(data.limit))) ? parseInt(data.limit) : 100;
+  const limit = (data.limit && !isNaN(parseInt(data.limit))) ? parseInt(data.limit) : 20;
 
   Submition
     .find({
