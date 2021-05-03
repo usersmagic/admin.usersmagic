@@ -10,6 +10,9 @@ block content
         span.header-subtitle #{__('See the submitions in the campaign')}: #{campaign.name}
     .all-content-wrapper
       .all-content-inner-wrapper
+        .submition-options-wrapper
+          .general-seablue-border-button.approve-all-button
+            span= __('Approve All')
         each submition in submitions
           .each-item-wrapper
             .each-item-header

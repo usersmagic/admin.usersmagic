@@ -36,5 +36,29 @@ window.onload = () => {
         });
       }
     }
+
+    if (event.target.classList.contains('approve-all-button') || event.target.parentNode.classList.contains('approve-all-button')) {
+      createConfirm({
+        title: 'Are you sure you want to approve all the submitions in this page?',
+        text: 'You cannot take this action back. Please wait a few seconds for the process to complete.',
+        accept: 'Continue',
+        reject: 'Cancel'
+      }, res => {
+        if (res) {
+          const approveButtons = document.querySelectorAll('.each-submition-approve-button');
+          const approveIds = [];
+          for (let i = 0; i < approveButtons.length; i++)
+            approveIds.push(approveButtons[i].id);
+          
+          serverRequest('/campaigns/submitions/approve', 'POST', {
+            ids: approveIds
+          }, res => {
+            if (!res.success && res.error)
+              return alert(res.error);
+            return window.location.reload();
+          });
+        }
+      });
+    }
   });
 }
