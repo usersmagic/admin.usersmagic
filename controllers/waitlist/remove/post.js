@@ -5,6 +5,8 @@ const async = require('async');
 
 const User = require('../../../models/user/User');
 
+const sendMail = require('../../../utils/sendMail');
+
 module.exports = (req, res) => {
   User.removeMultipleUsersFromWaitlist(req.body, (err, users) => {
     if (err) {
