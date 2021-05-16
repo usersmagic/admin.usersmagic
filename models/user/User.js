@@ -9,6 +9,24 @@ const verifyPassword = require('./functions/verifyPassword');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+  priority_index: {
+    // A number describing User's priority while joining new campaigns
+    // Calculated as last_login_time + 24*60*60*1000 * campaign_value
+    type: Number,
+    default: 0
+  },
+  last_login_time: {
+    // The UNIX time the User last logged in to the system
+    // Update on every 5 mins, prevent overload on database
+    type: Number,
+    default: 0
+  },
+  campaign_value: {
+    // The value describing how manys campaigns user joined. Unit is days
+    // Increased/Decreased by 0.25
+    type: Number,
+    default: 0.25
+  },
   email: {
     // Email address of the user
     type: String,
@@ -20,7 +38,8 @@ const UserSchema = new Schema({
     // Password of the user, saved hashed
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6,
+    maxlength: 1000
   },
   agreement_approved: {
     // If user approved user agreement
@@ -36,6 +55,18 @@ const UserSchema = new Schema({
     // If the user confirmed his/her mail address, cannot use the app without confirming
     type: Boolean,
     default: false
+  },
+  closed: {
+    // The field showing if the account is closed
+    // Set completed, confirmed false and on_waitlist true for closed accounts
+    type: Boolean,
+    default: false
+  },
+  confirm_code: {
+    // A random generated code when the user is created. Secure and never sended to client side
+    type: String,
+    length: 20,
+    required: true
   },
   country: {
     // Country of the user, required while completing account
@@ -55,7 +86,7 @@ const UserSchema = new Schema({
     maxlength: 1000
   },
   gender: {
-    // Gender of the user, required while completing acount. Possible values: [male, female, other, not_specified]
+    // Gender of the user, required while completing account. Possible values: [male, female, other, not_specified]
     type: String,
     default: null,
     maxlength: 1000
@@ -93,9 +124,11 @@ const UserSchema = new Schema({
     default: []
   },
   payment_number: {
-    // PayPal or Papara number of the user, required before user asking for a payment
+    // PayPal (email)(Everywhere), Papara (number 10-digits)(TR) or Venmo (username)(US) info of the user, required before user asking for a payment
     type: String,
-    default: null
+    unique: true,
+    default: null,
+    sparse: true // Allow null documents
   },
   credit: {
     // The current credit of user, gained from campaigns or projects
@@ -287,11 +320,12 @@ UserSchema.statics.getWaitlistUsers = function (filters, options, callback) {
         (err, users) => callback(err, users)
       );
     })
-    .catch(err => {console.log(err);callback('database_error')});
+    .catch(err => callback('database_error'));
 };
 
 UserSchema.statics.removeUserFromWaitlist = function (id, callback) {
-  // Find and update on_waitlist status of the User with the given id, return an error if it exists
+  // Find and update on_waitlist status of the User with the given id
+  // Return the user or an error if it exists
 
   if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
@@ -304,12 +338,13 @@ UserSchema.statics.removeUserFromWaitlist = function (id, callback) {
     if (err) return callback('database_error');
     if (!user) return callback('document_not_found');
 
-    return callback(null);
+    return callback(null, user);
   });
 };
 
 UserSchema.statics.removeMultipleUsersFromWaitlist = function (data, callback) {
-  // Find and update on_waitlist status of the users with the given ids on the users field, return an error if it exists
+  // Find and update on_waitlist status of the users with the given ids on the users field
+  // Return an array of users or an error if it exists
 
   if (!data || !data.users || !Array.isArray(data.users) || data.users.find(id => !validator.isMongoId(id.toString())))
     return callback('bad_request');
@@ -326,13 +361,13 @@ UserSchema.statics.removeMultipleUsersFromWaitlist = function (data, callback) {
         if (err) return next('database_error');
         if (!user) return next('document_not_found');
     
-        return next(null);
+        return next(null, user);
       });
     },
-    err => {
+    (err, users) => {
       if (err) return callback(err);
 
-      return callback(null);
+      return callback(null, users);
     }
   );
 };
@@ -373,6 +408,43 @@ UserSchema.statics.updateUserById = function (id, update, callback) {
     // This function does not check if the given update is a valid MongoDB update object, so use try/catch block to avoid any error
     return callback('database_error');
   }
+};
+
+UserSchema.statics.increaseCampaignValue = function (id, callback) {
+  // Find the User with the given id and increase its campaign value by 0.25
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const User = this;
+
+  User.findById(mongoose.Types.ObjectId(id.toString()), (err, user) => {
+    if (err || !user) return callback('document_not_found');
+
+    const campaign_value = user.campaign_value ? user.campaign_value : 0.25, one_day = parseFloat(24 * 60 * 60 * 1000);
+
+    User.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+      priority_index: (user.last_login_time + one_day * (campaign_value + 0.25)),
+      campaign_value: campaign_value + 0.25
+    }}, err => {
+      if (err) return callback('database_error');
+
+      User.collection
+        .createIndex({
+          on_waitlist: 1,
+          gender: 1,
+          birth_year: 1,
+          country: 1,
+          city: 1,
+          town: 1,
+          information: 1,
+          priority_index: 1
+        })
+        .then(() => callback(null))
+        .catch(err => callback('indexing_error'));
+      });
+  });
 };
 
 module.exports = mongoose.model('User', UserSchema);
