@@ -1,5 +1,6 @@
 extends ../partials/head
 block content
+  input.display-none#companies(type="text" value=JSON.stringify(companies))
   input.display-none#filters(type="text" value=JSON.stringify(filters))
   input.display-none#options(type="text" value=JSON.stringify(options))
   .all-wrapper
@@ -11,10 +12,10 @@ block content
       .all-content-inner-wrapper
         .companies-page-wrapper
           .change-page-wrapper
-            .change-page-button.previous-page-button(href=`/companies?` style=("cursor: not-allowed")) 
+            .change-page-button.previous-page-button(href=`/companies?` style=(options.skip ? "" : "cursor: not-allowed")) 
               i.fas.fa-chevron-left
               span #{__('Previous')}
-            .change-page-button.next-page-button(href=`/companies?` style=(options.skip ? "" : "cursor: not-allowed")) 
+            .change-page-button.next-page-button(href=`/companies?` style=(companies.length == options.limit ? "" : "cursor: not-allowed")) 
               span #{__('Next')}
               i.fas.fa-chevron-right
           .filter-questions-wrapper
