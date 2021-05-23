@@ -34,6 +34,7 @@ function uploadImage (file, callback) {
         return callback(response.error);
 
       callback(null, response.url);
+      console.log(response.url);
     }
   };
 }
