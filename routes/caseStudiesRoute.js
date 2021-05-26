@@ -11,6 +11,7 @@ const editPostController = require("../controllers/case_studies/edit/post");
 const deletePostController = require("../controllers/case_studies/delete/post");
 const getAllGetController = require("../controllers/case_studies/getAll/get");
 const getSingleGetController = require("../controllers/case_studies/getSingle/get");
+const updateGetController = require("../controllers/case_studies/update/get");
 
 // Case Studies admin index route
 router.get(
@@ -25,6 +26,13 @@ router.get(
     isLoggedIn,
     checkAdminRolePermissions,
     getAllGetController
+)
+
+router.get(
+    "/update",
+    isLoggedIn,
+    checkAdminRolePermissions,
+    updateGetController
 )
 
 router.post(

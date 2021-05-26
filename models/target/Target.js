@@ -65,15 +65,10 @@ const TargetSchema = new Schema({
     type: Number,
     default: 0
   },
-  users_list: {
-    // List of ids from User model. The users in this list can join this target group
-    type: Array,
-    default: []
-  },
-  joined_users_list: {
-    // List of ids from User model. The users in this list have already joined the project, they cannot join one more time
-    type: Array,
-    default: []
+  approved_submition_count: {
+    // The number of approved Submitions under this Target
+    type: Number,
+    default: 0
   },
   price: {
     // The price that will be paid to each user
@@ -126,7 +121,7 @@ TargetSchema.statics.approveTarget = function (id, data, callback) {
 };
 
 TargetSchema.statics.updateTargetsUsersList = function (callback) {
-  // Finds all the targets that's status is approved, updates their users_list
+  // Finds all the targets that's status is approved, updates their user_list
 
   const Target = this;
 
@@ -142,6 +137,8 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
       targets.length,
       (time, next) => {
         const target = targets[time];
+        if (target.users_list.length > 2000)
+          return next(null);
 
         filtersArrayToSearchQuery(target.filters, (err, filters) => {
           if (err) return next(err);

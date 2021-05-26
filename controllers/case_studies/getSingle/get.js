@@ -2,9 +2,9 @@
 const CaseStudy = require("../../../models/caseStudy/casestudy");
 
 module.exports = async (req, res) => {
-    const companyName = req.body.company_name
+    const id = req.body._id
     try {
-        const caseStudy = await CaseStudy.findOne({ company_name: companyName })
+        const caseStudy = await CaseStudy.findOne({ _id: id })
         res.send(caseStudy);
     } catch (e) {
         res.status(404).send(e)

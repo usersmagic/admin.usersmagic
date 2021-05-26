@@ -3,11 +3,9 @@ const CaseStudy = require("../../../models/caseStudy/casestudy");
 
 module.exports = async (req, res) => {
     try {
-        const caseStudy = await CaseStudy.findOneAndUpdate({company_name: req.body.company_name}, {
-            company_logo: req.body.company_logo,
+        const caseStudy = await CaseStudy.findOneAndUpdate({_id: req.body.id}, {
             main_title: req.body.main_title,
             main_description: req.body.main_description,
-            main_company_image: req.body.main_company_image,
             company_name: req.body.company_name,
             company_location: req.body.company_location,
             company_industry: req.body.company_industry,
@@ -21,7 +19,6 @@ module.exports = async (req, res) => {
             company_personal_name: req.body.company_personal_name,
             company_personal_role: req.body.company_personal_role,
             company_personal_quote: req.body.company_personal_quote,
-            company_personal_image: req.body.company_personal_image,
             context_text: req.body.context_text,
             problem_text: req.body.problem_text,
             solution_text: req.body.solution_text,
