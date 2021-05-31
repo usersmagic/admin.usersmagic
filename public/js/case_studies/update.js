@@ -1,52 +1,52 @@
 window.onload = () => {
 
-    const editCaseStudyForm = document.getElementById("edit-case-study-form");
-    editCaseStudyForm.style.display = "flex";
+    const editCaseStudyForm = document.getElementById('edit-case-study-form');
+    editCaseStudyForm.style.display = 'flex';
 
-    const id = location.href.split("?")[1].split("=")[1];
+    const id = location.href.split('?')[1].split('=')[1];
 
-    const submitButton = document.getElementById("submit-button");
-    const mainTitleEdit = document.getElementById("main-title");
-    const mainDescriptionEdit = document.getElementById("main-description");
-    const companyNameEdit = document.getElementById("company-name");
-    const companyLocationEdit = document.getElementById("company-location");
-    const companyIndustryEdit = document.getElementById("company-industry");
-    const companyipoEdit = document.getElementById("company-ipo");
-    const companyWebsiteEdit = document.getElementById("company-website");
-    const companyEmployeeNumberEdit = document.getElementById("company-employee-number");
-    const companyEstablishedYearEdit = document.getElementById("company-established-year");
-    const companySpecialityEdit = document.getElementById("company-speciality");
-    const companyTypeEdit = document.getElementById("company-type");
-    const companyStageEdit = document.getElementById("company-stage");
-    const personalNameEdit = document.getElementById("personal-name");
-    const personalRoleEdit = document.getElementById("personal-role");
-    const personalQuoteEdit = document.getElementById("personal-quote");
-    const contextParagraphEdit = document.getElementById("context-paragraph");
-    const problemParagraphEdit = document.getElementById("problem-paragraph");
-    const solutionParagraphEdit = document.getElementById("solution-paragraph");
-    const resultsParagraphEdit = document.getElementById("results-paragraph");
-    const goBackButton = document.getElementById("go-back-button");
+    const submitButton = document.getElementById('submit-button');
+    const mainTitleEdit = document.getElementById('main-title');
+    const mainDescriptionEdit = document.getElementById('main-description');
+    const companyNameEdit = document.getElementById('company-name');
+    const companyLocationEdit = document.getElementById('company-location');
+    const companyIndustryEdit = document.getElementById('company-industry');
+    const companyipoEdit = document.getElementById('company-ipo');
+    const companyWebsiteEdit = document.getElementById('company-website');
+    const companyEmployeeNumberEdit = document.getElementById('company-employee-number');
+    const companyEstablishedYearEdit = document.getElementById('company-established-year');
+    const companySpecialityEdit = document.getElementById('company-speciality');
+    const companyTypeEdit = document.getElementById('company-type');
+    const companyStageEdit = document.getElementById('company-stage');
+    const personalNameEdit = document.getElementById('personal-name');
+    const personalRoleEdit = document.getElementById('personal-role');
+    const personalQuoteEdit = document.getElementById('personal-quote');
+    const contextParagraphEdit = document.getElementById('context-paragraph');
+    const problemParagraphEdit = document.getElementById('problem-paragraph');
+    const solutionParagraphEdit = document.getElementById('solution-paragraph');
+    const resultsParagraphEdit = document.getElementById('results-paragraph');
+    const goBackButton = document.getElementById('go-back-button');
 
-    goBackButton.addEventListener("click", () => {
-        location.href = "/case_studies";
+    goBackButton.addEventListener('click', () => {
+        location.href = '/case_studies';
     })
 
     
     //const xhr = new XMLHttpRequest();
-    //xhr.open("POST", "/case_studies/edit");
-    //xhr.setRequestHeader("Content-Type", "application/json");
+    //xhr.open('POST', '/case_studies/edit');
+    //xhr.setRequestHeader('Content-Type', 'application/json');
 
     //xhr.onreadystatechange = () => {
     //    if (xhr.readyState === XMLHttpRequest.DONE) {
     //        if (xhr.status === 200) {
-    //            alert("success");
+    //            alert('success');
     //        } else {
-    //            alert("An error occured please try again");
+    //            alert('An error occured please try again');
     //        }
     //    }
     //}
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/case_studies/getSingle");
+    xhr.open('POST', '/case_studies/getSingle');
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
     xhr.send(JSON.stringify({
@@ -78,41 +78,41 @@ window.onload = () => {
                 solutionParagraphEdit.value = caseStudy.solution_text;
                 resultsParagraphEdit.value = caseStudy.results_text;
                 
-                submitButton.addEventListener("click", () => {
+                submitButton.addEventListener('click', () => {
                     
                     const xhr = new XMLHttpRequest();
-                    xhr.open("POST", "/case_studies/edit");
+                    xhr.open('POST', '/case_studies/edit');
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
                     xhr.onreadystatechange = () => {
                         if (xhr.readyState === XMLHttpRequest.DONE) {
                             if (xhr.status === 200) {
 
-                                mainTitleEdit.value = "";
-                                mainDescriptionEdit.value = "";
-                                companyNameEdit.value = "";
-                                companyLocationEdit.value = "";
-                                companyIndustryEdit.value = "";
-                                companyipoEdit.value = "";
-                                companyWebsiteEdit.value = "";
-                                companyEmployeeNumberEdit.value = "";
-                                companyEstablishedYearEdit.value = "";
-                                companySpecialityEdit.value = "";
-                                companyTypeEdit.value = "";
-                                companyStageEdit.value = "";
-                                personalNameEdit.value = "";
-                                personalRoleEdit.value = "";
-                                personalQuoteEdit.value = "";
-                                contextParagraphEdit.value = "";
-                                problemParagraphEdit.value = "";
-                                solutionParagraphEdit.value = "";
-                                resultsParagraphEdit.value = "";
+                                mainTitleEdit.value = '';
+                                mainDescriptionEdit.value = '';
+                                companyNameEdit.value = '';
+                                companyLocationEdit.value = '';
+                                companyIndustryEdit.value = '';
+                                companyipoEdit.value = '';
+                                companyWebsiteEdit.value = '';
+                                companyEmployeeNumberEdit.value = '';
+                                companyEstablishedYearEdit.value = '';
+                                companySpecialityEdit.value = '';
+                                companyTypeEdit.value = '';
+                                companyStageEdit.value = '';
+                                personalNameEdit.value = '';
+                                personalRoleEdit.value = '';
+                                personalQuoteEdit.value = '';
+                                contextParagraphEdit.value = '';
+                                problemParagraphEdit.value = '';
+                                solutionParagraphEdit.value = '';
+                                resultsParagraphEdit.value = '';
 
-                                alert("Successfully updated the case study.")
-                                location.href = "/case_studies";
+                                alert('Successfully updated the case study.')
+                                location.href = '/case_studies';
 
-                            } else if (xhr.status === 404){
-                                return alert("Please fill each required field.");
+                            } else if (xhr.status === 404 || xhr.status === 400){
+                                return alert('Please fill each required field.');
                             }
                         }
                     }
@@ -141,7 +141,7 @@ window.onload = () => {
                 })
 
             } else {
-                alert("An error occured please try again");
+                alert('An error occured please try again');
             }
         }
     }

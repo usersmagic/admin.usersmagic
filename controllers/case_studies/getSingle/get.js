@@ -1,12 +1,12 @@
 
-const CaseStudy = require("../../../models/caseStudy/casestudy");
+const CaseStudy = require('../../../models/caseStudy/casestudy');
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
     const id = req.body._id
-    try {
-        const caseStudy = await CaseStudy.findOne({ _id: id })
-        res.send(caseStudy);
-    } catch (e) {
-        res.status(404).send(e)
-    }
+    CaseStudy.findOne({_id: id}, (err, response) => {
+        if (err) {
+            return res.status(400).send(err);
+        }
+        res.send(response);
+    })
 }

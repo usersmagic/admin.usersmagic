@@ -1,5 +1,5 @@
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const caseStudySchema = mongoose.Schema({
     company_logo: {
@@ -89,27 +89,47 @@ const caseStudySchema = mongoose.Schema({
     results_text: {
         type: String,
         required: false
+    },
+    language: {
+        type: String,
+        required: true
     }
 });
 
-caseStudySchema.statics.createNewCaseStudy = async function(body) {
+caseStudySchema.statics.createNewCaseStudy = function(body, callback) {
     const caseStudy = new CaseStudy(body);
-    await caseStudy.save();
-    return caseStudy;
+    caseStudy.save((err, response) => {
+        if (err) {
+            return callback("bad_request");
+        }
+        return caseStudy;
+    });
 }
 
-caseStudySchema.statics.editCaseStudy = async function( companyName, body ) {
-    console.log("calisiyoooo")
-    const caseStudy = await CaseStudy.findOneAndUpdate({company_name: companyName}, body)
-    await caseStudy.save();
-    return caseStudy;
+caseStudySchema.statics.editCaseStudy = function( id, body, callback ) {
+    CaseStudy.findOneAndUpdate({_id: id}, body, (err, caseStudy) => {
+        if (err) {
+            return callback("bad_request");
+        }
+        
+        caseStudy.save((err, updatedCaseStudy) => {
+            if (err) {
+                return callback("bad_request");
+            }
+            return callback(undefined, updatedCaseStudy);
+        });
+    })
 }
 
-caseStudySchema.statics.deleteCaseStudy = async function( companyName ) {
-    const caseStudy = await CaseStudy.remove({ company_name: companyName });
-    return caseStudy;
+caseStudySchema.statics.deleteCaseStudy = async function( companyName, callback ) {
+    CaseStudy.remove({ company_name: companyName }, (err, caseStudy) => {
+        if (err) {
+            return callback("bad_request");
+        }
+        return callback(undefined, caseStudy);
+    });
 }
 
-const CaseStudy = mongoose.model("caseStudy", caseStudySchema);
+const CaseStudy = mongoose.model('caseStudy', caseStudySchema);
 
 module.exports = CaseStudy;

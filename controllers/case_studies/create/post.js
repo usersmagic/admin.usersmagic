@@ -1,11 +1,11 @@
 
-const CaseStudy = require("../../../models/caseStudy/casestudy");
+const CaseStudy = require('../../../models/caseStudy/casestudy');
 
-module.exports = async (req, res) => {
-    try {
-        const caseStudy = CaseStudy.createNewCaseStudy(req.body);
-        res.status(201).send({caseStudy});
-    } catch (e) {
-        res.status(400);
-    }
+module.exports = (req, res) => {
+    const caseStudy = CaseStudy.createNewCaseStudy(req.body, (err, casestudy) => {
+        if (err) {
+            return res.status(400).send(err);
+        }
+    });
+    return res.status(201).send({caseStudy});
 }

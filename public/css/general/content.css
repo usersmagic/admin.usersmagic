@@ -144,7 +144,3 @@
 .content-go-back-button:hover {
   text-decoration: underline;
 }
-.each-image-input {
-  display: flex;
-  flex-direction: column;
-}

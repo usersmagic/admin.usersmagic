@@ -1,6 +1,6 @@
 
 module.exports = (req, res) => {
-    res.render("case_studies/index", {
+    res.render('case_studies/index', {
         page: 'case_studies/index',
         title: res.__('Case Studies'),
         includes: {
