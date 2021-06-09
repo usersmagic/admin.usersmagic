@@ -5,6 +5,7 @@ const isLoggedIn = require('../middleware/isLoggedIn');
 const checkAdminRolePermissions = require('../middleware/checkAdminRolePermissions');
 
 const indexGetController = require('../controllers/questions/index/get');
+const csvGetController = require('../controllers/questions/csv/get');
 const editGetController = require('../controllers/questions/edit/get');
 
 const createPostController = require('../controllers/questions/create/post');
@@ -15,6 +16,12 @@ router.get(
     isLoggedIn,
     checkAdminRolePermissions,
     indexGetController
+);
+router.get(
+  '/csv',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    csvGetController
 );
 router.get(
   '/edit',
