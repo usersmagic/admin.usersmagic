@@ -343,7 +343,7 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
                 });
                 if (total)
                   Object.keys(data[point]).forEach(key => {
-                    data[point][key] = Math.round(data[point][key] / total * 10) / 10;
+                    data[point][key] = Math.round(data[point][key] / total * 1000) / 10;
                   });
               })
               
