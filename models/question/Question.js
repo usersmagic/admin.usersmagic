@@ -258,7 +258,7 @@ QuestionSchema.statics.getQuestionById = function (id, callback) {
   });
 };
 
-QuestionSchema.statics.getQuestionJSONByAges = function (id, callback) {
+QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callback) {
   // Find the Question with the given id and return json data grouped by ages, or an error if it exists
 
   if (!id || !validator.isMongoId(id.toString()))
@@ -325,14 +325,36 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, callback) {
           err => {
             if (err) return callback(err);
 
-            const newData = [];
-            Object.keys(data).forEach(key => {
-              const newDataItem = data[key];
-              newDataItem.age_group = key;
-              newData.push(newDataItem);
-            });
+            
 
-            return callback(null, newData);
+            if (!is_percent) {
+              const newData = [];
+              Object.keys(data).forEach(key => {
+                const newDataItem = data[key];
+                newDataItem.age_group = key;
+                newData.push(newDataItem);
+              });
+              return callback(null, newData);
+            } else {
+              Object.keys(data).forEach(point => {
+                let total = 0;
+                Object.values(data[point]).forEach(ans => {
+                  total += ans;
+                });
+                if (total)
+                  Object.keys(data[point]).forEach(key => {
+                    data[point][key] = Math.round(data[point][key] / total * 10) / 10;
+                  });
+              })
+              
+              const newData = [];
+              Object.keys(data).forEach(key => {
+                const newDataItem = data[key];
+                newDataItem.age_group = key;
+                newData.push(newDataItem);
+              });
+              return callback(null, newData);
+            }
           }
         );
       })
