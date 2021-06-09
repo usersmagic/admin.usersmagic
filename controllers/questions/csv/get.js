@@ -6,7 +6,6 @@ const Question = require('../../../models/question/Question');
 
 module.exports = (req, res) => {
   Question.getQuestionJSONByAges(req.query.id, (err, data) => {
-    console.log(data);
     if (err) return res.json({ error: err });
 
     json2csv.json2csv(data, (err, csv) => {
