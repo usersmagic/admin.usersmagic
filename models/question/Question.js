@@ -313,11 +313,11 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, callback) {
             const user = users[time];
 
             const ans = user.information[id.toString()];
-            if (data["all"][ans])
+            if (!isNaN(data["all"][ans]))
               data["all"][ans]++;
 
             const age = ageGroups.find(group => group.min <= user.birth_year && group.max >= user.birth_year);
-            if (age && data[age.name][ans])
+            if (age && !isNaN(data[age.name][ans]))
               data[age.name][ans]++;
 
             next(null);
