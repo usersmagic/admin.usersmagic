@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 
 const Country = require('../country/Country');
+const User = require('../user/User');
 
 const Schema = mongoose.Schema;
 
@@ -255,6 +256,67 @@ QuestionSchema.statics.getQuestionById = function (id, callback) {
 
     return callback(null, question);
   });
+};
+
+QuestionSchema.statics.getQuestionJSONByAges = function (id, callback) {
+  // Find the Question with the given id and return json data grouped by ages, or an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Question = this;
+  const ageGroups = [
+    {name: "18-24", min: 1997, max: 2003},
+    {name: "25-34", min: 1987, max: 1996},
+    {name: "35-44", min: 1977, max: 1986},
+    {name: "45-54", min: 1967, max: 1976},
+    {name: "55-65", min: 1956, max: 1966}
+  ];
+
+  User
+    .find({
+      ["information." + id.toString()]: { $ne: null }
+    })
+    .then(users => {
+      const data = {
+        "all": {},
+        "18-24": {},
+        "25-34": {},
+        "35-44": {},
+        "45-54": {},
+        "55-65": {}
+      };
+
+      async.timesSeries(
+        users.length,
+        (time, next) => {
+          const user = users[time];
+
+          const ans = user.information[id.toString()];
+          if (data["all"][ans])
+            data["all"][ans]++;
+          else
+            data["all"][ans] = 1;
+
+          const age = ageGroups.find(group => group.min <= user.birth_year && group.max >= user.birth_year);
+          
+          if (age) {
+            if (data[age][ans])
+              data[age][ans]++;
+            else
+              data[age][ans] = 1;
+          }
+
+          next(null);
+        },
+        err => {
+          if (err) return callback(err);
+
+          return callback(null, data);
+        }
+      );
+    })
+    .catch(err => callback('database_error'));
 };
 
 module.exports = mongoose.model('Question', QuestionSchema);
