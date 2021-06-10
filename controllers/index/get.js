@@ -46,7 +46,7 @@ module.exports = (req, res) => {
     },
     {
       name: res.__('Companies'),
-      details: res.__('Edit Company Accounts'),
+      details: res.__('See and edit company accounts'),
       role: 'organisation_manager',
       link: '/companies'
     },
@@ -55,6 +55,12 @@ module.exports = (req, res) => {
       details: res.__('See, create and edit templates'),
       role: 'product_head',
       link: '/templates'
+    },
+    {
+      name: res.__('Users'),
+      details: res.__('See and edit user accounts'),
+      role: 'organisation_manager',
+      link: '/users'
     }
   ];
 
