@@ -113,7 +113,7 @@ TargetUserListSchema.statics.getTargetUserListFilter = function (target_id, call
       (time, next) => {
         if (!target_user_lists[time].user_list || !Array.isArray(target_user_lists[time].user_list))
           return next('unknown_error');
-        return { _id: { $nin: target_user_lists[time].user_list } };
+        return next(null, { _id: { $nin: target_user_lists[time].user_list } });
       },
       (err, list) => {
         if (err) return callback(err);

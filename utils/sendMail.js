@@ -12,6 +12,7 @@ module.exports = (body, callback) => {
     subject: String
   */
 
+  return callback(null);
   const ELASTIC_EMAIL_API_KEY = process.env.ELASTIC_EMAIL_API_KEY;
 
   if (!body || !body.template || !body.to) return callback('bad_request');

@@ -257,6 +257,26 @@ UserSchema.statics.getUsersByFiltersAndOptions = function (filters, options, cal
     .catch(err => callback('database_error'));
 };
 
+UserSchema.statics.getUsersWithCustomFiltersAndOptions = function (filters, options, callback) {
+  // Use direct mongodb filters, require to have a valid search string
+  // Allowed options: limit (default: 100, max: 1000)
+  // Return an array of users, or an error if it exists
+
+  const User = this;
+
+  try {
+    const limit = ((options.limit && Number.isInteger(options.limit) && options.limit < 1000) ? options.limit : 100);
+
+    User
+      .find(filters)
+      .limit(limit)
+      .then(users => callback(null, users))
+      .catch(err => callback('database_error'));
+  } catch (err) {
+    return callback('database_error');
+  };
+}
+
 UserSchema.statics.getWaitlistUsers = function (filters, options, callback) {
   // Find all users matching filters and options that are on waitlist
   // Allowed filters: name, email, city, town, countries, genders, max_birth_year, min_birth_year
