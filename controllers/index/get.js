@@ -56,12 +56,12 @@ module.exports = (req, res) => {
       role: 'product_head',
       link: '/templates'
     },
-    {
-      name: res.__('Users'),
-      details: res.__('See and edit user accounts'),
-      role: 'organisation_manager',
-      link: '/users'
-    }
+    // {
+    //   name: res.__('Users'),
+    //   details: res.__('See and edit user accounts'),
+    //   role: 'organisation_manager',
+    //   link: '/users'
+    // }
   ];
 
   return res.render('index/index', {
