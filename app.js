@@ -14,7 +14,6 @@ const CronJob = require('./cron/CronJob');
 const MongoStore = require('connect-mongo')(session);
 
 const numCPUs = process.env.WEB_CONCURRENCY || require('os').cpus().length;
-const updateAdmin = require('./utils/updateAdmin');
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);

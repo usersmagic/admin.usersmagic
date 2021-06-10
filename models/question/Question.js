@@ -291,12 +291,12 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
       })
       .then(users => {
         const data = {
-          "all": { age_group: "all" },
-          "18-24": { age_group: "18-24" },
-          "25-34": { age_group: "25-34" },
-          "35-44": { age_group: "35-44" },
-          "45-54": { age_group: "45-54" },
-          "55-65": { age_group: "55-65" }
+          "all": { },
+          "18-24": { },
+          "25-34": { },
+          "35-44": { },
+          "45-54": { },
+          "55-65": { }
         };
         question.choices.forEach(choice => {
           data.all[choice] = 0;
@@ -325,12 +325,13 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
           err => {
             if (err) return callback(err);
 
-            
-
             if (!is_percent) {
               const newData = [];
               Object.keys(data).forEach(key => {
-                const newDataItem = data[key];
+                const newDataItem = { age_group: key };
+                Object.keys(data[key]).forEach(key2 => {
+                  newDataItem[key2] = data[key][key2];
+                });
                 newData.push(newDataItem);
               });
               return callback(null, newData);
@@ -340,15 +341,18 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
                 Object.values(data[point]).forEach(ans => {
                   total += ans;
                 });
-                if (total)
+                if (total > 0)
                   Object.keys(data[point]).forEach(key => {
                     data[point][key] = Math.round(data[point][key] / total * 1000) / 10;
                   });
-              })
+              });
               
               const newData = [];
               Object.keys(data).forEach(key => {
-                const newDataItem = data[key];
+                const newDataItem = { age_group: key };
+                Object.keys(data[key]).forEach(key2 => {
+                  newDataItem[key2] = data[key][key2];
+                });
                 newData.push(newDataItem);
               });
               return callback(null, newData);
