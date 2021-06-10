@@ -144,6 +144,7 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
     })
     .limit(10) // Update 10 at a time
     .then(targets => {
+      console.log(targets);
       async.timesSeries(
         targets.length,
         (time, next) => {
@@ -186,7 +187,7 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
                         last_update: 1
                       })
                       .then(() => next(null))
-                      .catch(err => next('indexing_error'));
+                      .catch(err => {console.log(err);next('indexing_error')});
                   });
                 });
               });
