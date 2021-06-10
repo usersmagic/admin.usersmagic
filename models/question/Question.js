@@ -260,6 +260,7 @@ QuestionSchema.statics.getQuestionById = function (id, callback) {
 
 QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callback) {
   // Find the Question with the given id and return json data grouped by ages, or an error if it exists
+  // Find X random documents. X = min(10000, 0.1 * total_document_count)
 
   if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
@@ -289,78 +290,93 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
       .find({
         ["information." + id.toString()]: { $ne: null }
       })
-      .then(users => {
-        const data = {
-          "all": { },
-          "18-24": { },
-          "25-34": { },
-          "35-44": { },
-          "45-54": { },
-          "55-65": { }
-        };
-        question.choices.forEach(choice => {
-          data.all[choice] = 0;
-        });
-        ageGroups.forEach(group => {
-          question.choices.forEach(choice => {
-            data[group.name][choice] = 0;
-          });
-        });
+      .countDocuments()
+      .then(number => {
+        if (number < 50) return callback('not_enough_document');
 
-        async.timesSeries(
-          users.length,
-          (time, next) => {
-            const user = users[time];
+        const count = Math.min(10000, Math.round(0.1 * number)); // 10% rule
+        const random_skip = Math.round(Math.random() * (number-count)) // Skip random number of documents
 
-            const ans = user.information[id.toString()];
-            if (!isNaN(data["all"][ans]))
-              data["all"][ans]++;
-
-            const age = ageGroups.find(group => group.min <= user.birth_year && group.max >= user.birth_year);
-            if (age && !isNaN(data[age.name][ans]))
-              data[age.name][ans]++;
-
-            next(null);
-          },
-          err => {
-            if (err) return callback(err);
-
-            if (!is_percent) {
-              const newData = [];
-              Object.keys(data).forEach(key => {
-                const newDataItem = { age_group: key };
-                Object.keys(data[key]).forEach(key2 => {
-                  newDataItem[key2] = data[key][key2];
-                });
-                newData.push(newDataItem);
+        User
+          .find({
+            ["information." + id.toString()]: { $ne: null }
+          })
+          .skip(random_skip)
+          .limit(count)
+          .then(users => {
+            const data = {
+              "all": { },
+              "18-24": { },
+              "25-34": { },
+              "35-44": { },
+              "45-54": { },
+              "55-65": { }
+            };
+            question.choices.forEach(choice => {
+              data.all[choice] = 0;
+            });
+            ageGroups.forEach(group => {
+              question.choices.forEach(choice => {
+                data[group.name][choice] = 0;
               });
-              return callback(null, newData);
-            } else {
-              Object.keys(data).forEach(point => {
-                let total = 0;
-                Object.values(data[point]).forEach(ans => {
-                  total += ans;
-                });
-                if (total > 0)
-                  Object.keys(data[point]).forEach(key => {
-                    data[point][key] = Math.round(data[point][key] / total * 1000) / 10;
+            });
+    
+            async.timesSeries(
+              users.length,
+              (time, next) => {
+                const user = users[time];
+    
+                const ans = user.information[id.toString()];
+                if (!isNaN(data["all"][ans]))
+                  data["all"][ans]++;
+    
+                const age = ageGroups.find(group => group.min <= user.birth_year && group.max >= user.birth_year);
+                if (age && !isNaN(data[age.name][ans]))
+                  data[age.name][ans]++;
+    
+                next(null);
+              },
+              err => {
+                if (err) return callback(err);
+    
+                if (!is_percent) {
+                  const newData = [];
+                  Object.keys(data).forEach(key => {
+                    const newDataItem = { age_group: key };
+                    Object.keys(data[key]).forEach(key2 => {
+                      newDataItem[key2] = data[key][key2];
+                    });
+                    newData.push(newDataItem);
                   });
-              });
-              
-              const newData = [];
-              Object.keys(data).forEach(key => {
-                const newDataItem = { age_group: key };
-                Object.keys(data[key]).forEach(key2 => {
-                  newDataItem[key2] = data[key][key2];
-                });
-                newData.push(newDataItem);
-              });
-              return callback(null, newData);
-            }
-          }
-        );
+                  return callback(null, newData);
+                } else {
+                  Object.keys(data).forEach(point => {
+                    let total = 0;
+                    Object.values(data[point]).forEach(ans => {
+                      total += ans;
+                    });
+                    if (total > 0)
+                      Object.keys(data[point]).forEach(key => {
+                        data[point][key] = Math.round(data[point][key] / total * 1000) / 10;
+                      });
+                  });
+                  
+                  const newData = [];
+                  Object.keys(data).forEach(key => {
+                    const newDataItem = { age_group: key };
+                    Object.keys(data[key]).forEach(key2 => {
+                      newDataItem[key2] = data[key][key2];
+                    });
+                    newData.push(newDataItem);
+                  });
+                  return callback(null, newData);
+                }
+              }
+            );
+          })
+          .catch(err => {console.log(err);callback('database_error')});
       })
-      .catch(err => {console.log(err);callback('database_error')});
+      .catch(err => callback('database_error'));
     });
 };
 
