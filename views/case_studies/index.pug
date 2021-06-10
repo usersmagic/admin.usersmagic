@@ -32,20 +32,19 @@ block content
                     span.general-input-required-sign *
                 span.general-input-explanation-text= __('Please enter a description for the headline.')
                 input.general-input-with-border(placeholder='Headline description')#main-description
-                .each-image-input
-                    span.general-input-title= __('Headline Image')
-                        span.general-input-required-sign *
-                    span.general-input-explanation-text= __('Please choose an image for headline design.')
-                    .general-image-input-outer-wrapper
-                        input.display-none#headline-image(type='text' name='image')
-                        label.general-choose-image-input-text
-                            span.general-choose-image-text= __('Choose')
-                            span.general-uploading-image-text #{__('Uploading')}...
-                            input.display-none.upload-image-input(type='file' accept='image/*')
-                        .general-image-input-wrapper(style='display: none')
-                            .general-image-input-wrapper-image
-                                img
-                            i.fas.fa-times.delete-image-button
+                span.general-input-title= __('Headline Image')
+                    span.general-input-required-sign *
+                span.general-input-explanation-text= __('Please choose an image for headline design.')
+                .general-image-input-outer-wrapper
+                    input.display-none#headline-image(type='text' name='image')
+                    label.general-choose-image-input-text
+                        span.general-choose-image-text= __('Choose')
+                        span.general-uploading-image-text #{__('Uploading')}...
+                        input.display-none.upload-image-input(type='file' accept='image/*')
+                    .general-image-input-wrapper(style='display: none')
+                        .general-image-input-wrapper-image
+                            img
+                        i.fas.fa-times.delete-image-button
                 span.general-input-title= __('Company Name')
                     span.general-input-required-sign *
                 span.general-input-explanation-text= __('Please enter the name of the company that will be mentioned in the case study.')
@@ -89,20 +88,19 @@ block content
                     span.general-input-required-sign *
                 span.general-input-explanation-text= __('Please enter the quote which is about usersmagic.')
                 input.general-input-with-border(placeholder='Personal\'s quote')#personal-quote
-                .each-image-input
-                    span.general-input-title= __('Personal\'s Photo')
-                        span.general-input-required-sign *
-                    span.general-input-explanation-text= __('Please choose a photo of the personal.')
-                    .general-image-input-outer-wrapper
-                        input.display-none#personal-photo(type='text' name='image')
-                        label.general-choose-image-input-text
-                            span.general-choose-image-text= __('Choose')
-                            span.general-uploading-image-text #{__('Uploading')}...
-                            input.display-none.upload-image-input(type='file' accept='image/*')
-                        .general-image-input-wrapper(style='display: none')
-                            .general-image-input-wrapper-image
-                                img
-                            i.fas.fa-times.delete-image-button
+                span.general-input-title= __('Personal\'s Photo')
+                    span.general-input-required-sign *
+                span.general-input-explanation-text= __('Please choose a photo of the personal.')
+                .general-image-input-outer-wrapper
+                    input.display-none#personal-photo(type='text' name='image')
+                    label.general-choose-image-input-text
+                        span.general-choose-image-text= __('Choose')
+                        span.general-uploading-image-text #{__('Uploading')}...
+                        input.display-none.upload-image-input(type='file' accept='image/*')
+                    .general-image-input-wrapper(style='display: none')
+                        .general-image-input-wrapper-image
+                            img
+                        i.fas.fa-times.delete-image-button
                 span.general-input-title= __('Context Paragraph')
                 span.general-input-explanation-text= __('Please enter a paragraph for the context part.')
                 input.general-input-with-border(placeholder='Context paragraph')#context-paragraph
@@ -116,6 +114,7 @@ block content
                 span.general-input-explanation-text= __('Please enter a paragraph for the results part.')
                 input.general-input-with-border(placeholder='Results paragraph')#results-paragraph
                 span.general-input-title= __('Language')
+                  span.general-input-required-sign *
                 span.general-input-explanation-text= __('Select the language of the case study. (Select only one)')
                 .general-checked-input-wrapper
                     input.general-checked-input-value#language-input(type="text" value="[]")

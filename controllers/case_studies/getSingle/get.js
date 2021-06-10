@@ -2,11 +2,15 @@
 const CaseStudy = require('../../../models/caseStudy/casestudy');
 
 module.exports = (req, res) => {
-    const id = req.body._id
-    CaseStudy.findOne({_id: id}, (err, response) => {
-        if (err) {
-            return res.status(400).send(err);
-        }
-        res.send(response);
-    })
+  if (!req.body) {
+    req.body = {};
+  }
+  CaseStudy.getSingle(req.body._id, (err, case_study) => {
+    if (err) {
+      res.write(JSON.stringify({success:false, error:err}))
+      return res.end()
+    }
+    res.send(case_study);
+    return res.end();
+  })
 }

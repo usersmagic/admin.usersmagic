@@ -367,5 +367,8 @@
 	"Language": "Language",
 	"Select the language of the case study.": "Select the language of the case study.",
 	"Select the language of the case study. (Select only one)": "Select the language of the case study. (Select only one)",
-	"Edit undefined": "Edit undefined"
+	"Edit undefined": "Edit undefined",
+	"Edit ": "Edit ",
+	" | Edit": " | Edit",
+	"Edit 's case study.": "Edit 's case study."
 }

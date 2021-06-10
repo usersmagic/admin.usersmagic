@@ -2,10 +2,9 @@
 const CaseStudy = require('../../../models/caseStudy/casestudy')
 
 module.exports = async (req, res) => {
-
   CaseStudy.findById(req.query.id, (err, caseStudy) => {
     if (err) {
-      return "error"
+      return res.end();
     }
     res.render('case_studies/update', {
       page: 'case_studies/update',
@@ -17,8 +16,7 @@ module.exports = async (req, res) => {
         }
       },
       caseStudy
-  })
+    })
   
   });
-    
 }
