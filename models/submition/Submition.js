@@ -3,11 +3,9 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 
 const Campaign = require('../campaign/Campaign');
-const Target = require('../target/Target');
 const Project = require('../project/Project');
+const Target = require('../target/Target');
 const User = require('../user/User');
-
-const approveSubmition = require('./functions/approveSubmition');
 
 const Schema = mongoose.Schema;
 
@@ -191,15 +189,38 @@ SubmitionSchema.statics.approveSubmitionById = function (id, callback) {
   Submition.findById(mongoose.Types.ObjectId(id.toString()), (err, submition) => {
     if (err) return callback('document_not_found');
 
-    approveSubmition(submition, err => {
-      if (err) return callback(err);
+    Project.findProjectById(submition.campaign_id, (err, project) => {
+      if (err || !project) return callback('document_not_found');
+  
+      Target.findById(mongoose.Types.ObjectId(submition.target_id), (err, target) => {
+        if (err || !target) return callback('document_not_found');
+  
+        User.findById(mongoose.Types.ObjectId(submition.user_id), (err, user) => {
+          if (err || !user) return callback('user_not_found');
+  
+          User.findByIdAndUpdate(mongoose.Types.ObjectId(submition.user_id), {
+            $inc: {
+              credit: user.paid_campaigns.includes(submition.campaign_id) ? 0 : target.price
+            },
+            $push: {
+              paid_campaigns: project._id.toString()
+            }
+          }, err => {
+            if (err) return callback(err);
+    
+            Submition.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+              status: 'approved'
+            }}, {new: true}, (err, submition) => {
+              if (err) return callback(err);
 
-      Submition.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
-        status: 'approved'
-      }}, {new: true}, (err, submition) => {
-        if (err) return callback(err);
+              Target.incApprovedSubmitionCount(submition.target_id, err => {
+                if (err) return callback(err);
 
-        return callback(null, submition);
+                return callback(null, submition);
+              });
+            });
+          });
+        });
       });
     });
   });
@@ -248,7 +269,11 @@ SubmitionSchema.statics.approveCampaignSubmitionById = function (id, callback) {
           }}, {}, err => {
             if (err) return callback('database_error');
 
-            return callback(null);
+            User.increaseCampaignValue(user._id, err => {
+              if (err) return callback(err);
+
+              return callback(null);
+            });
           });
         });
       });
@@ -304,11 +329,14 @@ SubmitionSchema.statics.approveAllCampaignSubmitionById = function (campaign_id,
               }}, {}, err => {
                 if (err) return next('database_error');
     
-                return next(null);
+                User.increaseCampaignValue(user._id, err => {
+                  if (err) return next(err);
+    
+                  return next(null);
+                });
               });
             });
           });
-          
         });
       },
       err => {
@@ -334,11 +362,9 @@ SubmitionSchema.statics.rejectSubmitionById = function (id, data, callback) {
     reject_message: data.reason,
     ended_at: (new Date()).getTime()
   }}, {new: true}, (err, submition) => {
-    if (err) return callback(err);
+    if (err) return callback('database_error');
 
-    Target.findByIdAndUpdate(mongoose.Types.ObjectId(submition.target_id.toString()), {$inc: {
-      submition_limit: 1
-    }}, err => {
+    Target.decSubmitionLimitByOne(submition.target_id, err => {
       if (err) return callback(err);
 
       return callback(null, submition);
