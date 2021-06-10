@@ -24,7 +24,7 @@ window.onload = () => {
       const reason = event.target.parentNode.childNodes[2].value;
 
       if (!reason || !reason.length)
-        return alert("Please write an integer price before approving this target");
+        return alert("Please write a reason before rejecting a submition");
 
       if (confirm('Are you sure you want to reject this submition?')) {
         serverRequest(`/submitions/reject?id=${event.target.id}`, 'POST', {

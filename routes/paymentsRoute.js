@@ -8,6 +8,8 @@ const checkAdminRolePermissions = require('../middleware/checkAdminRolePermissio
 const indexGetController = require('../controllers/payments/index/get');
 const approveGetController = require('../controllers/payments/approve/get');
 
+const indexPostController = require('../controllers/payments/index/post');
+
 router.get(
   '/',
     isLoggedIn,
@@ -19,6 +21,13 @@ router.get(
     isLoggedIn,
     checkAdminRolePermissions,
     approveGetController
+);
+
+router.post(
+  '/',
+    isLoggedIn,
+    checkAdminRolePermissions,
+    indexPostController
 );
 
 module.exports = router;

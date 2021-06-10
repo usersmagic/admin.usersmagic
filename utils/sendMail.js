@@ -36,6 +36,16 @@ module.exports = (body, callback) => {
       .then(data => data.json())
       .then(res => callback(null, res))
       .catch(err => callback('database_error'));
+  } else if (body.template == 'new_paid_survey_en') {
+    if (!body.name)
+      return callback('bad_request');
+
+    fetch(`https://api.elasticemail.com/v2/email/send?apiKey=${ELASTIC_EMAIL_API_KEY}&isTransactional=true&template=new_paid_survey_en&merge_name=${body.name}&to=${body.to.trim()}&charset=utf-8`, {
+      method: 'POST'
+    })
+      .then(data => data.json())
+      .then(res => callback(null, res))
+      .catch(err => callback('database_error'));
   } else {
     return callback('bad_request');
   }

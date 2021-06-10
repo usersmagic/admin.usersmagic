@@ -291,12 +291,12 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
       })
       .then(users => {
         const data = {
-          "all": {},
-          "18-24": {},
-          "25-34": {},
-          "35-44": {},
-          "45-54": {},
-          "55-65": {}
+          "all": { age_group: "all" },
+          "18-24": { age_group: "18-24" },
+          "25-34": { age_group: "25-34" },
+          "35-44": { age_group: "35-44" },
+          "45-54": { age_group: "45-54" },
+          "55-65": { age_group: "55-65" }
         };
         question.choices.forEach(choice => {
           data.all[choice] = 0;
@@ -331,7 +331,6 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
               const newData = [];
               Object.keys(data).forEach(key => {
                 const newDataItem = data[key];
-                newDataItem.age_group = key;
                 newData.push(newDataItem);
               });
               return callback(null, newData);
@@ -350,7 +349,6 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
               const newData = [];
               Object.keys(data).forEach(key => {
                 const newDataItem = data[key];
-                newDataItem.age_group = key;
                 newData.push(newDataItem);
               });
               return callback(null, newData);
