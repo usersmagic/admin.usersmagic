@@ -133,18 +133,17 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
   const thirtyMinBefore = (new Date).getTime() - 30 * 60 * 1000;
 
   Target
-    .find({
-      status: 'approved',
-      submition_limit: {
+    .find({$and: [
+      {status: 'approved'},
+      {submition_limit: {
         $gt: 0
-      },
-      last_update: {
+      }},
+      {last_update: {
         $lt: thirtyMinBefore // Update only in every 30 mins
-      }
-    })
+      }}
+    ]})
     .limit(10) // Update 10 at a time
     .then(targets => {
-      console.log(targets);
       async.timesSeries(
         targets.length,
         (time, next) => {
@@ -167,27 +166,20 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
               if (err) return next(err);
               if (filter) filters.$and.push(filter);
 
-              User.getUsersByFiltersAndOptions(filters, {
+              User.getUsersWithCustomFiltersAndOptions(filters, {
                 limit: Math.min(target.submition_limit, 1000) // Do not update more than 1000 users at a time
-              }, (err, user_ids) => {
+              }, (err, users) => {
                 if (err) return next(err);
-  
-                TargetUserList.updateTargetUserList(target._id, user_ids, target.submition_limit, err => {
-                  if (err) return callback(err);
+
+                TargetUserList.updateTargetUserList(target._id, users, target.submition_limit, err => {
+                  if (err) return next(err);
 
                   Target.findByIdAndUpdate(mongoose.Types.ObjectId(target._id.toString()), {$set: {
                     last_update: (new Date).getTime()
                   }}, err => {
-                    if (err) return callback('database_error');
-
-                    Target.collection
-                      .createIndex({
-                        status: 1,
-                        submition_limit: 1,
-                        last_update: 1
-                      })
-                      .then(() => next(null))
-                      .catch(err => {console.log(err);next('indexing_error')});
+                    if (err) return next('database_error');
+        
+                    next(null);
                   });
                 });
               });
@@ -197,11 +189,18 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
         err => {
           if (err) return callback(err);
 
-          return callback(null);
+          Target.collection
+            .createIndex({
+              status: 1,
+              submition_limit: 1,
+              last_update: 1
+            })
+            .then(() => callback(null))
+            .catch(err => {console.log(err);callback('indexing_error')});
         }
       );
     })
-    .catch(err => callback('database_error'));
+    .catch(err => {console.log(err);callback('database_error')});
 };
 
 TargetSchema.statics.getWaitingTargets = function (callback) {
