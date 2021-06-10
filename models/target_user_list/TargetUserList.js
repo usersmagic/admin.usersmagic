@@ -2,6 +2,8 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const sendMail = require('../../utils/sendMail');
+
 const Schema = mongoose.Schema;
 
 const TargetUserListSchema = new Schema({
@@ -139,9 +141,23 @@ TargetUserListSchema.statics.updateTargetUserList = function (target_id, user_li
       async.timesSeries(
         Math.min(user_list.length, maxUserListLength - target_user_list.user_list.length),
         (time, next) => {
+          const user = user_list[time];
+
           TargetUserList.findByIdAndUpdate(mongoose.Types.ObjectId(target_user_list._id.toString()), {$push: {
-            user_list: user_list[time]._id.toString()
-          }}, err => next(err ? 'database_error' : null));
+            user_list: user._id.toString()
+          }}, err => {
+            if (err) return next('database_error');
+
+            sendMail({
+              template: user.country == 'tr' ? 'new_paid_survey_tr' : 'new_paid_survey_en',
+              name: user.name || user.email,
+              to: user.email,
+            }, err => {
+              if (err) console.log(err);
+
+              return next(null);
+            });
+          });
         },
         err => {
           if (err) return callback(err);
@@ -160,10 +176,23 @@ TargetUserListSchema.statics.updateTargetUserList = function (target_id, user_li
               user_list.length - (maxUserListLength - target_user_list.user_list.length),
               (time, next) => {
                 time += target_user_list.user_list.length;
+                const user = user_list[time];
 
                 TargetUserList.findByIdAndUpdate(mongoose.Types.ObjectId(new_target_user_list._id.toString()), {$push: {
-                  user_list: user_list[time]._id.toString()
-                }}, err => next(err ? 'database_error' : null));
+                  user_list: user._id.toString()
+                }}, err => {
+                  if (err) return next('database_error');
+
+                  sendMail({
+                    template: user.country == 'tr' ? 'new_paid_survey_tr' : 'new_paid_survey_en',
+                    name: user.name || user.email,
+                    to: user.email,
+                  }, err => {
+                    if (err) console.log(err);
+
+                    return next(null);
+                  });
+                });
               },
               err => {
                 if (err) return callback(err);
