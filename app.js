@@ -113,8 +113,6 @@ if (cluster.isMaster) {
     app.use('/waitlist', waitlistRouteController);
 
     server.listen(PORT, () => {
-      if (cluster.worker.id == 1)
-        updateAdmin();
       console.log(`Server is on port ${PORT} as Worker ${cluster.worker.id} running @ process ${cluster.worker.process.pid}`);
     });
   }
