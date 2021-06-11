@@ -279,7 +279,7 @@ TargetSchema.statics.incApprovedSubmitionCount = function (id, callback) {
   }}, err => callback(err ? 'database_error' : null));
 };
 
-TargetSchema.statics.decSubmitionLimitByOne = function (id, callback) {
+TargetSchema.statics.incSubmitionLimitByOne = function (id, callback) {
   // Find the Target with the given id and decrease its submition limit by one
   // Return an error if it exists
 
@@ -289,7 +289,7 @@ TargetSchema.statics.decSubmitionLimitByOne = function (id, callback) {
   const Target = this;
 
   Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$inc: {
-    submiton_limit: -1
+    submiton_limit: 1
   }}, {new: true}, (err, target) => {
     if (err) return callback('database_error');
     if (!target) return callback('document_not_found');
@@ -298,6 +298,26 @@ TargetSchema.statics.decSubmitionLimitByOne = function (id, callback) {
       if (err) return callback(err);
 
       callback(null);
+    });
+  });
+};
+
+TargetSchema.statics.leaveTarget = function (id, user_id, callback) {
+  // Find the Target with the given id. Push user to valid user_list of the latest TargetUserList. Remove user from any other TargetUserList
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()) || !user_id || !validator.isMongoId(user_id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.incSubmitionLimitByOne(id, err => {
+    if (err) return callback(err);
+
+    TargetUserList.removeUser(user_id, id, err => {
+      if (err) return callback(err);
+
+      TargetUserList.addUserToValid(user_id, id, err => callback(err));
     });
   });
 };

@@ -257,4 +257,126 @@ TargetUserListSchema.statics.updateEachTargetUserListSubmitionLimit = function (
     .catch(err => callback('database_error'));
 };
 
+TargetUserListSchema.statics.addUserToAnswered = function (user_id, target_id, callback) {
+  // Add user to the latest 'answered' type TargetUserList of the Target
+  // Return an error if it exits
+
+  if (!user_id || !validator.isMongoId(user_id.toString()) || !target_id || !validator.isMongoId(target_id.toString()))
+    return callback('bad_request');
+
+  const TargetUserList = this;
+
+  TargetUserList.findLatestTargetUserList(target_id, 'answered', (err, target_user_list) => {
+    if (err) return callback(err);
+
+    if (target_user_list && target_user_list.user_list.length < 1000) {
+      TargetUserList.findByIdAndUpdate(mongoose.Types.ObjectId(target_user_list._id.toString()), {$push: {
+        user_list: user_id.toString()
+      }}, err => callback(err));
+    } else {
+      TargetUserList.createTargetUserList({
+        target_id,
+        type: 'answered'
+      }, (err, new_id) => {
+        if (err) return callback(err);
+
+        TargetUserList.findByIdAndUpdate(mongoose.Types.ObjectId(new_id.toString()), {$push: {
+          user_list: user_id.toString()
+        }}, err => callback(err));
+      });
+    };
+  });
+};
+
+TargetUserListSchema.statics.addUserToValid = function (user_id, target_id, callback) {
+  // Add user to the latest 'valid' type TargetUserList of the Target
+  // Return an error if it exits
+
+  if (!user_id || !validator.isMongoId(user_id.toString()) || !target_id || !validator.isMongoId(target_id.toString()))
+    return callback('bad_request');
+
+  const TargetUserList = this;
+
+  TargetUserList.findLatestTargetUserList(target_id, 'valid', (err, target_user_list) => {
+    if (err) return callback(err);
+
+    if (target_user_list && target_user_list.user_list.length < 1000) {
+      TargetUserList.findByIdAndUpdate(mongoose.Types.ObjectId(target_user_list._id.toString()), {$push: {
+        user_list: user_id.toString()
+      }}, err => callback(err));
+    } else {
+      TargetUserList.createTargetUserList({
+        target_id,
+        type: 'valid',
+        submition_limit: target_user_list.submition_limit
+      }, (err, new_id) => {
+        if (err) return callback(err);
+
+        TargetUserList.findByIdAndUpdate(mongoose.Types.ObjectId(new_id.toString()), {$push: {
+          user_list: user_id.toString()
+        }}, err => callback(err));
+      });
+    };
+  });
+};
+
+TargetUserListSchema.statics.removeUser = function (user_id, target_id, callback) {
+  // Remove user from any TargetUserList find under the Target
+  // Return an error if it exits
+  //  Write loop code to prevent any duplication errors
+
+  if (!user_id || !validator.isMongoId(user_id.toString()) || !target_id || !validator.isMongoId(target_id.toString()))
+    return callback('bad_request');
+
+  const TargetUserList = this;
+
+  TargetUserList.find({
+    target_id: mongoose.Types.ObjectId(target_id.toString()),
+    user_list: user_id.toString()
+  }, (err, target_user_lists) => {
+    if (err) return callback('database_error');
+
+    async.timesSeries(
+      target_user_lists.length,
+      (time, next) => {
+        TargetUserList.findByIdAndUpdate(mongoose.Types.ObjectId(target_user_lists[time]._id.toString()), {$pull: {
+          user_list: user_id.toString()
+        }}, err => next((err ? 'database_error' : null)));
+      },
+      err => callback(err)
+    );
+  });
+};
+
+TargetUserListSchema.statics.checkIfUserCanJoin = function (user_id, target_id, callback) {
+  // Check if the given User can join the given Target.
+  // Return true or false, can or cannot join, respectively
+
+  if (!user_id || !validator.isMongoId(user_id.toString()) || !target_id || !validator.isMongoId(target_id.toString()))
+    return callback('bad_request');
+
+  const TargetUserList = this;
+
+  TargetUserList.findOne({
+    target_id: mongoose.Types.ObjectId(target_id.toString()),
+    type: 'valid',
+    user_list: user_id.toString(),
+    submition_limit: { $gt: 0 }
+  }, (err, target_user_list) => {
+    if (err || !target_user_list)
+      return callback(false);
+    
+    TargetUserList.findOne({ // Do not allow to rejoin
+      target_id: mongoose.Types.ObjectId(target_id.toString()),
+      type: 'answered',
+      user_list: user_id.toString()
+    }, (err, target_user_list) => {
+      if (err || target_user_list) // If this TargetUserList exists
+        return callback(false);
+      
+      return callback(true);
+    });
+  });
+};
+
 module.exports = mongoose.model('TargetUserList', TargetUserListSchema);
