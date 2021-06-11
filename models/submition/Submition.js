@@ -473,12 +473,8 @@ SubmitionSchema.statics.terminatePassedDueSubmitions = function (callback) {
         (time, next) => {
           const submition = submitions[time];
 
-          Target.findByIdAndUpdate(mongoose.Types.ObjectId(submition.target_id.toString()), {
-            $push: { users_list: submition.user_id.toString() },
-            $pull: { joined_users_list: submition.user_id.toString() },
-            $inc: { submition_limit: 1 }
-          }, {}, (err, target) => {
-            if (err || !target)
+          Target.leaveTarget(submition.target_id, submition.user_id, err => {
+            if (err)
               return Submition
                 .findByIdAndDelete(
                   mongoose.Types.ObjectId(submition._id.toString()),
