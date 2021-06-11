@@ -269,6 +269,7 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
   const allowed_types = ['checked', 'radio', 'range'];
 
   const ageGroups = [
+    {name: "all", min: 1900, max: 2021},
     {name: "18-24", min: 1997, max: 2003},
     {name: "25-34", min: 1987, max: 1996},
     {name: "35-44", min: 1977, max: 1986},
@@ -277,8 +278,7 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
   ];
 
   Question.findById(mongoose.Types.ObjectId(id.toString()), (err, question) => {
-    if (err || !question || !allowed_types.includes(question.type))
-      return callback('bad_request');
+    if (err || !question) return callback('document_not_found');
 
     if (question.type == 'range') {
       question.choices = [];
@@ -286,97 +286,88 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
         question.choices.push(i.toString());
     };
 
-    User
-      .find({
-        ["information." + id.toString()]: { $ne: null }
-      })
-      .countDocuments()
-      .then(number => {
-        if (number < 50) return callback('not_enough_document');
-
-        const count = Math.min(10000, Math.round(0.1 * number)); // 10% rule
-        const random_skip = Math.round(Math.random() * (number-count)) // Skip random number of documents
-
+    async.timesSeries(
+      ageGroups.length,
+      (time, next) => {
+        const age = ageGroups[time];
+  
         User
-          .find({
-            ["information." + id.toString()]: { $ne: null }
-          })
-          .skip(random_skip)
-          .limit(count)
-          .then(users => {
-            const data = {
-              "all": { },
-              "18-24": { },
-              "25-34": { },
-              "35-44": { },
-              "45-54": { },
-              "55-65": { }
-            };
-            question.choices.forEach(choice => {
-              data.all[choice] = 0;
-            });
-            ageGroups.forEach(group => {
-              question.choices.forEach(choice => {
-                data[group.name][choice] = 0;
-              });
-            });
-    
-            async.timesSeries(
-              users.length,
-              (time, next) => {
-                const user = users[time];
-    
-                const ans = user.information[id.toString()];
-                if (!isNaN(data["all"][ans]))
-                  data["all"][ans]++;
-    
-                const age = ageGroups.find(group => group.min <= user.birth_year && group.max >= user.birth_year);
-                if (age && !isNaN(data[age.name][ans]))
-                  data[age.name][ans]++;
-    
-                next(null);
-              },
-              err => {
-                if (err) return callback(err);
-    
-                if (!is_percent) {
-                  const newData = [];
-                  Object.keys(data).forEach(key => {
-                    const newDataItem = { age_group: key };
-                    Object.keys(data[key]).forEach(key2 => {
-                      newDataItem[key2] = data[key][key2];
-                    });
-                    newData.push(newDataItem);
-                  });
-                  return callback(null, newData);
-                } else {
-                  Object.keys(data).forEach(point => {
+          .find({$and: [
+            { ["information." + id.toString()]: { $ne: null } },
+            { birth_year: { $gte: age.min } },
+            { birth_year: { $lte: age.max } },
+          ]})
+          .countDocuments()
+          .then(number => {
+            const count = Math.min(10000, Math.max(Math.min(number, 5), Math.round(0.1 * number))); // 10% rule
+            const random_skip = Math.round(Math.random() * (number-count)); // Skip random number of documents
+
+            User
+              .find({$and: [
+                { ["information." + id.toString()]: { $ne: null } },
+                { birth_year: { $gte: age.min } },
+                { birth_year: { $lte: age.max } },
+              ]})
+              .skip(random_skip)
+              .limit(count)
+              .then(users => {
+                const data = { age_group: age.name };
+
+                question.choices.forEach(choice => {
+                  data[choice] = 0;
+                });
+
+                async.timesSeries(
+                  users.length,
+                  (time, next) => {
+                    const user = users[time];
+        
+                    const ans = user.information[id.toString()];
+                    if (!isNaN(data[ans]))
+                      data[ans]++;
+
+                    next(null);
+                  },
+                  err => {
+                    if (err) return next(err);
+        
+                    if (!is_percent)
+                      return next(null, data);
+                    
                     let total = 0;
-                    Object.values(data[point]).forEach(ans => {
-                      total += ans;
+
+                    Object.values(data).forEach((ans, i) => {
+                      if (i > 0) total += ans;
                     });
+
                     if (total > 0)
-                      Object.keys(data[point]).forEach(key => {
-                        data[point][key] = Math.round(data[point][key] / total * 1000) / 10;
+                      Object.keys(data).forEach((key, i) => {
+                        if (i > 0) data[key] = Math.round(data[key] / total * 1000) / 10;
                       });
-                  });
-                  
-                  const newData = [];
-                  Object.keys(data).forEach(key => {
-                    const newDataItem = { age_group: key };
-                    Object.keys(data[key]).forEach(key2 => {
-                      newDataItem[key2] = data[key][key2];
-                    });
-                    newData.push(newDataItem);
-                  });
-                  return callback(null, newData);
-                }
-              }
-            );
-          })
-          .catch(err => {console.log(err);callback('database_error')});
+
+                    return next(null, data);
+                  }
+                );
+              })
+              .catch(err => {console.log(err);callback('database_error')});
       })
       .catch(err => callback('database_error'));
+      },
+      (err, data) => {
+        if (err) return callback(err);
+  
+        return callback(null, data);
+      }
+    );
+  });
+
+  Question.findById(mongoose.Types.ObjectId(id.toString()), (err, question) => {
+    if (err || !question || !allowed_types.includes(question.type))
+      return callback('bad_request');
+
+    
+
+    
     });
 };
 
