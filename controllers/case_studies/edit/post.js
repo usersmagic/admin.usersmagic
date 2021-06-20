@@ -3,11 +3,9 @@ const CaseStudy = require('../../../models/caseStudy/casestudy');
 
 module.exports = (req, res) => { 
 
-  if (!req.body) {
-    req.body = {};
-  }
-
-  CaseStudy.editCaseStudy(req.body.id, req.body, (err, caseStudy) => {
+  if (!req.body) req.body = {};
+  
+  CaseStudy.editCaseStudy(req.query.id, req.body, (err, case_study) => {
     if (
       !req.body.main_title ||
       !req.body.main_description ||
@@ -18,7 +16,7 @@ module.exports = (req, res) => {
       ) {
         res.write(JSON.stringify({success:false, error:err}))
         return res.end();
-      } else if (caseStudy) {
+      } else if (case_study) {
         res.write(JSON.stringify({success: true}));
       }
       return res.end();

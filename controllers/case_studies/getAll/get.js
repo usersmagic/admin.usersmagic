@@ -2,10 +2,11 @@
 const CaseStudy = require('../../../models/caseStudy/casestudy');
 
 module.exports = (req, res) => {
-  CaseStudy.getAll((err, caseStudy) => {
+  CaseStudy.getAllCaseStudies((err, case_study) => {
     if (err) {
+      res.write(JSON.stringify({ success:false, error:err }))
       return res.end();
     }
-    res.send(caseStudy);
+    res.send(case_study);
   })
 }

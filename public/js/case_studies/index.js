@@ -69,11 +69,9 @@ window.onload = () => {
       })
       trashCanIcon.addEventListener('click', () => {
         if (confirm('Are you sure to delete this case study')) {
-          const data_delete = {
-            company_name: caseStudy.company_name
-          }
-  
-          serverRequest('case_studies/delete', 'POST', data_delete, (response) => {
+          const data_delete = {}
+          const id = caseStudy._id;
+          serverRequest('case_studies/delete?id=' + id, 'POST', data_delete, (response) => {
             if (!response.error) {
               location.reload();
             } else if (!response.success && response.error === 'bad_request') {

@@ -1,5 +1,6 @@
 
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const caseStudySchema = mongoose.Schema({
   company_logo: {
@@ -96,77 +97,55 @@ const caseStudySchema = mongoose.Schema({
   }
 });
 
-caseStudySchema.statics.getAll = function (callback) {
+caseStudySchema.statics.getAllCaseStudies = function (callback) {
   CaseStudy.find({}, (err, case_study) => {
-    if (err) {
-      return callback('bad_request');
-    }
-    return callback(undefined, case_study);
+    if (err) return callback('bad_request');
+    
+    return callback(null, case_study);
   })
 }
 
-caseStudySchema.statics.getSingle = function (id, callback) {
-  CaseStudy.findById(id, (err, case_study) => {
-    if (err) {
-      return callback('bad_request');
-    }
-    return callback(undefined, case_study);
-  })
-}
-
-caseStudySchema.statics.createNewCaseStudy = function(body, callback) {
-  if (
-    !body.company_personal_image ||
-    !body.main_company_image ||
-    !body.company_logo ||
-    !body.main_title ||
-    !body.main_description ||
-    !body.company_name ||
-    !body.company_personal_name ||
-    !body.company_personal_role ||
-    !body.company_personal_quote ||
-    !body.language
-    ) {
+caseStudySchema.statics.findCaseStudyById = function (id, callback) {
+  if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
-  }
-  const caseStudy = new CaseStudy(body);
-  caseStudy.save((err, response) => {
-    if (err) {
-      return callback('bad_request');
-    }
-    return callback(undefined, caseStudy);
+  CaseStudy.findById(id, (err, case_study) => {
+    if (err) return callback('bad_request');
+    
+    return callback(null, case_study);
+  })
+}
+
+caseStudySchema.statics.createNewCaseStudy = function(data, callback) {
+  if (!data.company_personal_image ||!data.main_company_image ||!data.company_logo ||!data.main_title ||!data.main_description ||!data.company_name ||!data.company_personal_name ||!data.company_personal_role ||!data.company_personal_quote ||!data.language) return callback('bad_request');
+  
+  const case_study = new CaseStudy(data);
+  case_study.save((err, response) => {
+    if (err) return callback('bad_request');
+    return callback(null, case_study);
   });
 }
 
-caseStudySchema.statics.editCaseStudy = function( id, body, callback ) {
-  if (
-    !body.main_title ||
-    !body.main_description ||
-    !body.company_name ||
-    !body.company_personal_name ||
-    !body.company_personal_role ||
-    !body.company_personal_quote
-    ) {
+caseStudySchema.statics.editCaseStudy = function( id, data, callback ) {
+  if (!id || !validator.isMongoId(id.toString()) || !data)
     return callback('bad_request');
-  }
-  CaseStudy.findByIdAndUpdate(id, body, (err, caseStudy) => {
+  if (!data.main_title ||!data.main_description ||!data.company_name ||!data.company_personal_name ||!data.company_personal_role ||!data.company_personal_quote) return callback('bad_request');
+  
+  CaseStudy.findByIdAndUpdate(id, data, (err, caseStudy) => {
     if (err) return callback('bad_request');
 
     caseStudy.save((err, updatedCaseStudy) => {
-      if (err) {
-        return callback('bad_request');
-      }
-      return callback(undefined, updatedCaseStudy);
+      if (err) return callback('bad_request');
+      return callback(null, updatedCaseStudy);
     });
   })
 }
 
-caseStudySchema.statics.deleteCaseStudy = async function( companyName, callback ) {
-  CaseStudy.findOneAndDelete({ company_name: companyName }, (err, caseStudy) => {
-    if (err) {
-      return callback('bad_request');
-    }
-    return callback(undefined, caseStudy);
+caseStudySchema.statics.deleteCaseStudy = function( id, callback ) {
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+  CaseStudy.findByIdAndDelete(id, (err, caseStudy) => {
+    if (err) return callback('bad_request');
+    return callback(null, caseStudy);
   });
 }
 

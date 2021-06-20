@@ -58,7 +58,6 @@ window.onload = () => {
   });
   submitButton.addEventListener('click', () => {
     const data_update = {
-      id: id,
       main_title: mainTitleEdit.value,
       main_description: mainDescriptionEdit.value,
       company_name: companyNameEdit.value,
@@ -80,7 +79,7 @@ window.onload = () => {
       results_text: resultsParagraphEdit.value,
     }
 
-    serverRequest('/case_studies/edit', 'POST', data_update, (response) => {
+    serverRequest('/case_studies/edit?id='+id, 'POST', data_update, (response) => {
       if (!response.error) {
         mainTitleEdit.value = mainDescriptionEdit.value = companyNameEdit.value = companyLocationEdit.value = companyIndustryEdit.value = companyipoEdit.value = companyWebsiteEdit.value = companyEmployeeNumberEdit.value = companyEstablishedYearEdit.value = companySpecialityEdit.value = companyTypeEdit.value = companyStageEdit.value = personalNameEdit.value = personalRoleEdit.value = personalQuoteEdit.value = contextParagraphEdit.value = problemParagraphEdit.value = solutionParagraphEdit.value = resultsParagraphEdit.value = '';
         alert('Successfully updated the case study.');
