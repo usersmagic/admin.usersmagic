@@ -302,6 +302,29 @@ TargetSchema.statics.incSubmitionLimitByOne = function (id, callback) {
   });
 };
 
+TargetSchema.statics.decSubmitionLimitByOne = function (id, callback) {
+  // Find the Target with the given id and decrease its submition limit by one
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$inc: {
+    submition_limit: -1
+  }}, {new: true}, (err, target) => {
+    if (err) return callback('database_error');
+    if (!target) return callback('document_not_found');
+
+    TargetUserList.updateEachTargetUserListSubmitionLimit(id, target.submition_limit, err => {
+      if (err) return callback(err);
+
+      callback(null);
+    });
+  });
+};
+
 TargetSchema.statics.leaveTarget = function (id, user_id, callback) {
   // Find the Target with the given id. Push user to valid user_list of the latest TargetUserList. Remove user from any other TargetUserList
   // Return an error if it exists
