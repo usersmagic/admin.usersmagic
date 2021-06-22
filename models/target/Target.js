@@ -289,7 +289,7 @@ TargetSchema.statics.incSubmitionLimitByOne = function (id, callback) {
   const Target = this;
 
   Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$inc: {
-    submiton_limit: 1
+    submition_limit: 1
   }}, {new: true}, (err, target) => {
     if (err) return callback('database_error');
     if (!target) return callback('document_not_found');
