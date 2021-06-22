@@ -364,7 +364,7 @@ SubmitionSchema.statics.rejectSubmitionById = function (id, data, callback) {
   }}, {new: true}, (err, submition) => {
     if (err) return callback('database_error');
 
-    Target.decSubmitionLimitByOne(submition.target_id, err => {
+    Target.incSubmitionLimitByOne(submition.target_id, err => {
       if (err) return callback(err);
 
       return callback(null, submition);
