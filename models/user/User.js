@@ -269,6 +269,7 @@ UserSchema.statics.getUsersWithCustomFiltersAndOptions = function (filters, opti
 
     User
       .find(filters)
+      .sort({ priority_index: -1 })
       .limit(limit)
       .then(users => callback(null, users))
       .catch(err => callback('database_error'));
