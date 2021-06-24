@@ -451,20 +451,8 @@ UserSchema.statics.increaseCampaignValue = function (id, callback) {
     }}, err => {
       if (err) return callback('database_error');
 
-      User.collection
-        .createIndex({
-          on_waitlist: 1,
-          gender: 1,
-          birth_year: 1,
-          country: 1,
-          city: 1,
-          town: 1,
-          information: 1,
-          priority_index: 1
-        })
-        .then(() => callback(null))
-        .catch(err => callback('indexing_error'));
-      });
+      return callback(null);
+    });
   });
 };
 
