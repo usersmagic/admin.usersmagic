@@ -70,7 +70,6 @@ window.onload = () => {
     
     const data = {
       name,
-      image,
       description,
       information,
       price,

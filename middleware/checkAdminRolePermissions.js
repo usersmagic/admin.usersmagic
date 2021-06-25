@@ -39,6 +39,10 @@ const menus = [
     link: '/templates'
   },
   {
+    role: 'product_head',
+    link: '/case_studies'
+  },
+  {
     role: 'organisation_manager',
     link: '/users'
   }

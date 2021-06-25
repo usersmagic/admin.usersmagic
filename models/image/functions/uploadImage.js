@@ -30,7 +30,7 @@ module.exports = async (file_name, callback) => {
     if (err) return callback(err);	
   
     fs.unlink('./public/res/uploads/' + file_name, err => {	
-      return callback(err, data.Location);	
+      return callback(err, data.Location); 
     });
   });
 }
