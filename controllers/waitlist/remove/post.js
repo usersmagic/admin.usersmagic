@@ -24,9 +24,9 @@ module.exports = (req, res) => {
           name: user.name.split(' ')[0],
           to: user.email
         }, err => {
-          if (err) next('email_error');
+          if (err) console.log(err);
           
-          next(null);
+          return next(null);
         });
       },
       err => {

@@ -76,6 +76,14 @@ window.onload = () => {
       window.location = `/questions/edit?id=${event.target.id}`;
     }
 
+    if (event.target.classList.contains('each-question-csv-button')) {
+      window.location = `/questions/csv?id=${event.target.id}`;
+    }
+
+    if (event.target.classList.contains('each-question-csv-button-percent')) {
+      window.location = `/questions/csv?id=${event.target.id}&percent=true`;
+    }
+
     if ((event.target.classList.contains('previous-page-button') || event.target.parentNode.classList.contains('previous-page-button')) && options.skip) {
       options.skip = Math.max(options.skip - options.limit, 0);
       window.location = '/questions' + createQueryFromFiltersAndOptions(filters, options);

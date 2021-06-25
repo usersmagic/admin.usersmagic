@@ -28,7 +28,7 @@ if (cluster.isMaster) {
 } else {
   dotenv.config({ path: path.join(__dirname, '.env') });
 
-  if (cluster.worker.id == 2) { // Use the second worker only for CronJobs, to never block traffic on the site
+  if (cluster.worker.id == 2 && !process.env.IS_LOCAL) { // Use the second worker only for CronJobs, to never block traffic on the site. DO NOT USE on local
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/usersmagic';
     mongoose.connect(mongoUri, { useNewUrlParser: true, auto_reconnect: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
 
@@ -62,6 +62,7 @@ if (cluster.isMaster) {
     const submitionsRouteController = require('./routes/submitionsRoute');
     const targetsRouteController = require('./routes/targetsRoute');
     const templatesRouteController = require('./routes/templatesRoute');
+    const usersRouteController = require('./routes/usersRoute');
     const waitlistRouteController = require('./routes/waitlistRoute');
 
     app.set('views', path.join(__dirname, 'views'));
@@ -109,6 +110,7 @@ if (cluster.isMaster) {
     app.use('/submitions', submitionsRouteController);
     app.use('/targets', targetsRouteController);
     app.use('/templates', templatesRouteController);
+    app.use('/users', usersRouteController);
     app.use('/waitlist', waitlistRouteController);
 
     server.listen(PORT, () => {
