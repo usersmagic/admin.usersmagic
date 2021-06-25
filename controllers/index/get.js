@@ -56,6 +56,12 @@ module.exports = (req, res) => {
       role: 'product_head',
       link: '/templates'
     },
+    {
+      name: res.__("Case Studies"),
+      details: res.__("Create and edit case studies"),
+      role: "product_head",
+      link: "/case_studies"
+    }
     // {
     //   name: res.__('Users'),
     //   details: res.__('See and edit user accounts'),
