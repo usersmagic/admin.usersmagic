@@ -6,8 +6,6 @@ const hashPassword = require('./functions/hashPassword');
 const getUser = require('./functions/getUser');
 const verifyPassword = require('./functions/verifyPassword');
 
-const Question = require('../question/Question')
-
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -457,5 +455,16 @@ UserSchema.statics.increaseCampaignValue = function (id, callback) {
     });
   });
 };
+
+UserSchema.statics.findUsersAndCountDocuments = function (data, callback) {
+  // Finds user by information field
+  const User = this;
+
+  User.find(data).countDocuments((err, count) => {
+    if (err) return callback('bad_request, null')
+    return callback(null, count);
+  })
+}
+
 
 module.exports = mongoose.model('User', UserSchema);

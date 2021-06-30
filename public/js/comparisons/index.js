@@ -195,7 +195,7 @@ window.onload = () => {
 
           eachColumnWrapper.appendChild(eachBar);
           eachColumnWrapper.appendChild(eachBarLabel)
-          const barHeight = xAxisTotalValue[i] / Math.max(...xAxisTotalValue) * 91
+          const barHeight = xAxisTotalValue[i] / Math.max(...xAxisTotalValue) * 100;
 
           eachBar.style.height = barHeight + '%';
 
@@ -224,16 +224,17 @@ window.onload = () => {
               barSectionInformationsContent.appendChild(valueSpan);
               barSectionInformationsContent.appendChild(percentageSpan);
 
-              percentageSpan.innerHTML = 'Percentage: ' + eachBarSection.style.height
               graphLegends.childNodes.forEach(legend => {
                 if (legend.childNodes[0].style.backgroundColor === eachBarSection.style.backgroundColor) {
                   
                   const yChoiceLabel = legend.childNodes[1];
                   if (Object.keys(eachYChoice)[0] === yChoiceLabel.innerText) {
                     valueSpan.innerText = "Value: " + eachYChoice[Object.keys(eachYChoice)[0]];
+                    percentageSpan.innerHTML = 'Percentage: ' + ((eachYChoice[Object.keys(eachYChoice)[0]] / xAxisTotalValue[i]) * 100).toFixed(2);
                   }
                 }
               })
+
               eachBarSection.addEventListener('mousemove', (e) => {
                 barSectionInformationsContent.style.left = e.clientX + 20 + 'px';
                 barSectionInformationsContent.style.top = e.clientY + 20 + 'px';

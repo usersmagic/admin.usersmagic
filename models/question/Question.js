@@ -372,7 +372,14 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
 };
 
 
-QuestionSchema.statics.createFilterGraph = function (yQuestionId, xQuestionId, callback) {
+QuestionSchema.statics.createFilterGraph = function (data, callback) {
+  // Collects data from user and format the data
+  // Creates graphs with the ratio of the each data
+
+  if (!data.firstQuestionId || !data.secondQuestionId) return callback('bad_request', null)
+  const yQuestionId = data.firstQuestionId;
+  const xQuestionId = data.secondQuestionId;
+
   const Question = this;
   Question.getQuestionById(yQuestionId, (err, questionY) => {
     if (err) return callback('bad_request', null);
@@ -390,8 +397,10 @@ QuestionSchema.statics.createFilterGraph = function (yQuestionId, xQuestionId, c
               async.timesSeries(
                 yChoices.length,
                 (time2, next) => {
-                  User.find({["information." + xQuestionId]: xChoices[time1]}).countDocuments( (err, countX) => {
-                    User.find({["information." + xQuestionId]: xChoices[time1],["information." + yQuestionId]: yChoices[time2]}).countDocuments( (err, countY) => {
+                  User.findUsersAndCountDocuments({["information." + xQuestionId]: xChoices[time1]}, (err, countX) => {
+                    if (err) return callback('bad_request', null);
+                    User.findUsersAndCountDocuments({["information." + xQuestionId]: xChoices[time1],["information." + yQuestionId]: yChoices[time2]}, (err, countY) => {
+                      if (err) return callback('bad_request', null);
 
                       const choiceXName = xChoices[time1];
                       const choiceYName = yChoices[time2];
@@ -407,7 +416,7 @@ QuestionSchema.statics.createFilterGraph = function (yQuestionId, xQuestionId, c
                   });
                 },
                 (err) => {
-                  if (err) return callback('bad_request', null);
+                  if (err) return next(err);
                   yChoicesArray = [];
                   next(null)
                 }

@@ -10,16 +10,16 @@ const filtersPostController = require('../controllers/comparisons/filters/post')
 
 router.get(
   '/',
-  isLoggedIn,
-  checkAdminRolePermissions,
-  indexGetController
+    isLoggedIn,
+    checkAdminRolePermissions,
+    indexGetController
 )
 
 router.post(
   '/filters',
-  isLoggedIn,
-  checkAdminRolePermissions,
-  filtersPostController
+    isLoggedIn,
+    checkAdminRolePermissions,
+    filtersPostController
 )
 
 module.exports = router;
