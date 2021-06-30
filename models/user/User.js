@@ -259,6 +259,27 @@ UserSchema.statics.getUsersByFiltersAndOptions = function (filters, options, cal
     .catch(err => callback('database_error'));
 };
 
+UserSchema.statics.getUsersWithCustomFiltersAndOptions = function (filters, options, callback) {
+  // Use direct mongodb filters, require to have a valid search string
+  // Allowed options: limit (default: 100, max: 1000)
+  // Return an array of users, or an error if it exists
+
+  const User = this;
+
+  try {
+    const limit = ((options.limit && Number.isInteger(options.limit) && options.limit < 1000) ? options.limit : 100);
+
+    User
+      .find(filters)
+      .sort({ priority_index: -1 })
+      .limit(limit)
+      .then(users => callback(null, users))
+      .catch(err => callback('database_error'));
+  } catch (err) {
+    return callback('database_error');
+  };
+}
+
 UserSchema.statics.getWaitlistUsers = function (filters, options, callback) {
   // Find all users matching filters and options that are on waitlist
   // Allowed filters: name, email, city, town, countries, genders, max_birth_year, min_birth_year
@@ -432,20 +453,8 @@ UserSchema.statics.increaseCampaignValue = function (id, callback) {
     }}, err => {
       if (err) return callback('database_error');
 
-      User.collection
-        .createIndex({
-          on_waitlist: 1,
-          gender: 1,
-          birth_year: 1,
-          country: 1,
-          city: 1,
-          town: 1,
-          information: 1,
-          priority_index: 1
-        })
-        .then(() => callback(null))
-        .catch(err => callback('indexing_error'));
-      });
+      return callback(null);
+    });
   });
 };
 

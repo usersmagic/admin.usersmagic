@@ -10,6 +10,7 @@ const getTarget = require('./functions/getTarget');
 const Company = require('../company/Company');
 const Country = require('../country/Country');
 const Project = require('../project/Project');
+const TargetUserList = require('../target_user_list/TargetUserList');
 const User = require('../user/User');
 
 const Schema = mongoose.Schema;
@@ -74,6 +75,10 @@ const TargetSchema = new Schema({
     // The price that will be paid to each user
     type: Number,
     default: null
+  },
+  last_update: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -122,78 +127,80 @@ TargetSchema.statics.approveTarget = function (id, data, callback) {
 
 TargetSchema.statics.updateTargetsUsersList = function (callback) {
   // Finds all the targets that's status is approved, updates their user_list
+  // Return an error if it exists
 
   const Target = this;
+  const thirtyMinBefore = (new Date).getTime() - 30 * 60 * 1000;
 
-  Target.find({
-    status: 'approved',
-    submition_limit: {
-      $gt: 0
-    }
-  }, (err, targets) => {
-    if (err) return callback('database_error');
+  Target
+    .find({$and: [
+      {status: 'approved'},
+      {submition_limit: {
+        $gt: 0
+      }},
+      {last_update: {
+        $lt: thirtyMinBefore // Update only in every 30 mins
+      }}
+    ]})
+    .limit(10) // Update 10 at a time
+    .then(targets => {
+      async.timesSeries(
+        targets.length,
+        (time, next) => {
+          const target = targets[time];
 
-    async.timesSeries(
-      targets.length,
-      (time, next) => {
-        const target = targets[time];
-        if (target.users_list.length > 2000)
-          return next(null);
-
-        filtersArrayToSearchQuery(target.filters, (err, filters) => {
-          if (err) return next(err);
-          
-          // Push target country to filters, also make sure the $and array is not empty
-          filters.$and.push({
-            country: target.country
-          });
-
-          filters.$and.push({
-            completed: true
-          });
-
-          filters.$and.push({
-            on_waitlist: false
-          });
-
-          // Do not repeat users in users_list array
-          filters.$and.push({
-            _id: {
-              $nin: target.users_list
-            }
-          });
-
-          User.getUsersByFilters(filters, (err, user_ids) => {
+          filtersArrayToSearchQuery(target.filters, (err, filters) => {
             if (err) return next(err);
+            
+            filters.$and.push({
+              country: target.country
+            });
+            filters.$and.push({
+              completed: true
+            });
+            filters.$and.push({
+              on_waitlist: false
+            });
 
-            async.timesSeries(
-              user_ids.length,
-              (time, next) => {
-                Target.findByIdAndUpdate(mongoose.Types.ObjectId(target._id), {$push: {
-                  users_list: user_ids[time]
-                }}, {}, err => next(err));
-              },
-              err => {
-                if (err) return next('database_error');
+            TargetUserList.getTargetUserListFilter(target._id, (err, filter) => {
+              if (err) return next(err);
+              if (filter) filters.$and.push(filter);
 
-                Target.collection
-                  .createIndex({ // To make search faster
-                    users_list: 1
-                  })
-                  .then(() => next(null))
-                  .catch(err => next('indexing_error'));
-              }
-            );
+              User.getUsersWithCustomFiltersAndOptions(filters, {
+                limit: Math.min(target.submition_limit, 1000) // Do not update more than 1000 users at a time
+              }, (err, users) => {
+                if (err) return next(err);
+
+                TargetUserList.updateTargetUserList(target._id, users, target.submition_limit, err => {
+                  if (err) return next(err);
+
+                  Target.findByIdAndUpdate(mongoose.Types.ObjectId(target._id.toString()), {$set: {
+                    last_update: (new Date).getTime()
+                  }}, err => {
+                    if (err) return next('database_error');
+        
+                    next(null);
+                  });
+                });
+              });
+            });
           });
-        });
-      },
-      err => {
-        if (err) return callback(err);
+        },
+        err => {
+          if (err) return callback(err);
 
-        return callback(null);
-      }
-    );
-  });
+          Target.collection
+            .createIndex({
+              status: 1,
+              submition_limit: 1,
+              last_update: 1
+            })
+            .then(() => callback(null))
+            .catch(err => {console.log(err);callback('indexing_error')});
+        }
+      );
+    })
+    .catch(err => {console.log(err);callback('database_error')});
 };
 
 TargetSchema.statics.getWaitingTargets = function (callback) {
@@ -256,6 +263,86 @@ TargetSchema.statics.getWaitingTargets = function (callback) {
       );
     })
     .catch(err => callback('database_error'));
+};
+
+TargetSchema.statics.incApprovedSubmitionCount = function (id, callback) {
+  // Find the Target with the given id and increase its approved_submition_count by 1
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), { $inc: {
+    approved_submition_count: 1
+  }}, err => callback(err ? 'database_error' : null));
+};
+
+TargetSchema.statics.incSubmitionLimitByOne = function (id, callback) {
+  // Find the Target with the given id and decrease its submition limit by one
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback(id);
+
+  const Target = this;
+
+  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$inc: {
+    submition_limit: 1
+  }}, {new: true}, (err, target) => {
+    if (err) return callback('database_error');
+    if (!target) return callback('document_not_found');
+
+    TargetUserList.updateEachTargetUserListSubmitionLimit(id, target.submition_limit, err => {
+      if (err) return callback(err);
+
+      callback(null);
+    });
+  });
+};
+
+TargetSchema.statics.decSubmitionLimitByOne = function (id, callback) {
+  // Find the Target with the given id and decrease its submition limit by one
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$inc: {
+    submition_limit: -1
+  }}, {new: true}, (err, target) => {
+    if (err) return callback('database_error');
+    if (!target) return callback('document_not_found');
+
+    TargetUserList.updateEachTargetUserListSubmitionLimit(id, target.submition_limit, err => {
+      if (err) return callback(err);
+
+      callback(null);
+    });
+  });
+};
+
+TargetSchema.statics.leaveTarget = function (id, user_id, callback) {
+  // Find the Target with the given id. Push user to valid user_list of the latest TargetUserList. Remove user from any other TargetUserList
+  // Return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()) || !user_id || !validator.isMongoId(user_id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.incSubmitionLimitByOne(id, err => {
+    if (err) return callback(err);
+
+    TargetUserList.removeUser(user_id, id, err => {
+      if (err) return callback(err);
+
+      TargetUserList.addUserToValid(user_id, id, err => callback(err));
+    });
+  });
 };
 
 module.exports = mongoose.model('Target', TargetSchema);
