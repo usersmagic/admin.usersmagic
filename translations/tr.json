@@ -356,5 +356,14 @@
 	"Problem Paragraph": "Problem Paragraph",
 	"Solution Paragraph": "Solution Paragraph",
 	"Results Paragraph": "Results Paragraph",
-	"Please enter a paragraph for the results part.": "Please enter a paragraph for the results part."
+	"Please enter a paragraph for the results part.": "Please enter a paragraph for the results part.",
+	"Comparisons": "Comparisons",
+	"See, create and download detailed comparison graphs": "See, create and download detailed comparison graphs",
+	"Graph Title": "Graph Title",
+	"Enter the graph's title": "Enter the graph's title",
+	"Y Axis Filter": "Y Axis Filter",
+	"Choose a filter question for y axis": "Choose a filter question for y axis",
+	"X Axis Filter": "X Axis Filter",
+	"Choose a filter question for X axis": "Choose a filter question for X axis",
+	"Plot": "Plot"
 }

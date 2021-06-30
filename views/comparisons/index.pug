@@ -1,0 +1,35 @@
+extends ../partials/head
+block content
+  all-wrapper
+        .all-header-wrapper
+            .header-title-wrapper
+                .header-title= __('Comparisons')
+                .header-subtitle= __('See, create and download detailed comparison graphs')
+        .all-content-wrapper#all-content-wrapper
+          form.all-content-create-new-content-item-wrapper#create-case-study-form(style="display:flex")
+            span.general-input-title= __('Graph Title')
+            span.general-input-explanation-text= __('Enter the graph\'s title')
+            input.general-input-with-border(placeholder='Graph title' autocomplete="off")#graph-title
+            span.general-input-title= __('Y Axis Filter')
+              span.general-input-required-sign *
+            span.general-input-explanation-text= __('Choose a filter question for y axis')
+            .questions-wrapper-y
+            input(type="text" class="general-input-with-border each-question-input-y" placeholder=__('Search Questions') autocomplete="off")#y-filter
+            .search-questions-wrapper-y
+            .general-input-error-line
+              span#bad-request-error= __('You seem to have a missing field. Please check that you have entered all the required fields and selected at least one question.')
+            .general-input-error-line
+              span#unknown-error= __('An unknown error occured, please try again later')
+            span.general-input-title= __('X Axis Filter')
+              span.general-input-required-sign *
+            span.general-input-explanation-text= __('Choose a filter question for X axis')
+            .questions-wrapper-x
+            input(type="text" class="general-input-with-border each-question-input-x" placeholder=__('Search Questions') autocomplete="off")#x-filter
+            .search-questions-wrapper-x
+            .general-input-error-line
+              span#bad-request-error= __('You seem to have a missing field. Please check that you have entered all the required fields and selected at least one question.')
+            .general-input-error-line
+              span#unknown-error= __('An unknown error occured, please try again later')
+
+            .general-seablue-button(style='width:250px')#submit-button
+              span= __('Plot')

@@ -61,7 +61,13 @@ module.exports = (req, res) => {
       details: res.__("Create and edit case studies"),
       role: "product_head",
       link: "/case_studies"
-    }
+    },
+    {
+      name: res.__("Comparisons"),
+      details: res.__("See, create and download detailed comparison graphs"),
+      role: "product_head",
+      link: "/comparisons"
+    },
   ];
 
   return res.render('index/index', {
