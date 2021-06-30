@@ -1,5 +1,5 @@
 
-const User = require('../../../models/user/User');
+const Question = require('../../../models/question/Question');
 
 module.exports = (req, res) => {
 
@@ -13,7 +13,7 @@ module.exports = (req, res) => {
   const yQuestionId = req.body.firstQuestionId;
   const xQuestionId = req.body.secondQuestionId;
 
-  User.createFilterGraph(yQuestionId, xQuestionId, (err, data) => {
+  Question.createFilterGraph(yQuestionId, xQuestionId, (err, data) => {
     if (err) {
       res.write(JSON.stringify({success:false, error:err}));
       return res.end();

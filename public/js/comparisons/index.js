@@ -96,8 +96,20 @@ window.onload = () => {
       firstQuestionId: document.querySelectorAll('.each-search-question')[0].id,
       secondQuestionId: document.querySelectorAll('.each-search-question')[1].id,
     }
+
+    const graphMainWrapper = document.createElement('div');
+    graphMainWrapper.classList.add('graph-main-wrapper');
+    allContentWrapper.appendChild(graphMainWrapper);
+    
+    const loadingSpan = document.createElement('span');
+    loadingSpan.style.font = '500 20px helvetica'
+    loadingSpan.innerText = 'Loading...'
+
+    graphMainWrapper.appendChild(loadingSpan);
+
     serverRequest('/comparisons/filters', 'POST', data, (res) => {
       if (!res.error) {
+        loadingSpan.remove();
         const xLabels = []
         const xAxisTotalValue = [];
         const eachXAxisYChoices = [];
@@ -111,8 +123,6 @@ window.onload = () => {
           const randomColor = `rgba(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
           randomColors.push(randomColor);
         })
-        const graphMainWrapper = document.createElement('div');
-        graphMainWrapper.classList.add('graph-main-wrapper');
         const eachGraph = document.createElement('div');
         eachGraph.classList.add('each-graph');
         const eachGraphHeader = document.createElement('div');
@@ -144,7 +154,6 @@ window.onload = () => {
           j++;
         })
 
-        allContentWrapper.appendChild(graphMainWrapper);
         graphMainWrapper.appendChild(eachGraph);
         eachGraph.appendChild(eachGraphHeader);
         graphMainWrapper.appendChild(graphLegends)
@@ -199,7 +208,7 @@ window.onload = () => {
             eachBarSection.style.backgroundColor = randomColors[n];
             eachBar.appendChild(eachBarSection)
 
-            eachBarSection.addEventListener('mouseover', () => {
+            eachBarSection.addEventListener('mouseover', (e) => {
               eachBarSection.style.boxShadow = '0 2px 4px 2px ' + eachBarSection.style.backgroundColor
               graphLegends.childNodes.forEach(legend => {
                 if (legend.childNodes[0].style.backgroundColor === eachBarSection.style.backgroundColor) {
@@ -207,6 +216,33 @@ window.onload = () => {
                   legend.childNodes[1].style.fontWeight = 'bold'
                 }
               })
+              const barSectionInformationsContent = document.createElement('div');
+              barSectionInformationsContent.classList.add('bar-section-informations-content');
+              const percentageSpan = document.createElement('span');
+              const valueSpan = document.createElement('span');
+
+              barSectionInformationsContent.appendChild(valueSpan);
+              barSectionInformationsContent.appendChild(percentageSpan);
+
+              percentageSpan.innerHTML = 'Percentage: ' + eachBarSection.style.height
+              graphLegends.childNodes.forEach(legend => {
+                if (legend.childNodes[0].style.backgroundColor === eachBarSection.style.backgroundColor) {
+                  
+                  const yChoiceLabel = legend.childNodes[1];
+                  if (Object.keys(eachYChoice)[0] === yChoiceLabel.innerText) {
+                    valueSpan.innerText = "Value: " + eachYChoice[Object.keys(eachYChoice)[0]];
+                  }
+                }
+              })
+              eachBarSection.addEventListener('mousemove', (e) => {
+                barSectionInformationsContent.style.left = e.clientX + 20 + 'px';
+                barSectionInformationsContent.style.top = e.clientY + 20 + 'px';
+              })
+
+              eachBarSection.addEventListener('mouseleave', () => {
+                barSectionInformationsContent.remove()
+              })
+              document.body.appendChild(barSectionInformationsContent);
             })
 
             eachBarSection.addEventListener('mouseleave', () => {
@@ -218,7 +254,6 @@ window.onload = () => {
                 }
               })
             })
-
             n++;
           })
 

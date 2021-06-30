@@ -179,3 +179,20 @@
   font-size: 12px;
   margin-left: 10px;
 }
+
+.bar-section-informations-content {
+  width: 200px;
+  height: 50px;
+  border-radius: 5px;
+  background-color: rgb(59, 52, 52);
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  position: absolute;
+}
+
+.bar-section-informations-content span {
+  font: 500 12px arial;
+  color: rgb(230, 230, 230);
+  margin-bottom: 2px;
+}
