@@ -459,11 +459,14 @@ UserSchema.statics.increaseCampaignValue = function (id, callback) {
 UserSchema.statics.findUsersAndCountDocuments = function (data, callback) {
   // Finds user by information field
   const User = this;
-
-  User.find(data).countDocuments((err, count) => {
-    if (err) return callback('bad_request, null')
-    return callback(null, count);
-  })
+  try {
+    User.find(data).countDocuments((err, count) => {
+      if (err) return callback('bad_request');
+      return callback(null, count);
+    })
+  } catch (e) {
+    return callback('bad_request');
+  }
 }
 
 
