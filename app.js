@@ -55,6 +55,7 @@ if (cluster.isMaster) {
     const caseStudiesRouteController = require('./routes/caseStudiesRoute');
     const countriesRouteController = require('./routes/countriesRoute');
     const companiesRouteController = require('./routes/companiesRoute');
+    const comparisonsRouteController = require('./routes/comparisonsRoute')
     const imageRouteController = require('./routes/imageRoute');
     const paymentsRouteController = require('./routes/paymentsRoute');
     const questionsRouteController = require('./routes/questionsRoute');
@@ -103,6 +104,7 @@ if (cluster.isMaster) {
     app.use('/case_studies', caseStudiesRouteController);
     app.use('/countries', countriesRouteController);
     app.use('/companies', companiesRouteController);
+    app.use('/comparisons', comparisonsRouteController);
     app.use('/image', imageRouteController);
     app.use('/payments', paymentsRouteController);
     app.use('/questions', questionsRouteController);

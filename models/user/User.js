@@ -456,4 +456,18 @@ UserSchema.statics.increaseCampaignValue = function (id, callback) {
   });
 };
 
+UserSchema.statics.findUsersAndCountDocuments = function (data, callback) {
+  // Finds user by information field
+  const User = this;
+  try {
+    User.find(data).countDocuments((err, count) => {
+      if (err) return callback('bad_request');
+      return callback(null, count);
+    })
+  } catch (e) {
+    return callback('bad_request');
+  }
+}
+
+
 module.exports = mongoose.model('User', UserSchema);
