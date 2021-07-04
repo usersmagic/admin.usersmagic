@@ -370,5 +370,20 @@
 	"Edit undefined": "Edit undefined",
 	"Edit ": "Edit ",
 	" | Edit": " | Edit",
-	"Edit 's case study.": "Edit 's case study."
+	"Edit 's case study.": "Edit 's case study.",
+	"Comparisons": "Comparisons",
+	"See, create and download detailed comparison graphs": "See, create and download detailed comparison graphs",
+	"Graph Title": "Graph Title",
+	"Enter the graph's title": "Enter the graph's title",
+	"Question for Y axis": "Question for Y axis",
+	"Enter the question which's answers will form the y axis": "Enter the question which's answers will form the y axis",
+	"Filter for X axis": "Filter for X axis",
+	"Enter a filter. Ex: age, gender, etc.": "Enter a filter. Ex: age, gender, etc.",
+	"Plot": "Plot",
+	"Y axis filter": "Y axis filter",
+	"Choose a filter question for y axis": "Choose a filter question for y axis",
+	"": "",
+	"Y Axis Filter": "Y Axis Filter",
+	"X Axis Filter": "X Axis Filter",
+	"Choose a filter question for X axis": "Choose a filter question for X axis"
 }

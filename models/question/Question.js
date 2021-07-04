@@ -371,4 +371,68 @@ QuestionSchema.statics.getQuestionJSONByAges = function (id, is_percent, callbac
     });
 };
 
+
+QuestionSchema.statics.createFilterGraph = function (data, callback) {
+  // Collects data from user and format the data
+  // Creates graphs with the ratio of the each data
+
+  if (!data) data = {};
+
+  if (!data.firstQuestionId || !data.secondQuestionId) return callback('bad_request');
+  const yQuestionId = data.firstQuestionId;
+  const xQuestionId = data.secondQuestionId;
+
+  const Question = this;
+  Question.getQuestionById(yQuestionId, (err, questionY) => {
+    if (err) return callback('bad_request');
+    if (questionY) {
+      Question.getQuestionById(xQuestionId, (err, questionX) => {
+        if (err) return callback('bad_request');
+        if (questionX) {
+          var graphData = {};
+          var yChoicesArray = [];
+          const xChoices = questionX.choices;
+          const yChoices = questionY.choices;
+          async.timesSeries(
+            xChoices.length,
+            (time1, next) => {
+              async.timesSeries(
+                yChoices.length,
+                (time2, next) => {
+                  User.findUsersAndCountDocuments({["information." + xQuestionId]: xChoices[time1]}, (err, countX) => {
+                    if (err) return callback('bad_request');
+                    User.findUsersAndCountDocuments({["information." + xQuestionId]: xChoices[time1],["information." + yQuestionId]: yChoices[time2]}, (err, countY) => {
+                      if (err) return callback('bad_request');
+
+                      const choiceXName = xChoices[time1];
+                      const choiceYName = yChoices[time2];
+                      graphData[choiceXName] = {};
+                      graphData[choiceXName].val = countX;
+                      yChoicesArray.push({
+                        [yChoices[time2]]: countY
+                      })
+                      graphData[choiceXName].yChoicesArray = yChoicesArray;
+
+                      next(null)
+                    })
+                  });
+                },
+                (err) => {
+                  if (err) return next(err);
+                  yChoicesArray = [];
+                  next(null)
+                }
+              )
+            },
+            (err) => {
+              if (err) return callback('bad_request');
+              return callback(null, graphData);            
+            }
+          )
+        }
+      })
+    }
+  })
+}
+
 module.exports = mongoose.model('Question', QuestionSchema);
